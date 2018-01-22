@@ -1,16 +1,20 @@
+import java.util.ArrayList;
+
 public class Document {
     String [] keywords;
     int price;
+    String title;
+    ArrayList <String> authors;
 
-    void delete(){
-
-    }
-
-    void add(){
+    void delete(Document doc){
 
     }
 
-    void modify(){
+    void add(Document doc){
+
+    }
+
+    void modify(Document doc, Document new_doc){
 
     }
 
@@ -24,7 +28,9 @@ public class Document {
         return result;
     }
 
+    Document search(){
 
+    }
 
     int checkOverdue(){
         return
@@ -33,5 +39,9 @@ public class Document {
 
     int overdueFine(){
         return checkOverdue()*100;
+    }
+
+    void make_copy(Document doc){
+        doc
     }
 }

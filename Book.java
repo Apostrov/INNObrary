@@ -1,6 +1,8 @@
 public class Book extends Document {
+    int edition;
+    int edition_year;
 
-    int checkOut(){
+    void checkOut(Document doc){
 
     }
 }
