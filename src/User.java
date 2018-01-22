@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 
 public class User {
-
+    // TODO: getter for all info like name, addres and other
     private String name;
     private String address;
     private String phone;

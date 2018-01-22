@@ -5,7 +5,7 @@ public class JournalArticle extends Document {
     String issue;
     ArrayList <String> issue_editors;
     String publication_date;
-
+    // TODO: getter for all info like title, author and other
 
     int checkOut(Document doc){
         //2 weeks
