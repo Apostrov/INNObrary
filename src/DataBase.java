@@ -1,21 +1,9 @@
 import com.mongodb.MongoClient;
-import com.mongodb.MongoClientURI;
-import com.mongodb.ServerAddress;
-
-import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.MongoCollection;
-
+import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
-import java.util.Arrays;
-import com.mongodb.Block;
 
-import com.mongodb.client.MongoCursor;
-import static com.mongodb.client.model.Filters.*;
-import com.mongodb.client.result.DeleteResult;
-import static com.mongodb.client.model.Updates.*;
-import com.mongodb.client.result.UpdateResult;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 
 /**
  * INFO:
@@ -48,9 +36,20 @@ public class DataBase {
                 .append("publisher", book.getPublisher())
                 .append("edition", book.getEdition())
                 .append("year", book.getYear());
+        documents.insertOne(docBook);
     }
 
     public static Book getBook(){
         throw new Error("no such book");
+    }
+
+    public static void addUser(Patron patron){
+        //TODO: first find if this user already in db
+        Document docUser = new Document("name", patron.getName())
+                .append("password", patron.getPassword())
+                .append("address", patron.getAddress())
+                .append("phone", patron.getPhone())
+                .append("isFaculty", patron.getFaculty());
+        users.insertOne(docUser);
     }
 }

@@ -1,5 +1,5 @@
 public class Main {
-
+    // i think we don't need maxCardID, because db can say size
     public static int maxCardID = 0; // For new users (when person creates new user, it will increase by 1)
     public static int day = 0; // For booking system, fine overdue and so on
 
@@ -46,17 +46,16 @@ public class Main {
         return cardID;
     }
 
-    /** Registration with name, address, phone number and whether person is faculty member or not
+    /** Registration with name, password, address, phone number and whether person is faculty member or not
      *  @param name username
+     *  @param password password
      *  @param address user's address
      *  @param  phone user's phone number
-     *  @param isFaculty whether person is f culty member or not */
-    private static int register (String name, String address, String phone, boolean isFaculty) {
-        // TODO: load to database all data below
-        loadToDB("key = name", name);
-        loadToDB("key = address", address);
-        loadToDB("key = phone", phone);
-        loadToDB("key = is_faculty", isFaculty);
+     *  @param isFaculty whether person is faculty member or not */
+    private static int register (String name, String password, String address, String phone, boolean isFaculty) {
+
+        Patron patron = new Patron(name, password, address, phone, isFaculty);
+        DataBase.addUser(patron);
         return maxCardID++;
     }
 

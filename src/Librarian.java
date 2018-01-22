@@ -1,3 +1,3 @@
 public class Librarian {
-    // TODO: getter for all info like name, addres and other
+    // it would be just one librarian with specific username and password
 }
