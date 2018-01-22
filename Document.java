@@ -5,6 +5,7 @@ public class Document {
     int price;
     String title;
     ArrayList <String> authors;
+    int copies;
 
     void delete(Document doc){
 
@@ -42,6 +43,6 @@ public class Document {
     }
 
     void make_copy(Document doc){
-        doc
+        doc.copies ++;
     }
 }
