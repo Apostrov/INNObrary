@@ -1,11 +1,13 @@
 import java.util.ArrayList;
 
 public class Document {
-    String [] keywords;
-    int price;
+
     String title;
+    String [] keywords;
     ArrayList <String> authors;
+    int price;
     int copies;
+    // TODO: position of document in library
 
     void delete(Document doc){
 
@@ -33,16 +35,17 @@ public class Document {
 
     }
 
+    /** Returns number of days of overdue */
     int checkOverdue(){
-        return
+        return 0;
     }
 
 
     int overdueFine(){
-        return checkOverdue()*100;
+        return checkOverdue() * 100;
     }
 
-    void make_copy(Document doc){
-        doc.copies ++;
+    void make_copy(){
+        copies++;
     }
 }
