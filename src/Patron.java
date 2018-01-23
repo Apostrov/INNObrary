@@ -1,5 +1,4 @@
 public class Patron {
-    // TODO: getter for all info like name, addres and other
     private String name, password, address, phone;
     private boolean isFaculty;
     public Patron(String name, String password, String address, String phone, boolean isFaculty){

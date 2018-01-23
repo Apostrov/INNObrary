@@ -1,6 +1,7 @@
 public class Main {
     // i think we don't need maxCardID, because db can say size
     public static int maxCardID = 0; // For new users (when person creates new user, it will increase by 1)
+    // java already have class Date, maybe we use it
     public static int day = 0; // For booking system, fine overdue and so on
 
     private static User user; // Singleton of user
