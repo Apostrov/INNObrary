@@ -9,15 +9,15 @@ public class Document {
     int copies;
     // TODO: position of document in library
 
-    void delete(Document doc){
+    void delete(){
 
     }
 
-    void add(Document doc){
+    void add(){
 
     }
 
-    void modify(Document doc, Document new_doc){
+    void modify(Document new_doc){
 
     }
 
