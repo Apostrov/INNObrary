@@ -3,6 +3,7 @@ import java.util.List;
 public class Book extends Document {
     int edition;
     int edition_year;
+    String publisher;
     // TODO: getter for all info like title, author and other
     void checkOut(Document doc){
 
