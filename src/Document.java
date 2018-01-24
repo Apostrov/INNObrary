@@ -4,7 +4,7 @@ public class Document {
 
     String title;
     String [] keywords;
-    ArrayList <String> authors;
+    List<String> authors;
     int price;
     int copies;
     // TODO: position of document in library
