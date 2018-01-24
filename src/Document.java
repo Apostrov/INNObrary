@@ -2,50 +2,50 @@ import java.util.ArrayList;
 
 public class Document {
 
-    String title;
-    String [] keywords;
-    List<String> authors;
-    int price;
-    int copies;
+    private String title;
+    private String [] keywords;
+    private List<String> authors;
+    private int price;
+    private int copies;
     // TODO: position of document in library
 
-    void delete(){
+    public void delete(){
 
     }
 
-    void add(){
+    public void add(){
 
     }
 
-    void modify(Document new_doc){
+    public void modify(Document new_doc){
 
     }
 
-    Document[] searchFor_byAuthor(){
+    public Document[] searchFor_byAuthor(){
         Document[] result;
         return result;
     }
 
-    Document[] searchFor_byTitle(){
+    public Document[] searchFor_byTitle(){
         Document[] result;
         return result;
     }
 
-    Document search(){
+    public Document search(){
 
     }
 
     /** Returns number of days of overdue */
-    int checkOverdue(){
+    public int checkOverdue(){
         return 0;
     }
 
 
-    int overdueFine(){
+    public int overdueFine(){
         return checkOverdue() * 100;
     }
 
-    void make_copy(){
+    public void make_copy(){
         copies++;
     }
 }
