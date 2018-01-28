@@ -11,11 +11,11 @@ public class AudioVideo extends Document {
     }
     
     public String getTitle(){
-        return "";
+        return title;
     }
 
     public List<String> getAuthors(){
-        return null;
+        return authors;
     }
     
 }
