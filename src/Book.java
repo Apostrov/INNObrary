@@ -19,22 +19,22 @@ public class Book extends Document {
     }
 
     public String getTitle(){
-        return "";
+        return title;
     }
 
     public List<String> getAuthors(){
-        return null;
+        return authors;
     }
 
     public String getPublisher() {
-        return "";
+        return publisher;
     }
 
     public Integer getEdition() {
-        return 0;
+        return edition;
     }
 
     public Integer getYear() {
-        return 0;
+        return edition_year;
     }
 }
