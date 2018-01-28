@@ -23,30 +23,30 @@ public class JournalArticle extends Document {
     }
     
     public String getTitle(){
-        return "";
+        return title;
     }
 
     public List<String> getAuthors(){
-        return null;
+        return authors;
     }
 
     public String getJournal() {
-        return "";
+        return journal;
     }
 
     public Integer getIssue() {
-        return 0;
+        return issue;
     }
 
     public List<String> getEditors() {
-        return 0;
+        return issue_editors;
     }
     
     public String getDate() {
-        return "";
+        return pub_date;
     }
     
     public String getPublisher() {
-        return "";
+        return publisher;
     }
 }
