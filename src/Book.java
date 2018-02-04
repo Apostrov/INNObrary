@@ -3,7 +3,7 @@ import java.util.List;
 public class Book extends Document {
     int edition; // edition of the book
     int edition_year; // year of release of the book
-    String publisher; // publisher
+    String publisher; // publisher of the book
     
     /** Initialisation of the book.
      *  @param title, authors, edition, edition_year, publisher. */
