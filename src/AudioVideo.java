@@ -2,14 +2,14 @@ public class AudioVideo extends Document {
     
      /** Initialisation of the audio/video material.
      *  @param title, authors. */
-    AudioVideo(String title, List<String> authors){
+    AudioVideo(String title, ArrayList<String> authors){
         this.title = title;
         this.authors = authors;
     }
     
      /** Returns number of days you can check out the audio/video material.
      *  @param book. */
-    int checkOut(Document doc){
+    int checkOut(AudioVideo audiovideo){
         //2 weeks
     }
     
@@ -21,7 +21,7 @@ public class AudioVideo extends Document {
 
      /** Getter for authors of the audio/video material.
      *  @param authors. */
-    public List<String> getAuthors(){
+    public ArrayList<String> getAuthors(){
         return authors;
     }
     
