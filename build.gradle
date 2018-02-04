@@ -33,8 +33,11 @@ apply plugin: 'java'
 
 repositories {
     jcenter()
+    mavenLocal()
+    mavenCentral()
 }
 
 dependencies {
     compile 'org.mongodb:mongodb-driver:3.6.1'
+    compile group: 'de.dynamicfiles.projects.gradle.plugins', name: 'javafx-gradle-plugin', version: '8.7.0'
 }
