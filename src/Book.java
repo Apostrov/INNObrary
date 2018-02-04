@@ -7,7 +7,7 @@ public class Book extends Document {
     
     /** Initialisation of the book.
      *  @param title, authors, edition, edition_year, publisher. */
-    Book(String title, List<String> authors, int edition, int edition_year, String publisher){
+    Book(String title, ArrayList<String> authors, int edition, int edition_year, String publisher){
         this.title = title;
         this.authors = authors;
         this.edition = edition;
@@ -29,7 +29,7 @@ public class Book extends Document {
 
      /** Getter for authors of the book.
      *  @param authors. */
-    public List<String> getAuthors(){
+    public ArrayList<String> getAuthors(){
         return authors;
     }
 
