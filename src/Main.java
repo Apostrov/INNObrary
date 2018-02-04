@@ -1,43 +1,34 @@
-public class Main {
-    // i think we don't need maxCardID, because db can say size
-    public static int maxCardID = 0; // For new users (when person creates new user, it will increase by 1)
-    // java already have class Date, maybe we use it
-    public static int day = 0; // For booking system, fine overdue and so on
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+
+public class Main extends Application {
 
     private static User user; // Singleton of user
 
     /** Main method of INNObrary */
     public static void main(String[] args) {
         loadGlobalData();
-
-        // Somewhere here:
-        // Listen to button clicks
-        //
-        // If 'login' button is pressed then:
-        //   1) Send data to 'login' method and save the returned value somewhere
-        //   2) Open 'Booking system' page
-        //
-        // If 'register' button is pressed then:
-        //   1) Send data to 'register' method and save the returned value somewhere
-        //   2) Open 'Booking system' page
-        //
-        // If 'book a document' button is pressed then:
-        //   1) Send data to 'book' method add new booking based on selected document to the users current bookings
-        //   2) ...
-        //
-        // If 'logout' button is pressed
-        //   1) Save all data (load all important data to database)
-        //   2) ...
-        //
-        // If 'exit' button is pressed
-        //   1) Save all data (load all important data to database)
-        //   2) ...
-
         String username = getUsername();  // TODO: get username from input
         user = new User(login(username));
+ 
+		launch(args);
+	}
 
+	public void start(Stage primaryStage) throws Exception{
+            Parent root = FXMLLoader.load(getClass().getResource("God.fxml"));
+            primaryStage.setTitle("INNObrary");
+            primaryStage.setScene(new Scene(root, 1280, 720));
+            primaryStage.setMinHeight(0);
+            primaryStage.setMinWidth(0);
+            primaryStage.setResizable(false);
+            primaryStage.setX(300);
+            primaryStage.setY(100);
+            primaryStage.show();
     }
-
+	
     /** Login with username and return user's card ID
      *  @param username unique name that belongs only to single user
      *  @return corresponding card ID to username */
@@ -63,16 +54,6 @@ public class Main {
     /** Makes a booking */
     private static void book (Document doc) {
 
-    }
-
-    /** Toggles to the next day */
-    private static void nextDay () {
-        day++;
-    }
-
-    /** Load some global data from database. */
-    private static void loadGlobalData() {
-        maxCardID = loadFromDB("key = maxCardID"); // TODO: load saved value from data base
     }
 
 }
