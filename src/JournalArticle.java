@@ -20,50 +20,42 @@ public class JournalArticle extends Document {
         this.pub_date = pub_date;
     }
     
-     /** Returns number of days you can check out the journal article.
-     *  @param journal_article. */
-    int checkOut(JournalArticle journal_article){
+     /** Returns number of days you can check out the journal article.*/
+    void checkOut(JournalArticle journal_article){
         //2 weeks
     }
     
-     /** Getter for title of the journal article.
-     *  @param title. */
+     /** Getter for title of the journal article.*/
     public String getTitle(){
         return title;
     }
 
-     /** Getter for authors of the journal article.
-     *  @param authors. */
+     /** Getter for authors of the journal article.*/
     public ArrayList<String> getAuthors(){
         return authors;
     }
 
-     /** Getter for journal of the journal article.
-     *  @param journal. */
+     /** Getter for journal of the journal article.*/
     public String getJournal() {
         return journal;
     }
 
-     /** Getter for issue of the journal article.
-     *  @param issue. */
-    public Integer getIssue() {
+     /** Getter for issue of the journal article.*/
+    public String getIssue() {
         return issue;
     }
 
-     /** Getter for editors of the issue of the journal article.
-     *  @param issue_editors. */
+     /** Getter for editors of the issue of the journal article.*/
     public ArrayList<String> getEditors() {
         return issue_editors;
     }
     
-     /** Getter for publition date of the journal article.
-     *  @param pub_date. */ 
+     /** Getter for publition date of the journal article.*/
     public String getDate() {
         return pub_date;
     }
     
-     /** Getter for publisher of the journal article.
-     *  @param publisher. */ 
+     /** Getter for publisher of the journal article.*/
     public String getPublisher() {
         return publisher;
     }

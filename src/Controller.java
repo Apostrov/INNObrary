@@ -24,12 +24,15 @@ public class Controller {
     public Button signIn;
     public AnchorPane booking;
 
-    public void push (ActionEvent actionEvent) throws IOException {
+    public void login (ActionEvent actionEvent) throws IOException {
         if (user.getText().isEmpty() || password.getText().isEmpty()) {
             incorrect.setVisible(true);
         } else {
             System.out.println(user.getText());     // When 'login' button pressed
             System.out.println(password.getText()); // When 'login' button pressed
+
+            Main.login(user.getText(), password.getText());
+
             Stage stage;
             stage = (Stage) signIn.getScene().getWindow();
             stage.setScene(new Scene(FXMLLoader.load(getClass().getResource("booking.fxml")),600,600));
@@ -70,6 +73,8 @@ public class Controller {
         if (passReg.getText().equals(retypePassReg.getText()) && (!userReg.getText().isEmpty() && !passReg.getText().isEmpty()) && check) {
             System.out.println(userReg.getText()); // String from 'username' text field
             System.out.println(passReg.getText()); // String from 'password' text field
+
+            //Main.register();
 
             Stage stage;
             stage = (Stage) signUp.getScene().getWindow();

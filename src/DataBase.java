@@ -1,3 +1,4 @@
+/*
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -9,6 +10,7 @@ import java.util.Date;
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 
+*/
 /**
  * INFO:
  * All information in JSON:
@@ -19,7 +21,8 @@ import static com.mongodb.client.model.Filters.eq;
  * "versions": [ "v3.2", "v3.0", "v2.6" ],
  * "info" : { x : 203, y : 102 }
  * }
- */
+ *//*
+
 public class DataBase {
     private static MongoClient mongoClient = new MongoClient();
     private static MongoDatabase database = mongoClient.getDatabase("library");
@@ -27,12 +30,14 @@ public class DataBase {
     private static MongoCollection<Document> documents = database.getCollection("documents");
     private static MongoCollection<Document> orders = database.getCollection("orders");
 
-    /**
+    */
+/**
      * Add book to the DataBase,
      * throw Error if book already in db
      *
      * @param book that need to add
-     */
+     *//*
+
     public static void addBook(Book book) {
         //TODO: first find if this book already in db
 
@@ -80,3 +85,4 @@ public class DataBase {
 
     }
 }
+*/

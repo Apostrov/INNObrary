@@ -1,4 +1,4 @@
-import java.util.List;
+import java.util.ArrayList;
 
 public class Book extends Document {
     int edition; // edition of the book
@@ -15,38 +15,32 @@ public class Book extends Document {
         this.publisher = publisher;
     }
     
-    /** Returns number of days you can check out the book.
-     *  @param book. */
-    int checkOut(Book book){
+    /** Returns number of days you can check out the book.*/
+    void checkOut(Book book){
         
     }
     
-     /** Getter for title of the book.
-     *  @param title. */
+     /** Getter for title of the book.*/
     public String getTitle(){
         return title;
     }
 
-     /** Getter for authors of the book.
-     *  @param authors. */
+     /** Getter for authors of the book.*/
     public ArrayList<String> getAuthors(){
         return authors;
     }
 
-     /** Getter for publisher of the book.
-     *  @param publisher. */
+     /** Getter for publisher of the book.*/
     public String getPublisher() {
         return publisher;
     }
 
-     /** Getter for edition of the book.
-     *  @param edition. */
+     /** Getter for edition of the book.*/
     public Integer getEdition() {
         return edition;
     }
 
-     /** Getter for edition year of the book.
-     *  @param edition_year. */
+     /** Getter for edition year of the book.*/
     public Integer getYear() {
         return edition_year;
     }

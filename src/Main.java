@@ -23,23 +23,13 @@ public class Main extends Application {
             primaryStage.setY(100);
             primaryStage.show();
     }
-	
-    /** Login with username and return user's card ID
-     *  @param username unique name that belongs only to single user
-     *  @return corresponding card ID to username */
-    private static void login (String username) {
-        // TODO:
+
+    static void login (String username, String password) {
+        User user = new User(username);
     }
 
-    /** Registration with name, password, address, phone number and whether person is faculty member or not
-     *  @param name username
-     *  @param password password
-     *  @param address user's address
-     *  @param  phone user's phone number
-     *  @param isFaculty whether person is faculty member or not */
-    private static void register (String name, String password, String address, String phone, boolean isFaculty) {
-        Patron patron = new Patron(name, password, address, phone, isFaculty);
-        DataBase.addUser(patron);
+    static void register (String name, String password, String address, String phone, boolean isFaculty) {
+
     }
 
 }

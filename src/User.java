@@ -7,15 +7,10 @@ public class User {
     private String phone;
     private boolean isFaculty;
 
-    private int cardID; // User's card ID
     private ArrayList<Booking> bookingHistory; // History of all bookings
     private ArrayList<Booking> currentBookings; // Current documents on hands
 
-    /** Initialisation of user.
-     *  @param cardID unique for different users value. */
-    User (int cardID) {
-        this.cardID = cardID;
-
+    User (String username) {
         // TODO: load user's data depending on card ID
         /*name = loadFromDB("key = name");
         address = loadFromDB("key = address");

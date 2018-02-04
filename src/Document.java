@@ -2,9 +2,9 @@ import java.util.ArrayList;
 
 public class Document {
 
-    private String title; // title of the document
-    private String [] keywords; // keywords of the document
-    private List<String> authors; // authors of the document
+    String title; // title of the document
+    String [] keywords; // keywords of the document
+    ArrayList<String> authors; // authors of the document
     private int price; // price of some document
     private int copies; // number of copies of some document
     // TODO: position of document in library
