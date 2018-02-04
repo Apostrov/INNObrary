@@ -5,8 +5,8 @@ public class Book extends Document {
     int edition_year; // year of release of the book
     String publisher; // publisher
     
-    /** Initialisation of book.
-     *  @param title, authors, edition, different, edition_year, publisher. */
+    /** Initialisation of the book.
+     *  @param title, authors, edition, edition_year, publisher. */
     Book(String title, List<String> authors, int edition, int edition_year, String publisher){
         this.title = title;
         this.authors = authors;
