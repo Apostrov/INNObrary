@@ -17,15 +17,15 @@ public class User {
         this.cardID = cardID;
 
         // TODO: load user's data depending on card ID
-        name = loadFromDB("key = name");
+        /*name = loadFromDB("key = name");
         address = loadFromDB("key = address");
         phone = loadFromDB("key = phone");
-        isFaculty = loadFromDB("key = is_faculty");
+        isFaculty = loadFromDB("key = is_faculty");*/
 
         bookingHistory = new ArrayList<>();
-        loadFromDB("key = booking history"); // TODO: somehow need to load from database
+        // loadFromDB("key = booking history"); // TODO: somehow need to load from database
         currentBookings = new ArrayList<>();
-        loadFromDB("key = current bookings"); // TODO: somehow need to load from database
+        // loadFromDB("key = current bookings"); // TODO: somehow need to load from database
     }
 
     /** Addition of new booking

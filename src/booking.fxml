@@ -1,22 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.input.*?>
 <?import javafx.scene.text.*?>
-<?import javafx.scene.image.*?>
-<?import java.lang.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane fx:id="booking" prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ru.libarary.INNobrary.Controller">
+<AnchorPane fx:id="booking" prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller">
    <children>
       <Text layoutX="211.0" layoutY="134.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Booking">
          <font>
             <Font name="High Tower Text" size="51.0" />
          </font>
       </Text>
-      <Button layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#back_book" text="back" />
+      <Button layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#backBook" text="back" />
       <TitledPane expanded="false" layoutX="94.0" layoutY="192.0" text="World Classics">
          <content>
             <Accordion layoutX="94.0" layoutY="192.0" prefHeight="334.0" prefWidth="386.0">

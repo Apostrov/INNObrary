@@ -6,14 +6,9 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 
-    private static User user; // Singleton of user
-
     /** Main method of INNObrary */
     public static void main(String[] args) {
-        loadGlobalData();
-        String username = getUsername();  // TODO: get username from input
-        user = new User(login(username));
- 
+        // String username = getUsername();  // TODO: get username from input
 		launch(args);
 	}
 
@@ -32,10 +27,8 @@ public class Main extends Application {
     /** Login with username and return user's card ID
      *  @param username unique name that belongs only to single user
      *  @return corresponding card ID to username */
-    private static int login (String username) {
-        int cardID = 0;
-        cardID = loadFromDB("key = username"); // TODO: load from database card ID based on 'username'
-        return cardID;
+    private static void login (String username) {
+        // TODO:
     }
 
     /** Registration with name, password, address, phone number and whether person is faculty member or not
@@ -44,16 +37,9 @@ public class Main extends Application {
      *  @param address user's address
      *  @param  phone user's phone number
      *  @param isFaculty whether person is faculty member or not */
-    private static int register (String name, String password, String address, String phone, boolean isFaculty) {
-
+    private static void register (String name, String password, String address, String phone, boolean isFaculty) {
         Patron patron = new Patron(name, password, address, phone, isFaculty);
         DataBase.addUser(patron);
-        return maxCardID++;
-    }
-
-    /** Makes a booking */
-    private static void book (Document doc) {
-
     }
 
 }
