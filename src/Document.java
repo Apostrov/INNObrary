@@ -5,8 +5,9 @@ public class Document {
     String title; // title of the document
     String [] keywords; // keywords of the document
     ArrayList<String> authors; // authors of the document
-    private int price; // price of some document
-    private int copies; // number of copies of some document
+    int price; // price of some document
+    int copies; // number of copies of some document
+    int document_id; // id of the document
     // TODO: position of document in library
 
     /** To delete the document*/
@@ -21,6 +22,11 @@ public class Document {
 
     /** To modify the document*/
     public void modify(Document new_doc){
+
+    }
+
+    /** To return the document*/
+    public void returnDoc(Document doc){
 
     }
 
