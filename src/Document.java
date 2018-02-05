@@ -7,7 +7,7 @@ public class Document {
     ArrayList<String> authors; // authors of the document
     int price; // price of some document
     int copies; // number of copies of some document
-    int document_id; // id of the document
+    String document_id; // id of the document
     // TODO: position of document in library
 
     /** To delete the document*/
