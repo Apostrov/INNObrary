@@ -5,6 +5,7 @@ public class Book extends Document {
     int edition_year; // year of release of the book
     String publisher; // publisher of the book
     boolean isBS; // is the book best seller or not
+    boolean isReference; // is the book reference or not
 
     /** Initialisation of the book.
      *  @param title, authors, edition, edition_year, publisher, price, copies. */
