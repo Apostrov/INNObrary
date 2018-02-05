@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
 <AnchorPane fx:id="booking" prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller">
    <children>
-      <Text layoutX="211.0" layoutY="134.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Booking">
+      <Text layoutX="211.0" layoutY="134.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Booking" AnchorPane.bottomAnchor="452.751953125" AnchorPane.leftAnchor="210.400390625" AnchorPane.rightAnchor="210.599609375" AnchorPane.topAnchor="96.248046875">
          <font>
             <Font name="High Tower Text" size="51.0" />
          </font>
       </Text>
-      <Button layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#backBook" text="back" />
-      <TitledPane expanded="false" layoutX="94.0" layoutY="192.0" text="World Classics">
+      <Button layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#backBook" text="log out" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="14.0" />
+      <TitledPane layoutX="94.0" layoutY="192.0" text="World Classics">
          <content>
             <Accordion layoutX="94.0" layoutY="192.0" prefHeight="334.0" prefWidth="386.0">
               <panes>
@@ -20,8 +22,8 @@
                   <content>
                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                            <children>
-                              <TextArea layoutX="9.0" layoutY="14.0" prefHeight="94.0" prefWidth="421.0" text="War and Peace is a novel by the Russian author Leo Tolstoy, which is regarded as a central work of world literature and one of Tolstoy's finest literary achievements." wrapText="true" />
-                              <Button layoutX="187.0" layoutY="127.0" mnemonicParsing="false" text="catch" />
+                              <TextArea editable="false" layoutX="20.0" layoutY="14.0" prefHeight="94.0" prefWidth="396.0" text="War and Peace is a novel by the Russian author Leo Tolstoy, which is regarded as a central work of world literature and one of Tolstoy's finest literary achievements." wrapText="true" />
+                              <Button layoutX="187.0" layoutY="127.0" mnemonicParsing="false" text="add" />
                            </children>
                         </AnchorPane>
                   </content>
@@ -30,8 +32,8 @@
                   <content>
                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                            <children>
-                              <TextArea layoutX="27.0" layoutY="21.0" prefHeight="90.0" prefWidth="384.0" text="Nineteen Eighty-Four, often published as 1984, is a dystopian novel published in 1949 by English author George Orwell." wrapText="true" />
-                              <Button layoutX="187.0" layoutY="126.0" mnemonicParsing="false" text="catch" />
+                              <TextArea editable="false" layoutX="27.0" layoutY="21.0" prefHeight="90.0" prefWidth="384.0" text="Nineteen Eighty-Four, often published as 1984, is a dystopian novel published in 1949 by English author George Orwell." wrapText="true" />
+                              <Button layoutX="187.0" layoutY="126.0" mnemonicParsing="false" text="add" />
                            </children>
                         </AnchorPane>
                   </content>
@@ -40,8 +42,8 @@
                   <content>
                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                            <children>
-                              <Button layoutX="187.0" layoutY="126.0" mnemonicParsing="false" text="catch" />
-                              <TextArea layoutX="27.0" layoutY="21.0" prefHeight="90.0" prefWidth="384.0" text="The Great Gatsby is a 1925 novel written by American author F. Scott Fitzgerald that follows a cast of characters living in the fictional town of West Egg on prosperous Long Island in the summer of 1922." wrapText="true" />
+                              <Button layoutX="187.0" layoutY="126.0" mnemonicParsing="false" text="add" />
+                              <TextArea editable="false" layoutX="27.0" layoutY="21.0" prefHeight="90.0" prefWidth="384.0" text="The Great Gatsby is a 1925 novel written by American author F. Scott Fitzgerald that follows a cast of characters living in the fictional town of West Egg on prosperous Long Island in the summer of 1922." wrapText="true" />
                            </children>
                         </AnchorPane>
                   </content>
@@ -50,8 +52,8 @@
                      <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                            <children>
-                              <TextArea layoutX="27.0" layoutY="28.0" prefHeight="90.0" prefWidth="384.0" text="Crime and Punishment is a novel by the Russian author Fyodor Dostoyevsky. It was first published in the literary journal The Russian Messenger in twelve monthly installments during 1866. Later, it was published in a single volume." wrapText="true" />
-                              <Button layoutX="187.0" layoutY="133.0" mnemonicParsing="false" text="catch" />
+                              <TextArea editable="false" layoutX="27.0" layoutY="28.0" prefHeight="90.0" prefWidth="384.0" text="Crime and Punishment is a novel by the Russian author Fyodor Dostoyevsky. It was first published in the literary journal The Russian Messenger in twelve monthly installments during 1866. Later, it was published in a single volume." wrapText="true" />
+                              <Button layoutX="187.0" layoutY="133.0" mnemonicParsing="false" text="add" />
                            </children>
                         </AnchorPane>
                      </content>
@@ -60,8 +62,8 @@
                      <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                            <children>
-                              <TextArea layoutX="27.0" layoutY="21.0" prefHeight="90.0" prefWidth="384.0" text="Fathers and Sons, also translated more literally as Fathers and Children, is an 1862 novel by Ivan Turgenev, and ties with A Nest of Gentlefolk for the repute of being his best novel." wrapText="true" />
-                              <Button layoutX="187.0" layoutY="126.0" mnemonicParsing="false" text="catch" />
+                              <TextArea editable="false" layoutX="27.0" layoutY="21.0" prefHeight="90.0" prefWidth="384.0" text="Fathers and Sons, also translated more literally as Fathers and Children, is an 1862 novel by Ivan Turgenev, and ties with A Nest of Gentlefolk for the repute of being his best novel." wrapText="true" />
+                              <Button layoutX="187.0" layoutY="126.0" mnemonicParsing="false" text="add" />
                            </children>
                         </AnchorPane>
                      </content>
@@ -71,4 +73,7 @@
          </content>
       </TitledPane>
    </children>
+   <opaqueInsets>
+      <Insets />
+   </opaqueInsets>
 </AnchorPane>
