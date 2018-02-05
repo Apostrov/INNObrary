@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 
 public class User {
-    // TODO: getter for all info like name, addres and other
+
     private String name;
     private String address;
     private String phone;
@@ -11,26 +11,30 @@ public class User {
     private ArrayList<Booking> currentBookings; // Current documents on hands
 
     User (String username) {
-        // TODO: load user's data depending on card ID
-        /*name = loadFromDB("key = name");
-        address = loadFromDB("key = address");
-        phone = loadFromDB("key = phone");
-        isFaculty = loadFromDB("key = is_faculty");*/
-
         bookingHistory = new ArrayList<>();
-        // loadFromDB("key = booking history"); // TODO: somehow need to load from database
         currentBookings = new ArrayList<>();
-        // loadFromDB("key = current bookings"); // TODO: somehow need to load from database
     }
 
     /** Addition of new booking
      *  @param booking user's offer */
-    public void addBooking (Booking booking) { currentBookings.add(booking); }
+    void addBooking (Booking booking) { currentBookings.add(booking); }
+
+    /** Returns booking from current bookings with id 'bookingID'
+     *  @param bookingID id of booking that is need to return */
+    Booking getBooking (int bookingID) {
+        if (bookingID - 1 >= currentBookings.size()) {
+            return null;
+        } else {
+            return currentBookings.get(bookingID - 1);
+        }
+    }
 
     /** Deletion of user's booking with id 'bookingID'
      *  @param bookingID id of booking that is need to delete */
     public void removeBooking (int bookingID) {
-
+        if (bookingID - 1 < currentBookings.size()) {
+            currentBookings.remove(bookingID - 1);
+        }
     }
 
 }
