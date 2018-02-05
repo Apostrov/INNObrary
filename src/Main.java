@@ -12,6 +12,11 @@ public class Main extends Application {
 		launch(args);
 	}
 
+    /**
+     * Here we create a scene
+     * @param primaryStage  main interface window
+     * @throws Exception
+     */
 	public void start(Stage primaryStage) throws Exception{
             Parent root = FXMLLoader.load(getClass().getResource("God.fxml"));
             primaryStage.setTitle("INNObrary");

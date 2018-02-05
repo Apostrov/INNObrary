@@ -1,3 +1,8 @@
+/**
+ * This class handles actions
+ * associated with the interface
+ */
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -24,6 +29,11 @@ public class Controller {
     public Button signIn;
     public AnchorPane booking;
 
+    /**
+     * This method is responsible for the operation of the Log in button
+     * @param actionEvent
+     * @throws IOException
+     */
     public void login (ActionEvent actionEvent) throws IOException {
         if (user.getText().isEmpty() || password.getText().isEmpty()) {
             incorrect.setVisible(true);
@@ -41,7 +51,11 @@ public class Controller {
         }
     }
 
-
+    /**
+     * This method is responsible for the operation of the Sign up in button
+     * @param actionEvent
+     * @throws Exception
+     */
     public void register (ActionEvent actionEvent) throws Exception {
         try {
             Stage stage;
@@ -58,17 +72,23 @@ public class Controller {
         }
     }
 
+    /**window librarian or reader*/
     public void reader (ActionEvent actionEvent) {
         choose.setText("reader");
         check = true;
     }
 
-
+    /** window librarian or reader*/
     public void librarian (ActionEvent actionEvent) {
         choose.setText("librarian");
         check = true;
     }
 
+    /**
+     * This method checks the correctness of entering a login
+     * and password and creates an account
+     * @param actionEvent
+     * @throws IOException*/
     public void createAccount (ActionEvent actionEvent) throws IOException {
         if (passReg.getText().equals(retypePassReg.getText()) && (!userReg.getText().isEmpty() && !passReg.getText().isEmpty()) && check) {
             System.out.println(userReg.getText()); // String from 'username' text field
@@ -86,6 +106,11 @@ public class Controller {
         }
     }
 
+    /**
+     * buttom back
+     * @param actionEvent
+     * @throws IOException
+     */
     public void back (ActionEvent actionEvent)throws IOException {
         Stage stage;
         stage = (Stage) signUp.getScene().getWindow();
@@ -94,6 +119,11 @@ public class Controller {
         stage.setY(100);
     }
 
+    /**
+     * buttom back
+     * @param actionEvent
+     * @throws IOException
+     */
     public void backBook (ActionEvent actionEvent)throws IOException {
         Stage stage;
         stage = (Stage) booking.getScene().getWindow();
