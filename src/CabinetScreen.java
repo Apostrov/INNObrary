@@ -4,8 +4,6 @@ import java.util.ArrayList;
 
 class CabinetScreen extends JFrame {
 
-    private String selectedLibBook = "";
-
     CabinetScreen(boolean isLibrarian) {
         super("INNObrary");
         SwingUtilities.invokeLater(() -> {
@@ -201,7 +199,9 @@ class CabinetScreen extends JFrame {
         libScroll.setAlignmentX(JComponent.CENTER_ALIGNMENT);
 
 
-        library.addListSelectionListener(e -> selectedLibBook = library.getSelectedValue());
+        library.addListSelectionListener(e -> {
+
+        });
         booksList.add(libScroll);
         booksList.add(Box.createRigidArea(new Dimension(10, 0)));
 
@@ -244,42 +244,46 @@ class CabinetScreen extends JFrame {
         Box bookButtons = Box.createHorizontalBox();
         JButton addBookBtn = new JButton("Order");
         addBookBtn.addActionListener(e -> {
-            Document doc = Main.findDoc(selectedLibBook);
-            String info = "";
-            info += "Title: " + doc.title + "\n";
-            info += "Authors: ";
-            for (int i = 0; i < doc.authors.size(); ++i)
-                info += doc.authors.get(i) + " ";
-            info += "\n";
-            info += "Price: " + doc.price + "\n";
-            info += "Copies: " + doc.getCopies() + "\n";
-            if (doc.isReference()) info += "This is a reference document.\n";
-            if (doc instanceof Book) if(((Book) doc).isBS()) info += "This is a bestseller book.\n";
-            info += "\n";
-            info += "Would you like to offer this document?";
-            int result = JOptionPane.showConfirmDialog(mainPanel, info, "Information", JOptionPane.YES_NO_OPTION);
-            if (result == 0) {
-                boolean alreadyHas = false;
-                for (int i = 0; i < Main.activeUser.getBookings().size(); ++i) {
-                    if (doc.title.equals(Main.activeUser.getBookings().get(i).doc.title))
-                        alreadyHas = true;
+            if (library.getSelectedValue() != null) {
+                Document doc = Main.findDoc(library.getSelectedValue());
+                String info = "";
+                info += "Title: " + doc.title + "\n";
+                info += "Authors: ";
+                for (int i = 0; i < doc.authors.size(); ++i)
+                    info += doc.authors.get(i) + " ";
+                info += "\n";
+                info += "Price: " + doc.price + "\n";
+                info += "Copies: " + doc.getCopies() + "\n";
+                if (doc.isReference()) info += "This is a reference document.\n";
+                if (doc instanceof Book) if (((Book) doc).isBS()) info += "This is a bestseller book.\n";
+                info += "\n";
+                info += "Would you like to offer this document?";
+                int result = JOptionPane.showConfirmDialog(mainPanel, info, "Information", JOptionPane.YES_NO_OPTION);
+                if (result == 0) {
+                    boolean alreadyHas = false;
+                    for (int i = 0; i < Main.activeUser.getBookings().size(); ++i) {
+                        if (doc.title.equals(Main.activeUser.getBookings().get(i).doc.title))
+                            alreadyHas = true;
+                    }
+                    if (doc.getCopies() <= 0) {
+                        JOptionPane.showMessageDialog(mainPanel, "There is no more such documents!");
+                    } else if (doc.isReference()) {
+                        JOptionPane.showMessageDialog(mainPanel, "I am sorry, you cannot order a reference document.");
+                    } else if (alreadyHas) {
+                        JOptionPane.showMessageDialog(mainPanel, "You already have one copy of this document!");
+                    } else {
+                        Main.cabinet.setVisible(false);
+                        doc.setCopies(doc.getCopies() - 1);
+                        int delay = 21;
+                        if (Main.activeUser.isFaculty()) delay = 28;
+                        if (doc instanceof Book) if (((Book) doc).isBS()) delay = 14;
+                        Main.activeUser.addBooking(new Booking(doc, delay));
+                        Main.cabinet = new CabinetScreen(false);
+                        Main.cabinet.setVisible(true);
+                    }
                 }
-                if (doc.getCopies() <= 0) {
-                    JOptionPane.showMessageDialog(mainPanel, "There is no more such documents!");
-                } else if (doc.isReference()) {
-                    JOptionPane.showMessageDialog(mainPanel, "I am sorry, you cannot order a reference document.");
-                } else if (alreadyHas) {
-                    JOptionPane.showMessageDialog(mainPanel, "You already have one copy of this document!");
-                } else {
-                    Main.cabinet.setVisible(false);
-                    doc.setCopies(doc.getCopies() - 1);
-                    int delay = 21;
-                    if (Main.activeUser.isFaculty()) delay = 28;
-                    if (doc instanceof Book) if(((Book) doc).isBS()) delay = 14;
-                    Main.activeUser.addBooking(new Booking(doc, delay));
-                    Main.cabinet = new CabinetScreen(false);
-                    Main.cabinet.setVisible(true);
-                }
+            } else {
+                JOptionPane.showMessageDialog(mainPanel, "Choose the book!");
             }
         });
         addBookBtn.setAlignmentX(JComponent.CENTER_ALIGNMENT);
