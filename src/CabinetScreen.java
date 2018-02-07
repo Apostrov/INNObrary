@@ -8,97 +8,98 @@ class CabinetScreen extends JFrame {
         super("INNObrary");
         SwingUtilities.invokeLater(() -> {
             JFrame.setDefaultLookAndFeelDecorated(true);
-            if (isLibrarian)
+            if (isLibrarian) // Different GUIs for the users and librarians
                 createLibGUI();
             else
                 createUserGUI();
         });
     }
 
+    /** Initialization of the objects of the personal area page of librarians */
     private void createLibGUI() {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-        JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        JPanel mainPanel = new JPanel(); // Main container
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS)); // From top to bottom
         setResizable(false);
 
         // List of library books
-        Box booksList = Box.createHorizontalBox();
-        booksList.add(Box.createRigidArea(new Dimension(10, 0)));
+        Box libBookBox = Box.createHorizontalBox(); // Additional container to represent the element in the horizontal way
+        libBookBox.add(Box.createRigidArea(new Dimension(10, 0)));
 
         ArrayList<String> libBookTitles = new ArrayList<>();
         for (Document d : Main.documents) libBookTitles.add(d.title);
-        JList<String> library = new JList<>(libBookTitles.toArray(new String[libBookTitles.size()]));
-        library.setLayoutOrientation(JList.VERTICAL);
-        library.setVisibleRowCount(0);
+        JList<String> libBookList = new JList<>(libBookTitles.toArray(new String[libBookTitles.size()]));
+        libBookList.setLayoutOrientation(JList.VERTICAL);
+        libBookList.setVisibleRowCount(0);
 
-        JScrollPane libScroll = new JScrollPane(library);
-        libScroll.setPreferredSize(new Dimension(50, 50));
-        libScroll.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+        JScrollPane libBookScroll = new JScrollPane(libBookList);
+        libBookScroll.setPreferredSize(new Dimension(50, 50)); // Indentation
+        libBookScroll.setAlignmentX(JComponent.CENTER_ALIGNMENT);
 
-        library.addListSelectionListener(e -> {
-
-        });
-        booksList.add(libScroll);
-        booksList.add(Box.createRigidArea(new Dimension(10, 0)));
+        /*libBookList.addListSelectionListener(e -> {
+            // What to do when the element of libBookList was selected
+        });*/
+        libBookBox.add(libBookScroll);
+        libBookBox.add(Box.createRigidArea(new Dimension(10, 0)));
 
         // List of users
-        Box userList = Box.createHorizontalBox();
-        userList.add(Box.createRigidArea(new Dimension(10, 0)));
+        Box userBox = Box.createHorizontalBox();
+        userBox.add(Box.createRigidArea(new Dimension(10, 0)));
 
         String[] userNames = new String[Main.users.size()];
         for (int i = 0; i < Main.users.size(); ++i) userNames[i] = Main.users.get(i).getUsername();
-        JList<String> userary = new JList<>(userNames);
-        userary.setLayoutOrientation(JList.VERTICAL);
-        userary.setVisibleRowCount(0);
+        JList<String> userList = new JList<>(userNames);
+        userList.setLayoutOrientation(JList.VERTICAL);
+        userList.setVisibleRowCount(0);
 
-        JScrollPane userScroll = new JScrollPane(userary);
+        JScrollPane userScroll = new JScrollPane(userList);
         userScroll.setPreferredSize(new Dimension(50, 50));
         userScroll.setAlignmentX(JComponent.CENTER_ALIGNMENT);
 
-        userary.addListSelectionListener(e -> {
-
-        });
-        userList.add(userScroll);
-        userList.add(Box.createRigidArea(new Dimension(10, 0)));
+        /*userList.addListSelectionListener(e -> {
+            What to do when the element of userList was selected
+        });*/
+        userBox.add(userScroll);
+        userBox.add(Box.createRigidArea(new Dimension(10, 0)));
 
         // Log out button
         Box logoutBox = Box.createHorizontalBox();
         JButton logoutBtn = new JButton("Log out");
         logoutBtn.setAlignmentX(JComponent.RIGHT_ALIGNMENT);
-        logoutBtn.addActionListener(e -> {
+        logoutBtn.addActionListener(e -> { // What to do when logout button was pressed
             Main.cabinet.setVisible(false);
             Main.login.setVisible(true);
-            Main.login.passwordField.setText("");
+            Main.login.passField.setText(""); // Reset the password field
         });
         logoutBox.add(logoutBtn);
         logoutBox.add(Box.createRigidArea(new Dimension(215, 0)));
 
         // Buttons related to books
-        Box bookButtons = Box.createHorizontalBox();
+        Box docBtnBox = Box.createHorizontalBox();
         // Add button
-        JButton addBookBtn = new JButton("  Add  ");
-        addBookBtn.addActionListener(e -> {
-
+        JButton addDocBtn = new JButton("  Add  ");
+        addDocBtn.addActionListener(e -> {
+            // TODO: implement the functionality of the button 'Add' (add a document)
         });
-        addBookBtn.setAlignmentX(JComponent.CENTER_ALIGNMENT);
-        bookButtons.add(addBookBtn);
-        bookButtons.add(Box.createRigidArea(new Dimension(5, 0)));
+        addDocBtn.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+        docBtnBox.add(addDocBtn);
+        docBtnBox.add(Box.createRigidArea(new Dimension(5, 0)));
         // Info button
-        JButton infoBookBtn = new JButton(" Info ");
-        infoBookBtn.addActionListener(e -> {
-            String document = library.getSelectedValue();
-            if (document != null) {
-                Document doc = Main.findDoc(document);
+        JButton infoDocBtn = new JButton(" Info ");
+        infoDocBtn.addActionListener(e -> { // What to do when info button was pressed
+            String docTitle = libBookList.getSelectedValue();
+            if (docTitle != null) {
+                Document doc = Main.findDoc(docTitle);
                 String info = "";
                 info += "Information about the book:\n";
-                info += "Title: " + doc.title + "\n";
-                info += "Authors: ";
+                info += "Title:  " + doc.title + "\n";
+                info += "Authors:  ";
                 for (int i = 0; i < doc.authors.size(); ++i)
-                    info += doc.authors.get(i) + " ";
+                    info += doc.authors.get(i) + (doc.authors.size() > 1 ? "," : "") + " ";
                 info += "\n";
-                info += "Price: " + doc.price + "\n";
-                info += "Copies: " + doc.getCopies() + "\n";
+                info += "Price:  " + doc.price + " rubles.\n";
+                info += "Copies left:  " + doc.getCopies() + "\n";
                 if (doc.isReference()) info += "This is a reference document.\n";
                 if (doc instanceof Book) if(((Book) doc).isBS()) info += "This is a bestseller book.\n";
                 JOptionPane.showMessageDialog(mainPanel, info);
@@ -106,36 +107,36 @@ class CabinetScreen extends JFrame {
                 JOptionPane.showMessageDialog(mainPanel, "Select the book!");
             }
         });
-        infoBookBtn.setAlignmentX(JComponent.CENTER_ALIGNMENT);
-        bookButtons.add(infoBookBtn);
-        bookButtons.add(Box.createRigidArea(new Dimension(5, 0)));
+        infoDocBtn.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+        docBtnBox.add(infoDocBtn);
+        docBtnBox.add(Box.createRigidArea(new Dimension(5, 0)));
         // Modify button
-        JButton modifyBookBtn = new JButton("Modify");
-        modifyBookBtn.addActionListener(e -> {
-
+        JButton modifyDocBtn = new JButton("Modify");
+        modifyDocBtn.addActionListener(e -> {
+            // TODO: implement the functionality of the button 'Modify' (modify a document)
         });
-        modifyBookBtn.setAlignmentX(JComponent.CENTER_ALIGNMENT);
-        bookButtons.add(modifyBookBtn);
-        bookButtons.add(Box.createRigidArea(new Dimension(5, 0)));
+        modifyDocBtn.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+        docBtnBox.add(modifyDocBtn);
+        docBtnBox.add(Box.createRigidArea(new Dimension(5, 0)));
         // Remove button
-        JButton removeBookBtn = new JButton("Remove");
-        removeBookBtn.addActionListener(e -> {
-
+        JButton removeDocBtn = new JButton("Remove");
+        removeDocBtn.addActionListener(e -> {
+            // TODO: implement the functionality of the button 'Remove' (remove a document)
         });
-        removeBookBtn.setAlignmentX(JComponent.CENTER_ALIGNMENT);
-        bookButtons.add(removeBookBtn);
+        removeDocBtn.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+        docBtnBox.add(removeDocBtn);
 
         // User view button
-        JButton userViewBtn = new JButton("View");
-        userViewBtn.setAlignmentX(JComponent.CENTER_ALIGNMENT);
-        userViewBtn.addActionListener(l -> {
-            String user = userary.getSelectedValue();
-            if (user != null) {
-                Main.userView = new UserViewScreen(Main.findUser(user));
+        JButton viewUserBtn = new JButton("View");
+        viewUserBtn.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+        viewUserBtn.addActionListener(l -> {
+            String username = userList.getSelectedValue();
+            if (username != null) { // What to do when view button (view user) was pressed
+                Main.userView = new UserViewScreen(Main.findUser(username));
                 Main.userView.setVisible(true);
                 Main.cabinet.setVisible(false);
             } else {
-                JOptionPane.showMessageDialog(mainPanel, "Choose the user!");
+                JOptionPane.showMessageDialog(mainPanel, "Select the user!");
             }
         });
 
@@ -154,15 +155,15 @@ class CabinetScreen extends JFrame {
         mainPanel.add(Box.createRigidArea(new Dimension(0, 15)));
         mainPanel.add(libLabel);
         mainPanel.add(Box.createRigidArea(new Dimension(0, 5)));
-        mainPanel.add(booksList);
+        mainPanel.add(libBookBox);
         mainPanel.add(Box.createRigidArea(new Dimension(0, 5)));
-        mainPanel.add(bookButtons, BorderLayout.CENTER);
+        mainPanel.add(docBtnBox, BorderLayout.CENTER);
         mainPanel.add(Box.createRigidArea(new Dimension(0, 15)));
         mainPanel.add(userLabel);
         mainPanel.add(Box.createRigidArea(new Dimension(0, 5)));
-        mainPanel.add(userList);
+        mainPanel.add(userBox);
         mainPanel.add(Box.createRigidArea(new Dimension(0, 5)));
-        mainPanel.add(userViewBtn);
+        mainPanel.add(viewUserBtn);
         mainPanel.add(Box.createRigidArea(new Dimension(0, 20)));
 
         getContentPane().add(mainPanel);
@@ -172,11 +173,7 @@ class CabinetScreen extends JFrame {
         setLocationRelativeTo(null);
     }
 
-    /**
-     *
-     * TODO:
-     *
-     * */
+    /** Initialization of the objects of the personal area page of patrons */
     private void createUserGUI() {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
@@ -185,82 +182,81 @@ class CabinetScreen extends JFrame {
         setResizable(false);
 
         // List of library books
-        Box booksList = Box.createHorizontalBox();
-        booksList.add(Box.createRigidArea(new Dimension(10, 0)));
+        Box bookBox = Box.createHorizontalBox();
+        bookBox.add(Box.createRigidArea(new Dimension(10, 0)));
 
         ArrayList<String> libBookTitles = new ArrayList<>();
         for (Document d : Main.documents) libBookTitles.add(d.title);
-        JList<String> library = new JList<>(libBookTitles.toArray(new String[libBookTitles.size()]));
-        library.setLayoutOrientation(JList.VERTICAL);
-        library.setVisibleRowCount(0);
+        JList<String> libBookList = new JList<>(libBookTitles.toArray(new String[libBookTitles.size()]));
+        libBookList.setLayoutOrientation(JList.VERTICAL);
+        libBookList.setVisibleRowCount(0);
 
-        JScrollPane libScroll = new JScrollPane(library);
-        libScroll.setPreferredSize(new Dimension(50, 50));
-        libScroll.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+        JScrollPane libBookScroll = new JScrollPane(libBookList);
+        libBookScroll.setPreferredSize(new Dimension(50, 50));
+        libBookScroll.setAlignmentX(JComponent.CENTER_ALIGNMENT);
 
-
-        library.addListSelectionListener(e -> {
-
-        });
-        booksList.add(libScroll);
-        booksList.add(Box.createRigidArea(new Dimension(10, 0)));
+        /*libBookList.addListSelectionListener(e -> {
+            // What to do when the element of libBookList was selected
+        });*/
+        bookBox.add(libBookScroll);
+        bookBox.add(Box.createRigidArea(new Dimension(10, 0)));
 
         // List of user books
-        Box userBooksList = Box.createHorizontalBox();
-        userBooksList.add(Box.createRigidArea(new Dimension(10, 0)));
+        Box userBookBox = Box.createHorizontalBox();
+        userBookBox.add(Box.createRigidArea(new Dimension(10, 0)));
 
         ArrayList<String> userBookTitles = new ArrayList<>();
         if (Main.activeUser != null) for (Booking b : Main.activeUser.getBookings()) userBookTitles.add(b.doc.title);
-        JList<String> ubList = new JList<>(userBookTitles.toArray(new String[userBookTitles.size()]));
-        ubList.setLayoutOrientation(JList.VERTICAL);
-        ubList.setVisibleRowCount(0);
+        JList<String> userBookList = new JList<>(userBookTitles.toArray(new String[userBookTitles.size()]));
+        userBookList.setLayoutOrientation(JList.VERTICAL);
+        userBookList.setVisibleRowCount(0);
 
-        JScrollPane userScroll = new JScrollPane(ubList);
-        userScroll.setPreferredSize(new Dimension(50, 50));
-        userScroll.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+        JScrollPane userBookScroll = new JScrollPane(userBookList);
+        userBookScroll.setPreferredSize(new Dimension(50, 50));
+        userBookScroll.setAlignmentX(JComponent.CENTER_ALIGNMENT);
 
-        ubList.addListSelectionListener(e -> {
-
-        });
-        userBooksList.add(userScroll);
-        userBooksList.add(Box.createRigidArea(new Dimension(10, 0)));
+        /*userBookList.addListSelectionListener(e -> {
+            // What to do when the element of libBookList was selected
+        });*/
+        userBookBox.add(userBookScroll);
+        userBookBox.add(Box.createRigidArea(new Dimension(10, 0)));
 
         // Log out button
         Box logoutBox = Box.createHorizontalBox();
         JButton logoutBtn = new JButton("Log out");
         logoutBtn.setAlignmentX(JComponent.RIGHT_ALIGNMENT);
-        logoutBtn.addActionListener(e -> {
+        logoutBtn.addActionListener(e -> { // What to do when logout button was pressed
             for (int i = 0; i < Main.users.size(); ++i)
                 if (Main.users.get(i).getUsername().equals(Main.activeUser.getUsername()))
                     Main.users.get(i).setBookings(Main.activeUser.getBookings());
             Main.cabinet.setVisible(false);
             Main.login.setVisible(true);
-            Main.login.passwordField.setText("");
+            Main.login.passField.setText("");
         });
         logoutBox.add(logoutBtn);
         logoutBox.add(Box.createRigidArea(new Dimension(215, 0)));
 
         // Order button
-        Box bookButtons = Box.createHorizontalBox();
-        JButton addBookBtn = new JButton("Order");
-        addBookBtn.addActionListener(e -> {
-            if (library.getSelectedValue() != null) {
-                Document doc = Main.findDoc(library.getSelectedValue());
+        Box orderBox = Box.createHorizontalBox();
+        JButton orderBtn = new JButton("Order");
+        orderBtn.addActionListener(e -> { // What to do when order the book button was pressed
+            if (libBookList.getSelectedValue() != null) {
+                Document doc = Main.findDoc(libBookList.getSelectedValue());
                 String info = "";
-                info += "Title: " + doc.title + "\n";
-                info += "Authors: ";
+                info += "Title:  " + doc.title + "\n";
+                info += "Authors:  ";
                 for (int i = 0; i < doc.authors.size(); ++i)
-                    info += doc.authors.get(i) + " ";
+                    info += doc.authors.get(i) + (doc.authors.size() > 1 ? "," : "") + " ";
                 info += "\n";
-                info += "Price: " + doc.price + "\n";
-                info += "Copies: " + doc.getCopies() + "\n";
+                info += "Price:  " + doc.price + " rubles.\n";
+                info += "Copies left:  " + doc.getCopies() + "\n";
                 if (doc.isReference()) info += "This is a reference document.\n";
                 if (doc instanceof Book) if (((Book) doc).isBS()) info += "This is a bestseller book.\n";
                 info += "\n";
-                info += "Would you like to offer this document?";
+                info += "Would you like to order this document?";
                 int result = JOptionPane.showConfirmDialog(mainPanel, info, "Information", JOptionPane.YES_NO_OPTION);
-                if (result == 0) {
-                    boolean alreadyHas = false;
+                if (result == 0) { // If the result is equals to 0 then user pressed the button 'Yes'
+                    boolean alreadyHas = false; // Check whether the patron already has one copy of the book
                     for (int i = 0; i < Main.activeUser.getBookings().size(); ++i) {
                         if (doc.title.equals(Main.activeUser.getBookings().get(i).doc.title))
                             alreadyHas = true;
@@ -274,41 +270,42 @@ class CabinetScreen extends JFrame {
                     } else {
                         Main.cabinet.setVisible(false);
                         doc.setCopies(doc.getCopies() - 1);
-                        int delay = 21;
-                        if (Main.activeUser.isFaculty()) delay = 28;
-                        if (doc instanceof Book) if (((Book) doc).isBS()) delay = 14;
+                        int delay = 21;                                                 // Usually it is 3 weeks
+                        if (Main.activeUser.isFaculty()) delay = 28;                    // If user is faculty member, then 4 weeks
+                        if (doc instanceof Book) if (((Book) doc).isBS()) delay = 14;   // If the document is book-bestseller, then 2 weeks
+                        if (doc instanceof AudioVideo) delay = 14;                      // If the document is AV-material, then 2 weeks
                         Main.activeUser.addBooking(new Booking(doc, delay));
                         Main.cabinet = new CabinetScreen(false);
                         Main.cabinet.setVisible(true);
                     }
                 }
             } else {
-                JOptionPane.showMessageDialog(mainPanel, "Choose the book!");
+                JOptionPane.showMessageDialog(mainPanel, "Select the book!");
             }
         });
-        addBookBtn.setAlignmentX(JComponent.CENTER_ALIGNMENT);
-        bookButtons.add(addBookBtn);
-        bookButtons.add(Box.createRigidArea(new Dimension(5, 0)));
+        orderBtn.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+        orderBox.add(orderBtn);
+        orderBox.add(Box.createRigidArea(new Dimension(5, 0)));
 
         // Info about order button
         JButton infoBookBtn = new JButton(" Order info ");
-        infoBookBtn.addActionListener(e -> {
-            String document = ubList.getSelectedValue();
-            if (document != null) {
-                Booking booking = Main.activeUser.getBookings().get(0);
-                for (int i = 0; i < Main.activeUser.getBookings().size(); ++i) {
-                    if (Main.activeUser.getBookings().get(i).doc.title.equals(document))
+        infoBookBtn.addActionListener(e -> { // What to do when info about the order button was pressed
+            String docTitle = userBookList.getSelectedValue();
+            if (docTitle != null) {
+                Booking booking = Main.activeUser.getBookings().get(0);             // Here we need a booking because
+                for (int i = 0; i < Main.activeUser.getBookings().size(); ++i) {    // we should provide the time that is left
+                    if (Main.activeUser.getBookings().get(i).doc.title.equals(docTitle))
                         booking = Main.activeUser.getBookings().get(i);
                 }
                 String info = "";
                 info += "Information about the order:\n";
-                info += "Title: " + booking.doc.title + "\n";
+                info += "Title:  " + booking.doc.title + "\n";
                 info += "Authors: ";
                 for (int i = 0; i < booking.doc.authors.size(); ++i)
-                    info += booking.doc.authors.get(i) + " ";
+                    info += booking.doc.authors.get(i) + (booking.doc.authors.size() > 1 ? "," : "") + " ";
                 info += "\n";
-                info += "Price: " + booking.doc.price + "\n";
-                info += "Time left: " + booking.getDaysLeft() + "\n";
+                info += "Price: " + booking.doc.price + " rubles.\n";
+                info += "Time left: " + booking.getDaysLeft() + " days.\n";
                 if (booking.doc.isReference()) info += "This is a reference document.\n";
                 if (booking.doc instanceof Book) if(((Book) booking.doc).isBS()) info += "This is a bestseller book.\n";
                 JOptionPane.showMessageDialog(mainPanel, info);
@@ -333,13 +330,13 @@ class CabinetScreen extends JFrame {
         mainPanel.add(Box.createRigidArea(new Dimension(0, 15)));
         mainPanel.add(libLabel);
         mainPanel.add(Box.createRigidArea(new Dimension(0, 5)));
-        mainPanel.add(booksList);
+        mainPanel.add(bookBox);
         mainPanel.add(Box.createRigidArea(new Dimension(0, 5)));
-        mainPanel.add(bookButtons, BorderLayout.CENTER);
+        mainPanel.add(orderBox);
         mainPanel.add(Box.createRigidArea(new Dimension(0, 15)));
         mainPanel.add(userBooksLabel);
         mainPanel.add(Box.createRigidArea(new Dimension(0, 5)));
-        mainPanel.add(userBooksList);
+        mainPanel.add(userBookBox, BorderLayout.CENTER);
         mainPanel.add(Box.createRigidArea(new Dimension(0, 5)));
         mainPanel.add(infoBookBtn);
         mainPanel.add(Box.createRigidArea(new Dimension(0, 20)));

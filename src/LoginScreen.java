@@ -3,44 +3,45 @@ import java.awt.*;
 
 class LoginScreen extends JFrame {
 
-    JPasswordField passwordField;
+    JPasswordField passField;
 
     LoginScreen() {
         super("INNObrary");
         SwingUtilities.invokeLater(() -> {
-            JFrame.setDefaultLookAndFeelDecorated(true);
+            JFrame.setDefaultLookAndFeelDecorated(true); // System function
             createGUI();
         });
     }
 
+    /** Initialization of the objects of login page */
     private void createGUI() {
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE); // System function
 
-        JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        JPanel mainPanel = new JPanel(); // Main container
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS)); // Objects will displace from top to bottom
         setResizable(false);
 
         // Username field
-        JTextField usernameField = new JTextField();
-        usernameField.setAlignmentX(JComponent.CENTER_ALIGNMENT);
-        usernameField.setMaximumSize(new Dimension(160, 20));
+        JTextField userField = new JTextField();
+        userField.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+        userField.setMaximumSize(new Dimension(160, 20));
 
         // Password field
-        passwordField = new JPasswordField();
-        passwordField.setAlignmentX(JComponent.CENTER_ALIGNMENT);
-        passwordField.setMaximumSize(new Dimension(160, 20));
+        passField = new JPasswordField();
+        passField.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+        passField.setMaximumSize(new Dimension(160, 20));
 
         // Log in button
         JButton loginBtn = new JButton("Sign in ");
         loginBtn.setAlignmentX(JComponent.CENTER_ALIGNMENT);
-        loginBtn.addActionListener(e -> {
-                if (checkForUser(usernameField.getText(), new String(passwordField.getPassword()))){
-                    Main.activeUser = Main.findUser(usernameField.getText());
+        loginBtn.addActionListener(e -> { // What to do after login button has pressed
+                if (checkForUser(userField.getText(), new String(passField.getPassword()))){
+                    Main.activeUser = Main.findUser(userField.getText());
                     Main.cabinet = new CabinetScreen(false);
                     Main.cabinet.setVisible(true);
                     Main.login.setVisible(false);
-                } else if (checkForLib(usernameField.getText(), new String(passwordField.getPassword()))){
-                    Main.activeUser = new Librarian(usernameField.getText(), new String(passwordField.getPassword()));
+                } else if (checkForLib(userField.getText(), new String(passField.getPassword()))){
+                    Main.activeUser = new Librarian(userField.getText(), new String(passField.getPassword()));
                     Main.cabinet = new CabinetScreen(true);
                     Main.cabinet.setVisible(true);
                     Main.login.setVisible(false);
@@ -63,24 +64,26 @@ class LoginScreen extends JFrame {
         logo.setFont(new Font("name", Font.PLAIN, 30));
         logo.setText("INNObrary");
 
-        mainPanel.add(Box.createRigidArea(new Dimension(0, 75)));
+        mainPanel.add(Box.createRigidArea(new Dimension(0, 75))); // Indentation
         mainPanel.add(logo);
         mainPanel.add(Box.createRigidArea(new Dimension(0, 50)));
-        mainPanel.add(usernameField);
+        mainPanel.add(userField);
         mainPanel.add(Box.createRigidArea(new Dimension(0, 5)));
-        mainPanel.add(passwordField);
+        mainPanel.add(passField);
         mainPanel.add(Box.createRigidArea(new Dimension(0, 15)));
         mainPanel.add(loginBtn);
         mainPanel.add(Box.createRigidArea(new Dimension(0, 5)));
         mainPanel.add(registerBtn);
 
-        getContentPane().add(mainPanel);
+        getContentPane().add(mainPanel); // See the actual content of the container
 
         setPreferredSize(new Dimension(330, 450));
         pack();
         setLocationRelativeTo(null);
     }
 
+    /** Checks whether given username and password of some user are exists in the system
+     * @return whether given username and password of some user are exists in the system */
     private boolean checkForUser(String username, String password) {
         boolean founded = false;
         for (int i = 0; i < Main.users.size(); ++i) {
@@ -89,6 +92,8 @@ class LoginScreen extends JFrame {
         return founded;
     }
 
+    /** Checks whether given username and password of some librarian are exists in the system
+     * @return whether given username and password of some librarian are exists in the system */
     private boolean checkForLib(String username, String password) {
         boolean founded = false;
         for (int i = 0; i < Main.librarians.size(); ++i) {
