@@ -260,11 +260,9 @@ class CabinetScreen extends JFrame {
             int result = JOptionPane.showConfirmDialog(mainPanel, info, "Information", JOptionPane.YES_NO_OPTION);
             if (result == 0) {
                 boolean alreadyHas = false;
-                for (int i = 0; i < Main.documents.size(); ++i) {
-                    for (int j = 0; j < Main.activeUser.getBookings().size(); ++j) {
-                        if (Main.documents.get(i).title.equals(Main.activeUser.getBookings().get(j).doc.title))
-                            alreadyHas = true;
-                    }
+                for (int i = 0; i < Main.activeUser.getBookings().size(); ++i) {
+                    if (doc.title.equals(Main.activeUser.getBookings().get(i).doc.title))
+                        alreadyHas = true;
                 }
                 if (doc.getCopies() <= 0) {
                     JOptionPane.showMessageDialog(mainPanel, "There is no more such documents!");
