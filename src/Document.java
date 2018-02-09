@@ -4,7 +4,7 @@ public class Document {
 
     String title; // title of the document
     ArrayList<String> authors; // authors of the document
-    int price; // price of some document
+    private int price; // price of some document
     private int copies; // number of copies of some document
     int document_id; // id of the document
     String [] keywords; // keywords of the document
@@ -84,5 +84,13 @@ public class Document {
 
     public void setCopies(int copies) {
         this.copies = copies;
+    }
+
+    public int getPrice() {
+        return price;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
     }
 }

@@ -1,8 +1,11 @@
 import javax.swing.*;
+import javax.swing.table.TableModel;
 import java.awt.*;
 import java.util.ArrayList;
 
 public class UserViewScreen extends JFrame {
+		
+	private String userDoc = null;	
 
     UserViewScreen(User userForView) {
         super("INNObrary");
@@ -24,18 +27,32 @@ public class UserViewScreen extends JFrame {
         userBookBox.add(Box.createRigidArea(new Dimension(10, 0)));
 
         ArrayList<String> userBookTitles = new ArrayList<>();
-        if (userForView != null) for (int i = 0; i < userForView.getBookings().size(); ++i) userBookTitles.add(userForView.getBookings().get(i).doc.title);
+        if (userForView != null) 
+            for (int i = 0; i < userForView.getBookings().size(); ++i)
+                userBookTitles.add(userForView.getBookings().get(i).doc.title);
         JList<String> userBookList = new JList<>(userBookTitles.toArray(new String[userBookTitles.size()]));
         userBookList.setLayoutOrientation(JList.VERTICAL);
         userBookList.setVisibleRowCount(0);
 
-        JScrollPane userBookScroll = new JScrollPane(userBookList);
+        TableModel docModel = new UserDocTableModel(Main.users.get(0).getBookings());
+        if (userForView != null) docModel = new UserDocTableModel(userForView.getBookings());
+        JTable userDocTable = new JTable(docModel);
+        ListSelectionModel userCellSelectionModel = userDocTable.getSelectionModel();
+        userCellSelectionModel.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+        userCellSelectionModel.addListSelectionListener(e -> {
+            int[] selectedRow = userDocTable.getSelectedRows();
+            int[] selectedColumns = userDocTable.getSelectedColumns();
+            for (int i = 0; i < selectedRow.length; i++) {
+                for (int j = 0; j < selectedColumns.length; j++) {
+                    userDoc = userDocTable.getValueAt(selectedRow[i], 0).toString();
+                }
+            }
+        });
+
+        JScrollPane userBookScroll = new JScrollPane(userDocTable);
         userBookScroll.setPreferredSize(new Dimension(50, 50));
         userBookScroll.setAlignmentX(JComponent.CENTER_ALIGNMENT);
 
-        /*userBookList.addListSelectionListener(e -> {
-            // What to do when the element of userBookList was selected
-        });*/
         userBookBox.add(userBookScroll);
         userBookBox.add(Box.createRigidArea(new Dimension(10, 0)));
 
@@ -53,7 +70,7 @@ public class UserViewScreen extends JFrame {
         // Info about order button
         JButton orderInfoBtn = new JButton(" Order info ");
         orderInfoBtn.addActionListener(e -> { // What to do when order info button was pressed
-            String orderTitle = userBookList.getSelectedValue();
+            String orderTitle = userDoc; 
             if (orderTitle != null) {
                 Booking booking = userForView.getBookings().get(0);
                 for (int i = 0; i < userForView.getBookings().size(); ++i) {
@@ -67,7 +84,7 @@ public class UserViewScreen extends JFrame {
                 for (int i = 0; i < booking.doc.authors.size(); ++i)
                     info += booking.doc.authors.get(i) + (booking.doc.authors.size() > 1 ? "," : "") + " ";
                 info += "\n";
-                info += "Price:  " + booking.doc.price + " rubles.\n";
+                info += "Price:  " + booking.doc.getPrice() + " rubles.\n";
                 info += "Time left:  " + booking.getDaysLeft() + " days.\n";
                 if (booking.doc.isReference()) info += "This is a reference document.\n";
                 if (booking.doc instanceof Book) if(((Book) booking.doc).isBS()) info += "This is a bestseller book.\n";
@@ -80,7 +97,7 @@ public class UserViewScreen extends JFrame {
 
         //Label of library books
         JLabel ubLabel = new JLabel();
-        ubLabel.setText("User's books");
+        ubLabel.setText("User's documents");
         ubLabel.setAlignmentX(JComponent.CENTER_ALIGNMENT);
 
         mainPanel.add(Box.createRigidArea(new Dimension(0, 15)));
