@@ -33,13 +33,13 @@ public class Book extends Document {
     }
 
     /** Getter for edition of the book.*/
-    public Integer getEdition() {
-        return edition;
+    public String getEdition() {
+        return String.valueOf(edition);
     }
 
     /** Getter for edition year of the book.*/
-    public Integer getYear() {
-        return edition_year;
+    public String getYear() {
+        return String.valueOf(edition_year);
     }
 
     public boolean isBS() {
