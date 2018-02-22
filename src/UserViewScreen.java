@@ -97,7 +97,9 @@ public class UserViewScreen extends JFrame {
 
         //Label of library books
         JLabel ubLabel = new JLabel();
-        ubLabel.setText("User's documents");
+        String username = "";
+        if (userForView != null) username += userForView.getUsername();
+        ubLabel.setText("Documents of " + username);
         ubLabel.setAlignmentX(JComponent.CENTER_ALIGNMENT);
 
         mainPanel.add(Box.createRigidArea(new Dimension(0, 15)));

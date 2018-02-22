@@ -7,17 +7,13 @@ import java.util.Set;
 
 public class UserTableModel implements TableModel {
 
-    private Set<TableModelListener> listeners = new HashSet<TableModelListener>();
+    private Set<TableModelListener> listeners = new HashSet<>();
 
     private List<User> users;
 
-    public UserTableModel(List<User> users) {
+    UserTableModel(List<User> users) {
         this.users = users;
-    }
-
-    public UserTableModel(ArrayList<Patron> users) {
-        this.users = new ArrayList<>();
-        this.users.addAll(users);
+        for (int i = 0; i < users.size(); ++i) if (users.get(i) instanceof Librarian) users.remove(i);
     }
 
     public void addTableModelListener(TableModelListener listener) {

@@ -1,17 +1,7 @@
-public class Patron extends User {
+class Patron extends User {
 
-    private String address;
-    private String phone;
-
-    Patron (String username, String password, boolean isFaculty) {
-        super(username, password, isFaculty);
+    Patron (String username, String password, boolean isFaculty, String firstName, String secondName, String address, String phone) {
+        super(username, password, isFaculty, firstName, secondName, address, phone);
     }
 
-    public String getAddress() {
-        return address;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
 }

@@ -3,20 +3,20 @@ import java.util.ArrayList;
 public class Main {
 
     static User activeUser = null;
-    static ArrayList<Patron> users;
-    static ArrayList<Librarian> librarians;
+    static ArrayList<User> users;
     static ArrayList<Document> documents;
 
     static LoginScreen login;
     static CabinetScreen cabinet;
-    static RegisterScreen register;
+    static RegistrationScreen register;
     static UserViewScreen userView;
+    static UserAddScreen userAdd;
+    static DocumentAddScreen docAdd;
 
     /** Main method of INNObrary */
     public static void main(String[] args) {
         // For test cases
         users = new ArrayList<>();
-        librarians = new ArrayList<>();
         documents = new ArrayList<>();
         String[] books = {
                 "War and peace", "1984", "Three comrades", "The Catcher in the Rye",
@@ -27,12 +27,12 @@ public class Main {
         };
 
         for (int i = 0; i < 3; ++i) {
-            Patron nextPatron = new Patron("patron_" + (i + 1), "123", false);
+            Patron nextPatron = new Patron("patron_" + (i + 1), "123", false, "1" + i, "1" + i, "1" + i, "1" + i);
             users.add(nextPatron);
         }
-        Patron facultyPatron = new Patron("faculty_1", "123", true);
+        Patron facultyPatron = new Patron("faculty_1", "123", true, "1f", "1f", "1f", "1f");
         users.add(facultyPatron);
-        librarians.add(new Librarian("librarian_1", "123"));
+        users.add(new Librarian("librarian_1", "123"));
         ArrayList<String> authors = new ArrayList<>();
         authors.add("Egor");
         for (int i = 0; i < 19; ++i){
@@ -47,14 +47,18 @@ public class Main {
 
         // Load interface
         login = new LoginScreen();
-        register = new RegisterScreen();
+        register = new RegistrationScreen();
         cabinet = new CabinetScreen(false);
         userView = new UserViewScreen(null);
+        userAdd = new UserAddScreen();
+        docAdd = new DocumentAddScreen("Book");
 
         login.setVisible(true);
         register.setVisible(false);
         cabinet.setVisible(false);
         userView.setVisible(false);
+        userAdd.setVisible(false);
+        docAdd.setVisible(false);
 	}
 
 	static User findUser (String username) {
@@ -69,14 +73,6 @@ public class Main {
         for (int i = 0; i < documents.size(); ++i)
             if (documents.get(i).getTitle().equals(doc_title)) doc = documents.get(i);
         return doc;
-    }
-
-    static void login (String username, String password) {
-
-    }
-
-    static void register (String name, String password, String address, String phone, boolean isFaculty) {
-
     }
 
 }

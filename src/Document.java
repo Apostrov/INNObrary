@@ -10,7 +10,6 @@ public class Document {
     String [] keywords; // keywords of the document
     private boolean isReference;
     private String year;
-    private Boolean bestSeller;
     private String edition;
     private String description;
     private String publisher;
@@ -111,11 +110,4 @@ public class Document {
         return publisher;
     }
 
-    public String getEdition() {
-        return edition;
-    }
-
-    public Boolean isBestSeller() {
-        return bestSeller;
-    }
 }

@@ -95,12 +95,27 @@ class CabinetScreen extends JFrame {
         // Buttons related to books
         Box docBtnBox = Box.createHorizontalBox();
         // Add button
-        JButton addDocBtn = new JButton("  Add  ");
+        JButton addDocBtn = new JButton("Add new");
         addDocBtn.addActionListener(e -> {
-            // TODO: implement the functionality of the button 'Add' (add a document)
+            Main.cabinet.setVisible(false);
+            Main.docAdd.setVisible(true);
         });
         addDocBtn.setAlignmentX(JComponent.CENTER_ALIGNMENT);
         docBtnBox.add(addDocBtn);
+        docBtnBox.add(Box.createRigidArea(new Dimension(5, 0)));
+        JButton addDocCopyBtn = new JButton("Add copy");
+        addDocCopyBtn.addActionListener(e -> {
+            String docTitle = libDoc;
+            if (docTitle != null) {
+                Document doc = Main.findDoc(docTitle);
+                doc.setCopies(doc.getCopies() + 1);
+                JOptionPane.showMessageDialog(mainPanel, "Copy added!");
+            } else {
+                JOptionPane.showMessageDialog(mainPanel, "Select the document!");
+            }
+        });
+        addDocCopyBtn.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+        docBtnBox.add(addDocCopyBtn);
         docBtnBox.add(Box.createRigidArea(new Dimension(5, 0)));
         // Info button
         JButton infoDocBtn = new JButton(" Info ");
@@ -143,7 +158,9 @@ class CabinetScreen extends JFrame {
         removeDocBtn.setAlignmentX(JComponent.CENTER_ALIGNMENT);
         docBtnBox.add(removeDocBtn);
 
-        // User view button
+        // Buttons related to users
+        Box userBtnBox = Box.createHorizontalBox();
+        // View user button
         JButton viewUserBtn = new JButton("View");
         viewUserBtn.setAlignmentX(JComponent.CENTER_ALIGNMENT);
         viewUserBtn.addActionListener(l -> {
@@ -156,6 +173,15 @@ class CabinetScreen extends JFrame {
                 JOptionPane.showMessageDialog(mainPanel, "Select the user!");
             }
         });
+        JButton addUserBtn = new JButton("Add new");
+        addUserBtn.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+        addUserBtn.addActionListener(l -> {
+            Main.cabinet.setVisible(false);
+            Main.userAdd.setVisible(true);
+        });
+        userBtnBox.add(viewUserBtn);
+        userBtnBox.add(Box.createRigidArea(new Dimension(5, 0)));
+        userBtnBox.add(addUserBtn);
 
         //Label of library books
         JLabel libLabel = new JLabel();
@@ -180,7 +206,7 @@ class CabinetScreen extends JFrame {
         mainPanel.add(Box.createRigidArea(new Dimension(0, 5)));
         mainPanel.add(userBox);
         mainPanel.add(Box.createRigidArea(new Dimension(0, 5)));
-        mainPanel.add(viewUserBtn);
+        mainPanel.add(userBtnBox);
         mainPanel.add(Box.createRigidArea(new Dimension(0, 20)));
 
         getContentPane().add(mainPanel);
@@ -254,19 +280,40 @@ class CabinetScreen extends JFrame {
         userDocBox.add(Box.createRigidArea(new Dimension(10, 0)));
 
         // Log out button
-        Box logoutBox = Box.createHorizontalBox();
+        Box profileBox = Box.createHorizontalBox();
         JButton logoutBtn = new JButton("Log out");
         logoutBtn.setAlignmentX(JComponent.RIGHT_ALIGNMENT);
         logoutBtn.addActionListener(e -> { // What to do when logout button was pressed
             for (int i = 0; i < Main.users.size(); ++i)
                 if (Main.users.get(i).getUsername().equals(Main.activeUser.getUsername()))
-                    Main.users.get(i).setBookings(Main.activeUser.getBookings());
+                    Main.users.get(i).copyData(Main.activeUser);
             Main.cabinet.setVisible(false);
             Main.login.setVisible(true);
             Main.login.passField.setText("");
         });
-        logoutBox.add(logoutBtn);
-        logoutBox.add(Box.createRigidArea(new Dimension(325, 0)));
+        JButton profileBtn = new JButton("My profile");
+        profileBtn.setAlignmentX(JComponent.RIGHT_ALIGNMENT);
+        profileBtn.addActionListener(e -> { // What to do when my profile button was pressed
+            String info = "";
+            info += "Information about me:\n";
+            info += "Username:  " + Main.activeUser.getUsername() + "\n";
+            info += "Password:  " + Main.activeUser.getPassword() + "\n";
+            info += "First name:  " + Main.activeUser.getFirstName() + "\n";
+            info += "Second name:  " + Main.activeUser.getSecondName() + "\n";
+            info += "Address:  " + Main.activeUser.getAddress() + "\n";
+            info += "Phone number:  " + Main.activeUser.getPhone() + "\n";
+            JOptionPane.showMessageDialog(mainPanel, info);
+        });
+        JButton changeProfBtn = new JButton("Change profile");
+        changeProfBtn.setAlignmentX(JComponent.RIGHT_ALIGNMENT);
+        changeProfBtn.addActionListener(e -> { // What to do when my profile button was pressed
+            // TODO: change profile
+        });
+        profileBox.add(logoutBtn);
+        profileBox.add(Box.createRigidArea(new Dimension(125, 0)));
+        profileBox.add(profileBtn);
+        profileBox.add(Box.createRigidArea(new Dimension(5, 0)));
+        profileBox.add(changeProfBtn);
 
         // Order button
         Box orderBox = Box.createHorizontalBox();
@@ -343,7 +390,7 @@ class CabinetScreen extends JFrame {
         userBooksLabel.setAlignmentX(JComponent.CENTER_ALIGNMENT);
 
         mainPanel.add(Box.createRigidArea(new Dimension(0, 15)));
-        mainPanel.add(logoutBox);
+        mainPanel.add(profileBox);
         mainPanel.add(Box.createRigidArea(new Dimension(0, 15)));
         mainPanel.add(libLabel);
         mainPanel.add(Box.createRigidArea(new Dimension(0, 5)));

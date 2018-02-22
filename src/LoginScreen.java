@@ -37,12 +37,7 @@ class LoginScreen extends JFrame {
         loginBtn.addActionListener(e -> { // What to do after login button has pressed
                 if (checkForUser(userField.getText(), new String(passField.getPassword()))){
                     Main.activeUser = Main.findUser(userField.getText());
-                    Main.cabinet = new CabinetScreen(false);
-                    Main.cabinet.setVisible(true);
-                    Main.login.setVisible(false);
-                } else if (checkForLib(userField.getText(), new String(passField.getPassword()))){
-                    Main.activeUser = new Librarian(userField.getText(), new String(passField.getPassword()));
-                    Main.cabinet = new CabinetScreen(true);
+                    Main.cabinet = new CabinetScreen(Main.activeUser instanceof Librarian);
                     Main.cabinet.setVisible(true);
                     Main.login.setVisible(false);
                 } else {
@@ -88,16 +83,6 @@ class LoginScreen extends JFrame {
         boolean founded = false;
         for (int i = 0; i < Main.users.size(); ++i) {
             if (Main.users.get(i).getUsername().equals(username) && Main.users.get(i).getPassword().equals(password)) founded = true;
-        }
-        return founded;
-    }
-
-    /** Checks whether given username and password of some librarian are exists in the system
-     * @return whether given username and password of some librarian are exists in the system */
-    private boolean checkForLib(String username, String password) {
-        boolean founded = false;
-        for (int i = 0; i < Main.librarians.size(); ++i) {
-            if (Main.librarians.get(i).getUsername().equals(username) && Main.librarians.get(i).getPassword().equals(password)) founded = true;
         }
         return founded;
     }
