@@ -11,7 +11,10 @@ public class Main {
     static RegistrationScreen register;
     static UserViewScreen userView;
     static UserAddScreen userAdd;
-    static DocumentAddScreen docAdd;
+    static UserModifyScreen userMod;
+    static DocAddScreen docAdd;
+    static DocModifyScreen docMod;
+    static ProfChangeScreen changeProf;
 
     /** Main method of INNObrary */
     public static void main(String[] args) {
@@ -32,11 +35,9 @@ public class Main {
         }
         Patron facultyPatron = new Patron("faculty_1", "123", true, "1f", "1f", "1f", "1f");
         users.add(facultyPatron);
-        users.add(new Librarian("librarian_1", "123"));
-        ArrayList<String> authors = new ArrayList<>();
-        authors.add("Egor");
+        users.add(new Librarian("admin", "admin"));
         for (int i = 0; i < 19; ++i){
-            documents.add(new Book(books[i], authors, 1, 2007, "Egor pub. house", 100, 1, false, false));
+            documents.add(new Book(books[i], "Somebody", 1, 2007, "DownTown pub. house", 100, 1, false, false));
         }
         documents.get(0).setCopies(0);
         documents.get(1).setReference(true);
@@ -51,14 +52,19 @@ public class Main {
         cabinet = new CabinetScreen(false);
         userView = new UserViewScreen(null);
         userAdd = new UserAddScreen();
-        docAdd = new DocumentAddScreen("Book");
+        userMod = new UserModifyScreen(new User("", "", false));
+        docAdd = new DocAddScreen("Book");
+        docMod = new DocModifyScreen(new Document("","",1,1,false));
+        changeProf = new ProfChangeScreen(new User("", "", false));
 
         login.setVisible(true);
         register.setVisible(false);
         cabinet.setVisible(false);
         userView.setVisible(false);
         userAdd.setVisible(false);
+        userMod.setVisible(false);
         docAdd.setVisible(false);
+        docMod.setVisible(false);
 	}
 
 	static User findUser (String username) {

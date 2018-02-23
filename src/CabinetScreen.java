@@ -1,7 +1,6 @@
 import javax.swing.*;
 import javax.swing.table.TableModel;
 import java.awt.*;
-import java.util.ArrayList;
 
 class CabinetScreen extends JFrame {
 
@@ -49,9 +48,6 @@ class CabinetScreen extends JFrame {
         libBookScroll.setPreferredSize(new Dimension(50, 50)); // Indentation
         libBookScroll.setAlignmentX(JComponent.CENTER_ALIGNMENT);
 
-        /*libBookList.addListSelectionListener(e -> {
-            // What to do when the element of libBookList was selected
-        });*/
         libDocBox.add(libBookScroll);
         libDocBox.add(Box.createRigidArea(new Dimension(10, 0)));
 
@@ -125,11 +121,8 @@ class CabinetScreen extends JFrame {
                 Document doc = Main.findDoc(docTitle);
                 String info = "";
                 info += "Information about the document:\n";
-                info += "Title:  " + doc.title + "\n";
-                info += "Authors:  ";
-                for (int i = 0; i < doc.authors.size(); ++i)
-                    info += doc.authors.get(i) + (doc.authors.size() > 1 ? "," : "") + " ";
-                info += "\n";
+                info += "Title:  " + doc.getTitle() + "\n";
+                info += "Authors:  " + doc.getAuthors() + "\n";
                 info += "Price:  " + doc.getPrice() + " rubles.\n";
                 info += "Copies left:  " + doc.getCopies() + "\n";
                 if (doc.isReference()) info += "This is a reference document.\n";
@@ -145,7 +138,13 @@ class CabinetScreen extends JFrame {
         // Modify button
         JButton modifyDocBtn = new JButton("Modify");
         modifyDocBtn.addActionListener(e -> {
-            // TODO: implement the functionality of the button 'Modify' (modify a document)
+            if (libDoc == null) {
+                JOptionPane.showMessageDialog(mainPanel, "Select the document!");
+            } else {
+                Main.docMod = new DocModifyScreen(Main.findDoc(libDoc));
+                Main.docMod.setVisible(true);
+                Main.cabinet.setVisible(false);
+            }
         });
         modifyDocBtn.setAlignmentX(JComponent.CENTER_ALIGNMENT);
         docBtnBox.add(modifyDocBtn);
@@ -153,7 +152,15 @@ class CabinetScreen extends JFrame {
         // Remove button
         JButton removeDocBtn = new JButton("Remove");
         removeDocBtn.addActionListener(e -> {
-            // TODO: implement the functionality of the button 'Remove' (remove a document)
+            if (libDoc == null) {
+                JOptionPane.showMessageDialog(mainPanel, "Select the document!");
+            } else {
+                Main.documents.remove(Main.findDoc(libDoc));
+                JOptionPane.showMessageDialog(mainPanel, "The document has been removed!");
+                Main.cabinet.setVisible(false);
+                Main.cabinet = new CabinetScreen(true);
+                Main.cabinet.setVisible(true);
+            }
         });
         removeDocBtn.setAlignmentX(JComponent.CENTER_ALIGNMENT);
         docBtnBox.add(removeDocBtn);
@@ -161,7 +168,7 @@ class CabinetScreen extends JFrame {
         // Buttons related to users
         Box userBtnBox = Box.createHorizontalBox();
         // View user button
-        JButton viewUserBtn = new JButton("View");
+        JButton viewUserBtn = new JButton(" Info ");
         viewUserBtn.setAlignmentX(JComponent.CENTER_ALIGNMENT);
         viewUserBtn.addActionListener(l -> {
             String username = userDoc;
@@ -179,9 +186,37 @@ class CabinetScreen extends JFrame {
             Main.cabinet.setVisible(false);
             Main.userAdd.setVisible(true);
         });
+        JButton modifyUserBtn = new JButton("Modify");
+        modifyUserBtn.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+        modifyUserBtn.addActionListener(l -> {
+            if (userDoc == null) {
+                JOptionPane.showMessageDialog(mainPanel, "Select the user!");
+            } else {
+                Main.cabinet.setVisible(false);
+                Main.userMod = new UserModifyScreen(Main.findUser(userDoc));
+                Main.userMod.setVisible(true);
+            }
+        });
+        JButton removeUserBtn = new JButton("Remove");
+        removeUserBtn.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+        removeUserBtn.addActionListener(l -> {
+            if (userDoc == null) {
+                JOptionPane.showMessageDialog(mainPanel, "Select the user!");
+            } else {
+                JOptionPane.showMessageDialog(mainPanel, "The user has been removed!");
+                Main.users.remove(Main.findUser(userDoc));
+                Main.cabinet.setVisible(false);
+                Main.cabinet = new CabinetScreen(true);
+                Main.cabinet.setVisible(true);
+            }
+        });
+        userBtnBox.add(addUserBtn);
+        userBtnBox.add(Box.createRigidArea(new Dimension(5, 0)));
         userBtnBox.add(viewUserBtn);
         userBtnBox.add(Box.createRigidArea(new Dimension(5, 0)));
-        userBtnBox.add(addUserBtn);
+        userBtnBox.add(modifyUserBtn);
+        userBtnBox.add(Box.createRigidArea(new Dimension(5, 0)));
+        userBtnBox.add(removeUserBtn);
 
         //Label of library books
         JLabel libLabel = new JLabel();
@@ -302,12 +337,18 @@ class CabinetScreen extends JFrame {
             info += "Second name:  " + Main.activeUser.getSecondName() + "\n";
             info += "Address:  " + Main.activeUser.getAddress() + "\n";
             info += "Phone number:  " + Main.activeUser.getPhone() + "\n";
+            if (Main.activeUser.isFaculty())
+                info += "I am a faculty member\n";
+            else
+                info += "I am a student\n";
             JOptionPane.showMessageDialog(mainPanel, info);
         });
         JButton changeProfBtn = new JButton("Change profile");
         changeProfBtn.setAlignmentX(JComponent.RIGHT_ALIGNMENT);
         changeProfBtn.addActionListener(e -> { // What to do when my profile button was pressed
-            // TODO: change profile
+            Main.changeProf = new ProfChangeScreen(Main.findUser(Main.activeUser.getUsername()));
+            Main.cabinet.setVisible(false);
+            Main.changeProf.setVisible(true);
         });
         profileBox.add(logoutBtn);
         profileBox.add(Box.createRigidArea(new Dimension(125, 0)));
@@ -323,7 +364,7 @@ class CabinetScreen extends JFrame {
                 Document doc = Main.findDoc(libDoc);
                 boolean alreadyHas = false; // Check whether the patron already has one copy of the book
                 for (int i = 0; i < Main.activeUser.getBookings().size(); ++i) {
-                    if (doc.title.equals(Main.activeUser.getBookings().get(i).doc.title))
+                    if (doc.getTitle().equals(Main.activeUser.getBookings().get(i).getDoc().getTitle()))
                         alreadyHas = true;
                 }
                 if (doc.getCopies() <= 0) {
@@ -351,6 +392,7 @@ class CabinetScreen extends JFrame {
         orderBox.add(orderBtn);
         orderBox.add(Box.createRigidArea(new Dimension(5, 0)));
 
+        Box orderBtnBox = Box.createHorizontalBox();
         // Info about order button
         JButton infoDocBtn = new JButton(" Order info ");
         infoDocBtn.addActionListener(e -> { // What to do when info about the order button was pressed
@@ -358,26 +400,50 @@ class CabinetScreen extends JFrame {
             if (docTitle != null) {
                 Booking booking = Main.activeUser.getBookings().get(0);             // Here we need a booking because
                 for (int i = 0; i < Main.activeUser.getBookings().size(); ++i) {    // we should provide the time that is left
-                    if (Main.activeUser.getBookings().get(i).doc.title.equals(docTitle))
+                    if (Main.activeUser.getBookings().get(i).getDoc().getTitle().equals(docTitle))
                         booking = Main.activeUser.getBookings().get(i);
                 }
                 String info = "";
                 info += "Information about the order:\n";
-                info += "Title:  " + booking.doc.title + "\n";
-                info += "Authors: ";
-                for (int i = 0; i < booking.doc.authors.size(); ++i)
-                    info += booking.doc.authors.get(i) + (booking.doc.authors.size() > 1 ? "," : "") + " ";
-                info += "\n";
-                info += "Price: " + booking.doc.getPrice() + " rubles.\n";
-                info += "Time left: " + booking.getDaysLeft() + " days.\n";
-                if (booking.doc.isReference()) info += "This is a reference document.\n";
-                if (booking.doc instanceof Book) if(((Book) booking.doc).isBS()) info += "This is a bestseller book.\n";
+                info += "Title:  " + booking.getDoc().getTitle() + "\n";
+                info += "Authors: " + booking.getDoc().getAuthors() + "\n";
+                info += "Price: " + booking.getDoc().getPrice() + " rubles.\n";
+                info += "Time left: " + booking.getTimeLeft() + " days.\n";
+                if (booking.getDoc().isReference()) info += "This is a reference document.\n";
+                if (booking.getDoc() instanceof Book) if(((Book) booking.getDoc()).isBS()) info += "This is a bestseller book.\n";
                 JOptionPane.showMessageDialog(mainPanel, info);
             } else {
                 JOptionPane.showMessageDialog(mainPanel, "Select the order!");
             }
         });
         infoDocBtn.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+        // Info about order button
+        JButton returnDocBtn = new JButton(" Return ");
+        returnDocBtn.addActionListener(e -> { // What to do when return about the order button was pressed
+            if (userDoc == null) {
+                JOptionPane.showMessageDialog(mainPanel, "Select the order!");
+            } else {
+                Booking booking = Main.activeUser.getBookings().get(0);             // Here we need a booking because
+                for (int i = 0; i < Main.activeUser.getBookings().size(); ++i) {    // we should provide the time that is left
+                    if (Main.activeUser.getBookings().get(i).getDoc().getTitle().equals(userDoc))
+                        booking = Main.activeUser.getBookings().get(i);
+                }
+                if (booking.hasRequestedByUser()) {
+                    JOptionPane.showMessageDialog(mainPanel, "Already requested!");
+                } else {
+                    JOptionPane.showMessageDialog(mainPanel, "Successfully requested!");
+                    booking.userRequest();
+                    Main.cabinet.setVisible(false);
+                    Main.cabinet = new CabinetScreen(false);
+                    Main.cabinet.setVisible(true);
+                }
+            }
+        });
+        returnDocBtn.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+
+        orderBtnBox.add(infoDocBtn);
+        orderBtnBox.add(Box.createRigidArea(new Dimension(5, 0)));
+        orderBtnBox.add(returnDocBtn);
 
         //Label of library books
         JLabel libLabel = new JLabel();
@@ -402,7 +468,7 @@ class CabinetScreen extends JFrame {
         mainPanel.add(Box.createRigidArea(new Dimension(0, 5)));
         mainPanel.add(userDocBox, BorderLayout.CENTER);
         mainPanel.add(Box.createRigidArea(new Dimension(0, 5)));
-        mainPanel.add(infoDocBtn);
+        mainPanel.add(orderBtnBox);
         mainPanel.add(Box.createRigidArea(new Dimension(0, 20)));
 
         getContentPane().add(mainPanel);
@@ -411,6 +477,5 @@ class CabinetScreen extends JFrame {
         pack();
         setLocationRelativeTo(null);
     }
-
 
 }

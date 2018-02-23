@@ -23,7 +23,7 @@ public class UserDocTableModel implements TableModel {
     }
 
     public int getColumnCount() {
-        return 3;
+        return 5;
     }
 
     public String getColumnName(int columnIndex) {
@@ -34,6 +34,10 @@ public class UserDocTableModel implements TableModel {
                 return "Days left";
             case 2:
                 return "Price";
+            case 3:
+                return "Request from library";
+            case 4:
+                return "Request for library";
         }
         return "";
     }
@@ -46,11 +50,15 @@ public class UserDocTableModel implements TableModel {
         Booking booking = bookings.get(rowIndex);
         switch (columnIndex) {
             case 0:
-                return booking.doc.getTitle();
+                return booking.getDoc().getTitle();
             case 1:
-                return booking.delay;
+                return booking.getTimeLeft();
             case 2:
-                return booking.doc.getPrice();
+                return booking.getDoc().getPrice();
+            case 3:
+                return booking.hasRequestedByLib();
+            case 4:
+                return booking.hasRequestedByUser();
         }
         return "";
     }

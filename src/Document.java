@@ -1,21 +1,16 @@
-import java.util.ArrayList;
-
 public class Document {
 
-    String title; // title of the document
-    ArrayList<String> authors; // authors of the document
+    private String title; // title of the document
+    private String authors; // authors of the document
     private int price; // price of some document
     private int copies; // number of copies of some document
     int document_id; // id of the document
     String [] keywords; // keywords of the document
     private boolean isReference;
-    private String year;
-    private String edition;
     private String description;
-    private String publisher;
     // TODO: position of document in library
 
-    Document (String title, ArrayList<String> authors, int price, int copies, boolean isReference) {
+    Document (String title, String authors, int price, int copies, boolean isReference) {
         this.title = title;
         this.authors = authors;
         this.price = price;
@@ -59,6 +54,10 @@ public class Document {
         return title;
     }
 
+    public void setTitle (String title) {
+        this.title = title;
+    }
+
     /** Returns number of days of overdue */
     public int checkOverdue(){
         return 0;
@@ -94,20 +93,21 @@ public class Document {
         return price;
     }
 
+    /** Getter for authors of the document.*/
+    public String getAuthors(){
+        return authors;
+    }
+
+    public void setAuthors(String authors){
+        this.authors = authors;
+    }
+
     public void setPrice(int price) {
         this.price = price;
     }
 
-    public String getYear() {
-        return year;
-    }
-
     public String getDescription() {
         return description;
-    }
-
-    public String getPublisher() {
-        return publisher;
     }
 
 }

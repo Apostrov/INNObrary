@@ -1,9 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 
-class RegistrationScreen extends JFrame {
+class ProfChangeScreen extends JFrame {
 
     private String username;
     private String password;
@@ -18,15 +16,15 @@ class RegistrationScreen extends JFrame {
     private JTextField addressField;
     private JTextField phoneField;
 
-    RegistrationScreen() {
+    ProfChangeScreen(User user) {
         super("INNObrary");
         SwingUtilities.invokeLater(() -> {
             JFrame.setDefaultLookAndFeelDecorated(true);
-            createGUI();
+            createGUI(user);
         });
     }
 
-    private void createGUI() {
+    private void createGUI(User user) {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         JPanel mainPanel = new JPanel();
@@ -39,14 +37,14 @@ class RegistrationScreen extends JFrame {
         JButton backBtn = new JButton("Back");
         backBtn.setAlignmentX(JComponent.LEFT_ALIGNMENT);
         backBtn.addActionListener(e -> {
-            Main.register.setVisible(false);
-            Main.login.setVisible(true);
+            Main.changeProf.setVisible(false);
+            Main.cabinet.setVisible(true);
         });
         backBtnBox.add(backBtn);
         backBtnBox.add(Box.createRigidArea(new Dimension(200, 0)));
 
         // Box for input fields
-        Box registerBox = Box.createHorizontalBox();
+        Box changeBox = Box.createHorizontalBox();
         Box labelBox = Box.createVerticalBox();
         Box fieldBox = Box.createVerticalBox();
 
@@ -60,6 +58,7 @@ class RegistrationScreen extends JFrame {
         usernameField = new JTextField();
         usernameField.setAlignmentX(JComponent.CENTER_ALIGNMENT);
         usernameField.setMaximumSize(new Dimension(160, 20));
+        usernameField.setText(user.getUsername());
         fieldBox.add(Box.createRigidArea(new Dimension(0, 5)));
         fieldBox.add(usernameField);
 
@@ -73,6 +72,7 @@ class RegistrationScreen extends JFrame {
         passwordField = new JPasswordField();
         passwordField.setAlignmentX(JComponent.CENTER_ALIGNMENT);
         passwordField.setMaximumSize(new Dimension(160, 20));
+        passwordField.setText(user.getPassword());
         fieldBox.add(Box.createRigidArea(new Dimension(0, 5)));
         fieldBox.add(passwordField);
 
@@ -86,6 +86,7 @@ class RegistrationScreen extends JFrame {
         fNameField = new JTextField();
         fNameField.setAlignmentX(JComponent.CENTER_ALIGNMENT);
         fNameField.setMaximumSize(new Dimension(160, 20));
+        fNameField.setText(user.getFirstName());
         fieldBox.add(Box.createRigidArea(new Dimension(0, 5)));
         fieldBox.add(fNameField);
 
@@ -99,6 +100,7 @@ class RegistrationScreen extends JFrame {
         sNameField = new JTextField();
         sNameField.setAlignmentX(JComponent.CENTER_ALIGNMENT);
         sNameField.setMaximumSize(new Dimension(160, 20));
+        sNameField.setText(user.getSecondName());
         fieldBox.add(Box.createRigidArea(new Dimension(0, 5)));
         fieldBox.add(sNameField);
 
@@ -112,6 +114,7 @@ class RegistrationScreen extends JFrame {
         addressField = new JTextField();
         addressField.setAlignmentX(JComponent.CENTER_ALIGNMENT);
         addressField.setMaximumSize(new Dimension(160, 20));
+        addressField.setText(user.getAddress());
         fieldBox.add(Box.createRigidArea(new Dimension(0, 5)));
         fieldBox.add(addressField);
 
@@ -124,43 +127,50 @@ class RegistrationScreen extends JFrame {
         phoneField = new JTextField();
         phoneField.setAlignmentX(JComponent.CENTER_ALIGNMENT);
         phoneField.setMaximumSize(new Dimension(160, 20));
+        phoneField.setText(user.getPhone());
         fieldBox.add(Box.createRigidArea(new Dimension(0, 5)));
         fieldBox.add(phoneField);
 
-        registerBox.add(Box.createRigidArea(new Dimension(15, 0)));
-        registerBox.add(labelBox);
-        registerBox.add(fieldBox);
-        registerBox.add(Box.createRigidArea(new Dimension(15, 0)));
+        changeBox.add(Box.createRigidArea(new Dimension(15, 0)));
+        changeBox.add(labelBox);
+        changeBox.add(fieldBox);
+        changeBox.add(Box.createRigidArea(new Dimension(15, 0)));
 
         // Register button box
-        Box registerBtnBox = Box.createHorizontalBox();
+        Box changeBtnBox = Box.createHorizontalBox();
         // Register button
-        JButton registerBtn = new JButton("Register");
-        registerBtn.setAlignmentX(JComponent.LEFT_ALIGNMENT);
-        registerBtn.addActionListener(e -> {
+        JButton changeBtn = new JButton("Change");
+        changeBtn.setAlignmentX(JComponent.LEFT_ALIGNMENT);
+        changeBtn.addActionListener(e -> {
             updateData();
             if (username == null || password == null || firstName == null || secondName == null || address == null || phone == null) {
                 JOptionPane.showMessageDialog(mainPanel, "Wrong input data!");
             } else if (username.equals("") || password.equals("") || firstName.equals("") || secondName.equals("") || address.equals("") || phone.equals("")) {
                 JOptionPane.showMessageDialog(mainPanel, "Wrong input data!");
             } else {
-                Main.activeUser = new User(username, password, false, firstName, secondName, address, phone);
-                Main.users.add(Main.activeUser);
-                JOptionPane.showMessageDialog(mainPanel, "Successfully registered!");
-                Main.register.setVisible(false);
+                user.setUsername(username);
+                user.setPassword(password);
+                user.setFirstName(firstName);
+                user.setSecondName(secondName);
+                user.setAddress(address);
+                user.setPhone(phone);
+                Main.activeUser = user;
+                JOptionPane.showMessageDialog(mainPanel, "Successfully changed!");
+                Main.changeProf.setVisible(false);
+                Main.cabinet = new CabinetScreen(false);
                 Main.cabinet.setVisible(true);
             }
         }
         );
-        registerBtnBox.add(registerBtn);
-        registerBtnBox.add(Box.createRigidArea(new Dimension(0, 0)));
+        changeBtnBox.add(changeBtn);
+        changeBtnBox.add(Box.createRigidArea(new Dimension(0, 0)));
 
         mainPanel.add(Box.createRigidArea(new Dimension(0, 15)));
         mainPanel.add(backBtnBox);
         mainPanel.add(Box.createRigidArea(new Dimension(0, 65)));
-        mainPanel.add(registerBox);
+        mainPanel.add(changeBox);
         mainPanel.add(Box.createRigidArea(new Dimension(0, 25)));
-        mainPanel.add(registerBtnBox);
+        mainPanel.add(changeBtnBox);
 
         getContentPane().add(mainPanel);
 

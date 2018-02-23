@@ -80,11 +80,12 @@ class LoginScreen extends JFrame {
     /** Checks whether given username and password of some user are exists in the system
      * @return whether given username and password of some user are exists in the system */
     private boolean checkForUser(String username, String password) {
-        boolean founded = false;
         for (int i = 0; i < Main.users.size(); ++i) {
-            if (Main.users.get(i).getUsername().equals(username) && Main.users.get(i).getPassword().equals(password)) founded = true;
+            if (Main.users.get(i).getUsername().equals(username) && Main.users.get(i).getPassword().equals(password)) {
+                return true;
+            }
         }
-        return founded;
+        return false;
     }
 
 }

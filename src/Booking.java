@@ -1,7 +1,9 @@
 public class Booking {
 
-    int delay;
-    Document doc;
+    private int delay;
+    private Document doc;
+    private boolean reqByLib;
+    private boolean reqByUser;
 
     /** Represents a single offer of any document
      *  @param doc document to be booked
@@ -9,13 +11,31 @@ public class Booking {
     public Booking (Document doc, int delay) {
         this.doc = doc;
         this.delay = delay;
+        reqByLib = false;
+        reqByUser = false;
     }
 
-    public int getDaysLeft () {
+    public boolean hasRequestedByLib(){
+        return reqByLib;
+    }
+
+    public boolean hasRequestedByUser(){
+        return reqByUser;
+    }
+
+    public void libRequest(){
+        reqByLib = true;
+    }
+
+    public void userRequest(){
+        reqByUser = true;
+    }
+
+    public int getTimeLeft() {
         return delay;
     }
 
-    public Document getBookedDocument () {
+    public Document getDoc () {
         return doc;
     }
 

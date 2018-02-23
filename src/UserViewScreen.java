@@ -29,7 +29,7 @@ public class UserViewScreen extends JFrame {
         ArrayList<String> userBookTitles = new ArrayList<>();
         if (userForView != null) 
             for (int i = 0; i < userForView.getBookings().size(); ++i)
-                userBookTitles.add(userForView.getBookings().get(i).doc.title);
+                userBookTitles.add(userForView.getBookings().get(i).getDoc().getTitle());
         JList<String> userBookList = new JList<>(userBookTitles.toArray(new String[userBookTitles.size()]));
         userBookList.setLayoutOrientation(JList.VERTICAL);
         userBookList.setVisibleRowCount(0);
@@ -64,8 +64,62 @@ public class UserViewScreen extends JFrame {
             Main.cabinet.setVisible(true);
             Main.userView.setVisible(false);
         });
+        // Request button
+        JButton requestBtn = new JButton("Request");
+        requestBtn.setAlignmentX(JComponent.RIGHT_ALIGNMENT);
+        requestBtn.addActionListener(e -> { // What to do when libRequest button was pressed
+            if (userDoc == null) {
+                JOptionPane.showMessageDialog(mainPanel, "Select user's order!");
+            } else {
+                Booking booking = new Booking(null, 0);
+                for (int i = 0; i < userForView.getBookings().size(); ++i) {
+                    if (userForView.getBookings().get(i).getDoc().getTitle().equals(userDoc))
+                        booking = userForView.getBookings().get(i);
+                }
+                if (booking.hasRequestedByLib()) {
+                    JOptionPane.showMessageDialog(mainPanel, "Already requested!");
+                } else {
+                    JOptionPane.showMessageDialog(mainPanel, "Successfully requested!");
+                    booking.libRequest();
+                    Main.userView.setVisible(false);
+                    Main.userView = new UserViewScreen(userForView);
+                    Main.userView.setVisible(true);
+                }
+            }
+        });
+        // Return button
+        JButton returnBtn = new JButton("Return");
+        returnBtn.setAlignmentX(JComponent.RIGHT_ALIGNMENT);
+        returnBtn.addActionListener(e -> { // What to do when libRequest button was pressed
+            if (userDoc == null) {
+                JOptionPane.showMessageDialog(mainPanel, "Select user's order!");
+            } else{
+                Booking booking = new Booking(null, 0);
+                for (int i = 0; i < userForView.getBookings().size(); ++i) {
+                    if (userForView.getBookings().get(i).getDoc().getTitle().equals(userDoc))
+                        booking = userForView.getBookings().get(i);
+                }
+                if (booking.hasRequestedByUser()) {
+                    JOptionPane.showMessageDialog(mainPanel, "Successfully returned!");
+                    for (int i = 0; i < Main.documents.size(); ++i) {
+                        if (Main.documents.get(i).getTitle().equals(booking.getDoc().getTitle())) {
+                            Main.documents.get(i).setCopies(Main.documents.get(i).getCopies() + 1);
+                            userForView.getBookings().remove(booking);
+                        }
+                    }
+                    Main.userView.setVisible(false);
+                    Main.userView = new UserViewScreen(userForView);
+                    Main.userView.setVisible(true);
+                } else {
+                    JOptionPane.showMessageDialog(mainPanel, "User has not requested yet!");
+                }
+            }
+        });
         backBox.add(backBtn);
-        backBox.add(Box.createRigidArea(new Dimension(215, 0)));
+        backBox.add(Box.createRigidArea(new Dimension(75, 0)));
+        backBox.add(requestBtn);
+        backBox.add(Box.createRigidArea(new Dimension(5, 0)));
+        backBox.add(returnBtn);
 
         // Info about order button
         JButton orderInfoBtn = new JButton(" Order info ");
@@ -74,20 +128,17 @@ public class UserViewScreen extends JFrame {
             if (orderTitle != null) {
                 Booking booking = userForView.getBookings().get(0);
                 for (int i = 0; i < userForView.getBookings().size(); ++i) {
-                    if (userForView.getBookings().get(i).doc.title.equals(orderTitle))
+                    if (userForView.getBookings().get(i).getDoc().getTitle().equals(orderTitle))
                         booking = userForView.getBookings().get(i);
                 }
                 String info = "";
                 info += "Information about user's order:\n";
-                info += "Title:  " + booking.doc.title + "\n";
-                info += "Authors:  ";
-                for (int i = 0; i < booking.doc.authors.size(); ++i)
-                    info += booking.doc.authors.get(i) + (booking.doc.authors.size() > 1 ? "," : "") + " ";
-                info += "\n";
-                info += "Price:  " + booking.doc.getPrice() + " rubles.\n";
-                info += "Time left:  " + booking.getDaysLeft() + " days.\n";
-                if (booking.doc.isReference()) info += "This is a reference document.\n";
-                if (booking.doc instanceof Book) if(((Book) booking.doc).isBS()) info += "This is a bestseller book.\n";
+                info += "Title:  " + booking.getDoc().getTitle() + "\n";
+                info += "Authors:  " + booking.getDoc().getAuthors() + "\n";
+                info += "Price:  " + booking.getDoc().getPrice() + " rubles.\n";
+                info += "Time left:  " + booking.getTimeLeft() + " days.\n";
+                if (booking.getDoc().isReference()) info += "This is a reference document.\n";
+                if (booking.getDoc() instanceof Book) if(((Book) booking.getDoc()).isBS()) info += "This is a bestseller book.\n";
                 JOptionPane.showMessageDialog(mainPanel, info);
             } else {
                 JOptionPane.showMessageDialog(mainPanel, "Select user's order!");
@@ -99,7 +150,7 @@ public class UserViewScreen extends JFrame {
         JLabel ubLabel = new JLabel();
         String username = "";
         if (userForView != null) username += userForView.getUsername();
-        ubLabel.setText("Documents of " + username);
+        ubLabel.setText("Orders of " + username);
         ubLabel.setAlignmentX(JComponent.CENTER_ALIGNMENT);
 
         mainPanel.add(Box.createRigidArea(new Dimension(0, 15)));

@@ -12,8 +12,9 @@ public class UserTableModel implements TableModel {
     private List<User> users;
 
     UserTableModel(List<User> users) {
-        this.users = users;
-        for (int i = 0; i < users.size(); ++i) if (users.get(i) instanceof Librarian) users.remove(i);
+        this.users = new ArrayList<>();
+        this.users.addAll(users);
+        for (int i = 0; i < this.users.size(); ++i) if (this.users.get(i) instanceof Librarian) this.users.remove(i);
     }
 
     public void addTableModelListener(TableModelListener listener) {
