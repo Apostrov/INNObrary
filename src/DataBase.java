@@ -29,6 +29,7 @@ public class DataBase {
      * @param document what need to add
      */
     public static void addDoc(Document document) {
+        // create unique id
         Object id = (document.getTitle() + document.getYear()).hashCode();
 
         // check if already have in db this id
@@ -70,9 +71,20 @@ public class DataBase {
         if(docJson == null)
             return null;
 
-        return new Document(docJson.getString("title"), docJson.getString("authors"),
-                docJson.getInteger("price"), docJson.getInteger("copies"),
-                docJson.getBoolean("reference"));
+        return new Document(docJson.get("_id"), docJson.getString("title"),
+                docJson.getString("authors"), docJson.getInteger("price"),
+                docJson.getInteger("copies"), docJson.getBoolean("reference"),
+                docJson.getString("description"), docJson.getString("publisher"),
+                docJson.getInteger("edition"), docJson.getInteger("year"),
+                docJson.getBoolean("best-seller"));
+    }
+
+    /**
+     * Delete document from db
+     * @param id of document
+     */
+    public static void deleteDoc(Object id){
+        documents.deleteOne(eq("_id", id));
     }
 
     /**
@@ -80,6 +92,7 @@ public class DataBase {
      * @param user what need to add
      */
     public static void addUser(User user) {
+        // create unique id
         Object id = user.getUsername();
 
         // check if already have in DataBase this id
@@ -115,10 +128,18 @@ public class DataBase {
             return null;
         }
 
-        return new User(userJson.getString("username"), userJson.getString("password"),
-                userJson.getBoolean("isFaculty"), userJson.getString("firstName"),
-                userJson.getString("secondName"), userJson.getString("address"),
-                userJson.getString("phone"));
+        return new User(userJson.get("_id"),userJson.getString("username"),
+                userJson.getString("password"), userJson.getBoolean("isFaculty"),
+                userJson.getString("firstName"), userJson.getString("secondName"),
+                userJson.getString("address"), userJson.getString("phone"));
+    }
+
+    /**
+     * Delete user from database
+     * @param id of user
+     */
+    public static void deleteUser(Object id){
+        users.deleteOne(eq("_id", id));
     }
 
     public static void doOrder(Patron patron, Document document) {

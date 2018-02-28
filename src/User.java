@@ -6,8 +6,8 @@ public class User {
     private String firstName;
     private String secondName;
     private String password;
-    String address;
-    String phone;
+    private String address;
+    private String phone;
     private boolean isFaculty;
 
     private ArrayList<Booking> bookings; // Current documents on hands
@@ -21,6 +21,19 @@ public class User {
     }
 
     User (String username, String password, boolean isFaculty, String firstName, String secondName, String address, String phone) {
+        this.username = username;
+        this.password = password;
+        this.isFaculty = isFaculty;
+        this.firstName = firstName;
+        this.secondName = secondName;
+        this.address = address;
+        this.phone = phone;
+        bookings = new ArrayList<>();
+    }
+
+    // constructor for getting from DataBase
+    User (Object user_id,String username, String password, boolean isFaculty, String firstName, String secondName, String address, String phone) {
+        this.user_id = user_id;
         this.username = username;
         this.password = password;
         this.isFaculty = isFaculty;
@@ -52,9 +65,7 @@ public class User {
     /** Returns all current bookings */
     void setBookings (ArrayList<Booking> bookings) {
         this.bookings = new ArrayList<>();
-        for (int i = 0; i < bookings.size(); ++i) {
-            this.bookings.add(bookings.get(i));
-        }
+        this.bookings.addAll(bookings);
     }
 
     /** Returns booking from current bookings with id 'bookingID'

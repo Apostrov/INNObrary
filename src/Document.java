@@ -8,11 +8,12 @@ public class Document {
     String [] keywords; // keywords of the document
     private boolean isReference;
     private String description;
-    private String year;
+    private int year;
     private String publisher;
-    private String edition;
-    private boolean bestSeller;
+    private int edition;
+    private boolean isBestSeller;
     // TODO: position of document in library
+
 
     Document (String title, String authors, int price, int copies, boolean isReference) {
         this.title = title;
@@ -20,6 +21,23 @@ public class Document {
         this.price = price;
         this.copies = copies;
         this.isReference = isReference;
+    }
+
+    // constructor for getting from DataBase
+    Document (Object document_id, String title, String authors, int price,
+              int copies, boolean isReference, String description, String publisher,
+              int edition, int year, boolean isBestSeller){
+        this.document_id = document_id;
+        this.title = title;
+        this.authors = authors;
+        this.price = price;
+        this.copies = copies;
+        this.isReference = isReference;
+        this.description = description;
+        this.publisher = publisher;
+        this.edition = edition;
+        this.year = year;
+        this.isBestSeller = isBestSeller;
     }
 
     /** To delete the document*/
@@ -114,7 +132,7 @@ public class Document {
         return description;
     }
 
-    public String getYear() {
+    public int getYear() {
         return year;
     }
 
@@ -126,11 +144,11 @@ public class Document {
         return publisher;
     }
 
-    public String getEdition() {
+    public int getEdition() {
         return edition;
     }
 
     public boolean isBestSeller() {
-        return bestSeller;
+        return isBestSeller;
     }
 }
