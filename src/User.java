@@ -11,6 +11,7 @@ public class User {
     private boolean isFaculty;
 
     private ArrayList<Booking> bookings; // Current documents on hands
+    private Object user_id;
 
     User (String username, String password, boolean isFaculty) {
         this.username = username;
@@ -132,5 +133,9 @@ public class User {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public void setUser_id(Object user_id) {
+        this.user_id = user_id;
     }
 }

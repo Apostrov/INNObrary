@@ -4,10 +4,14 @@ public class Document {
     private String authors; // authors of the document
     private int price; // price of some document
     private int copies; // number of copies of some document
-    int document_id; // id of the document
+    private Object document_id; // id of the document
     String [] keywords; // keywords of the document
     private boolean isReference;
     private String description;
+    private String year;
+    private String publisher;
+    private String edition;
+    private boolean bestSeller;
     // TODO: position of document in library
 
     Document (String title, String authors, int price, int copies, boolean isReference) {
@@ -110,4 +114,23 @@ public class Document {
         return description;
     }
 
+    public String getYear() {
+        return year;
+    }
+
+    public void setDocument_id(Object document_id) {
+        this.document_id = document_id;
+    }
+
+    public String getPublisher() {
+        return publisher;
+    }
+
+    public String getEdition() {
+        return edition;
+    }
+
+    public boolean isBestSeller() {
+        return bestSeller;
+    }
 }
