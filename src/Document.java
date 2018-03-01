@@ -27,12 +27,8 @@ public class Document {
     Document (Object document_id, String title, String authors, int price,
               int copies, boolean isReference, String description, String publisher,
               int edition, int year, boolean isBestSeller){
+        this(title, authors, price, copies, isReference);
         this.document_id = document_id;
-        this.title = title;
-        this.authors = authors;
-        this.price = price;
-        this.copies = copies;
-        this.isReference = isReference;
         this.description = description;
         this.publisher = publisher;
         this.edition = edition;

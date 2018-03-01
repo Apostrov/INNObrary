@@ -2,6 +2,8 @@ import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
+import java.util.ArrayList;
+
 import static com.mongodb.client.model.Filters.eq;
 
 /**
@@ -26,6 +28,7 @@ public class DataBase {
 
     /**
      * Add document to DataBase and set id to class
+     *
      * @param document what need to add
      */
     public static void addDoc(Document document) {
@@ -34,8 +37,8 @@ public class DataBase {
 
         // check if already have in db this id
         Document check = getDoc(id);
-        if (check != null){
-            if(!check.getTitle().equals(document.getTitle())){
+        if (check != null) {
+            if (!check.getTitle().equals(document.getTitle())) {
                 // TODO: change id
             } else {
                 // TODO: what to do if already have this id?
@@ -61,6 +64,7 @@ public class DataBase {
 
     /**
      * Get document in DataBase by id
+     *
      * @param id of document
      * @return Document or null if not in DataBase
      */
@@ -68,9 +72,32 @@ public class DataBase {
         org.bson.Document docJson = documents.find(eq("_id", id)).first();
 
         // if not in DataBase
-        if(docJson == null)
+        if (docJson == null)
             return null;
 
+        return jsonToDoc(docJson);
+    }
+
+    /**
+     * Get all Document
+     *
+     * @return ArrayList with all documents
+     */
+    public static ArrayList<Document> getAllDoc() {
+        ArrayList<Document> allDoc = new ArrayList<>();
+        for (org.bson.Document json : documents.find()) {
+            allDoc.add(jsonToDoc(json));
+        }
+        return allDoc;
+    }
+
+    /**
+     * Parse org.bson.Document to class Document
+     *
+     * @param docJson that need to parse
+     * @return new class Document
+     */
+    private static Document jsonToDoc(org.bson.Document docJson) {
         return new Document(docJson.get("_id"), docJson.getString("title"),
                 docJson.getString("authors"), docJson.getInteger("price"),
                 docJson.getInteger("copies"), docJson.getBoolean("reference"),
@@ -81,14 +108,16 @@ public class DataBase {
 
     /**
      * Delete document from db
+     *
      * @param id of document
      */
-    public static void deleteDoc(Object id){
+    public static void deleteDoc(Object id) {
         documents.deleteOne(eq("_id", id));
     }
 
     /**
      * Add user to DataBase
+     *
      * @param user what need to add
      */
     public static void addUser(User user) {
@@ -97,7 +126,7 @@ public class DataBase {
 
         // check if already have in DataBase this id
         User check = getUser(id);
-        if (check != null){
+        if (check != null) {
             // TODO: what to do if already have this id?
         }
 
@@ -117,6 +146,7 @@ public class DataBase {
 
     /**
      * Get user from DataBase
+     *
      * @param id of user
      * @return User or null if not in DataBase
      */
@@ -124,11 +154,35 @@ public class DataBase {
         org.bson.Document userJson = users.find(eq("_id", id)).first();
 
         // if not in DataBase
-        if(userJson == null){
+        if (userJson == null) {
             return null;
         }
 
-        return new User(userJson.get("_id"),userJson.getString("username"),
+        return jsonToUser(userJson);
+    }
+
+    /**
+     * Get all User
+     *
+     * @return ArrayList with all user
+     */
+    public static ArrayList<User> getAllUser() {
+        ArrayList<User> allUser = new ArrayList<>();
+        // TODO: use Booking in User
+        for (org.bson.Document json : documents.find()) {
+            allUser.add(jsonToUser(json));
+        }
+        return allUser;
+    }
+
+    /**
+     * Parse org.bson.Document to class User
+     *
+     * @param userJson that need to parse
+     * @return new class User
+     */
+    private static User jsonToUser(org.bson.Document userJson) {
+        return new User(userJson.get("_id"), userJson.getString("username"),
                 userJson.getString("password"), userJson.getBoolean("isFaculty"),
                 userJson.getString("firstName"), userJson.getString("secondName"),
                 userJson.getString("address"), userJson.getString("phone"));
@@ -136,9 +190,10 @@ public class DataBase {
 
     /**
      * Delete user from database
+     *
      * @param id of user
      */
-    public static void deleteUser(Object id){
+    public static void deleteUser(Object id) {
         users.deleteOne(eq("_id", id));
     }
 

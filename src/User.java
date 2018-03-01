@@ -21,27 +21,17 @@ public class User {
     }
 
     User (String username, String password, boolean isFaculty, String firstName, String secondName, String address, String phone) {
-        this.username = username;
-        this.password = password;
-        this.isFaculty = isFaculty;
+        this(username, password, isFaculty);
         this.firstName = firstName;
         this.secondName = secondName;
         this.address = address;
         this.phone = phone;
-        bookings = new ArrayList<>();
     }
 
     // constructor for getting from DataBase
     User (Object user_id,String username, String password, boolean isFaculty, String firstName, String secondName, String address, String phone) {
+        this(username, password, isFaculty, firstName, secondName, address, phone);
         this.user_id = user_id;
-        this.username = username;
-        this.password = password;
-        this.isFaculty = isFaculty;
-        this.firstName = firstName;
-        this.secondName = secondName;
-        this.address = address;
-        this.phone = phone;
-        bookings = new ArrayList<>();
     }
 
     /** Addition of new booking
