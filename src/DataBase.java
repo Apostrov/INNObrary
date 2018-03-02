@@ -1,3 +1,4 @@
+import com.mongodb.BasicDBList;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -139,6 +140,11 @@ public class DataBase {
                 .append("phone", user.getPhone())
                 .append("isFaculty", user.isFaculty());
         users.insertOne(userJson);
+
+        // parse booking to order
+        for (Booking booking : user.getBookings()) {
+            doOrder(user, booking.getDoc());
+        }
     }
 
     /**
@@ -165,8 +171,7 @@ public class DataBase {
      */
     public static ArrayList<User> getAllUser() {
         ArrayList<User> allUser = new ArrayList<>();
-        // TODO: use Booking in User
-        for (org.bson.Document json : documents.find()) {
+        for (org.bson.Document json : users.find()) {
             allUser.add(jsonToUser(json));
         }
         return allUser;
@@ -179,10 +184,13 @@ public class DataBase {
      * @return new class User
      */
     private static User jsonToUser(org.bson.Document userJson) {
-        return new User(userJson.get("_id"), userJson.getString("username"),
+        ArrayList<Booking> bookings = getAllOrderedDoc(userJson.get("_id"));
+        User user = new User(userJson.get("_id"), userJson.getString("username"),
                 userJson.getString("password"), userJson.getBoolean("isFaculty"),
                 userJson.getString("firstName"), userJson.getString("secondName"),
                 userJson.getString("address"), userJson.getString("phone"));
+        user.setBookings(bookings);
+        return user;
     }
 
     /**
@@ -196,7 +204,8 @@ public class DataBase {
 
     /**
      * Make order between user and document
-     * @param user take doc
+     *
+     * @param user     take doc
      * @param document what take
      */
     public static void doOrder(User user, Document document) {
@@ -205,19 +214,45 @@ public class DataBase {
 
         // find if user already took something
         org.bson.Document orderJson = orders.find(eq("_id", id)).first();
-        if(orderJson == null) {
+        if (orderJson == null) {
             //TODO: 3 DEADLINE TASK: start and end time
             orderJson = new org.bson.Document("_id", id)
                     .append("userId", user.getUser_id())
-                    .append("documentId", Arrays.asList(new org.bson.Document("_id", document.getDocument_id())
+                    .append("documents", Arrays.asList(new org.bson.Document("_id", document.getDocument_id())
                             .append("date", 0))); // add date all date
             orders.insertOne(orderJson);
         } else {
             orders.updateOne(
                     eq("_id", id),
-                    push("documentId",
+                    push("documents",
                             new org.bson.Document("_id", document.getDocument_id())
                                     .append("date", 0)));// add date all date
         }
+    }
+
+    /**
+     * Get list of all order from one user
+     *
+     * @param id of user
+     * @return ArrayList of all order
+     */
+    public static ArrayList<Booking> getAllOrderedDoc(Object id) {
+        // get order
+        org.bson.Document orderJson = orders.find(eq("_id", id)).first();
+
+        if (orderJson == null) {
+            return new ArrayList<>();//no order book
+        }
+
+        ArrayList<Booking> bookings = new ArrayList<>();
+        // make list of booking
+        ArrayList list = (ArrayList) orderJson.get("documents");
+        for (Object doc : list) {
+            Object document_id = ((org.bson.Document) doc).get("_id");
+            Document document = jsonToDoc(documents.find(eq("_id", document_id)).first());
+            Booking booking = new Booking(document, ((org.bson.Document) doc).getInteger("date"));
+            bookings.add(booking);
+        }
+        return bookings;
     }
 }
