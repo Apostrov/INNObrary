@@ -1,4 +1,3 @@
-import com.mongodb.BasicDBList;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -7,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Updates.*;
+import static com.mongodb.client.model.Updates.push;
 
 /**
  * INFO:
@@ -31,18 +30,13 @@ public class DataBase {
 
     /**
      * Add document to DataBase and set id to class
+     * If document already in db, REPLACE it
      *
      * @param document what need to add
      */
     public static void addDoc(Document document) {
         // create unique id
         Object id = document.getTitle() + document.getAuthors();
-        // check if already have in db this id
-        Document check = getDoc(id);
-        if (check != null) {
-            // TODO: what to do if already have this id?
-        }
-
         document.setDocument_id(id);
 
         // create Json document
@@ -57,7 +51,14 @@ public class DataBase {
                 .append("copies", document.getCopies())
                 .append("reference", document.isReference())
                 .append("best-seller", document.isBestSeller());
-        documents.insertOne(docJson);
+
+        // check if already have in db this id
+        Document check = getDoc(id);
+        if (check != null) {
+            documents.replaceOne(eq("_id", id), docJson);
+        } else {
+            documents.insertOne(docJson);
+        }
     }
 
     /**
@@ -66,7 +67,7 @@ public class DataBase {
      * @param id of document
      * @return Document or null if not in DataBase
      */
-    public static Document getDoc(Object id) {
+    private static Document getDoc(Object id) {
         org.bson.Document docJson = documents.find(eq("_id", id)).first();
 
         // if not in DataBase
@@ -115,18 +116,13 @@ public class DataBase {
 
     /**
      * Add user to DataBase
+     * If document already in db, REPLACE it
      *
      * @param user what need to add
      */
     public static void addUser(User user) {
         // create unique id
         Object id = user.getUsername();
-
-        // check if already have in DataBase this id
-        User check = getUser(id);
-        if (check != null) {
-            // TODO: what to do if already have this id?
-        }
 
         user.setUser_id(id);
 
@@ -139,11 +135,19 @@ public class DataBase {
                 .append("secondName", user.getSecondName())
                 .append("phone", user.getPhone())
                 .append("isFaculty", user.isFaculty());
-        users.insertOne(userJson);
+
+        // check if already have in DataBase this id
+        User check = getUser(id);
+        if (check != null) {
+            users.replaceOne(eq("_id", id), userJson);
+            deleteAllUserOrders(user);
+        } else {
+            users.insertOne(userJson);
+        }
 
         // parse booking to order
         for (Booking booking : user.getBookings()) {
-            doOrder(user, booking.getDoc());
+            doOrderWithBooking(user, booking);
         }
     }
 
@@ -153,7 +157,7 @@ public class DataBase {
      * @param id of user
      * @return User or null if not in DataBase
      */
-    public static User getUser(Object id) {
+    private static User getUser(Object id) {
         org.bson.Document userJson = users.find(eq("_id", id)).first();
 
         // if not in DataBase
@@ -231,12 +235,61 @@ public class DataBase {
     }
 
     /**
+     * Do order with booking
+     *
+     * @param user    that need order
+     * @param booking with book and date
+     */
+    private static void doOrderWithBooking(User user, Booking booking) {
+        doOrder(user, booking.getDoc());
+    }
+
+    /**
+     * Delete one user all orders
+     *
+     * @param user that order net delete
+     */
+    public static void deleteAllUserOrders(User user) {
+        orders.deleteOne(eq("_id", user.getUser_id()));
+    }
+
+    /**
+     * Delete books from orders
+     *
+     * @param user     that have order
+     * @param document list with deleted book
+     */
+    public static void deleteOrders(User user, ArrayList<Document> document) {
+        ArrayList<Booking> oldBookings = getAllOrderedDoc(user);
+        deleteAllUserOrders(user);
+
+        for (Booking old : oldBookings) {
+            if (document.indexOf(old.getDoc()) == -1) {
+                doOrderWithBooking(user, old);
+            }
+        }
+
+    }
+
+    /**
      * Get list of all order from one user
      *
-     * @param id of user
+     * @param user that order need get
      * @return ArrayList of all order
      */
-    public static ArrayList<Booking> getAllOrderedDoc(Object id) {
+    public static ArrayList<Booking> getAllOrderedDoc(User user) {
+        // get order id
+        Object id = user.getUser_id();
+        return getAllOrderedDoc(id);
+    }
+
+    /**
+     * Helper for getAllOrderedDoc, that found by id
+     *
+     * @param id of user
+     * @return list of all order
+     */
+    private static ArrayList<Booking> getAllOrderedDoc(Object id) {
         // get order
         org.bson.Document orderJson = orders.find(eq("_id", id)).first();
 
