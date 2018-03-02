@@ -3,8 +3,10 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Updates.*;
 
 /**
  * INFO:
@@ -33,16 +35,11 @@ public class DataBase {
      */
     public static void addDoc(Document document) {
         // create unique id
-        Object id = (document.getTitle() + document.getYear()).hashCode();
-
+        Object id = document.getTitle() + document.getAuthors();
         // check if already have in db this id
         Document check = getDoc(id);
         if (check != null) {
-            if (!check.getTitle().equals(document.getTitle())) {
-                // TODO: change id
-            } else {
-                // TODO: what to do if already have this id?
-            }
+            // TODO: what to do if already have this id?
         }
 
         document.setDocument_id(id);
@@ -197,9 +194,30 @@ public class DataBase {
         users.deleteOne(eq("_id", id));
     }
 
-    public static void doOrder(Patron patron, Document document) {
-        // TODO: rewrite for id
-        // DEADLINE 3
-        //TODO: test DBRefs
+    /**
+     * Make order between user and document
+     * @param user take doc
+     * @param document what take
+     */
+    public static void doOrder(User user, Document document) {
+        // create unique id
+        Object id = user.getUser_id();
+
+        // find if user already took something
+        org.bson.Document orderJson = orders.find(eq("_id", id)).first();
+        if(orderJson == null) {
+            //TODO: 3 DEADLINE TASK: start and end time
+            orderJson = new org.bson.Document("_id", id)
+                    .append("userId", user.getUser_id())
+                    .append("documentId", Arrays.asList(new org.bson.Document("_id", document.getDocument_id())
+                            .append("date", 0))); // add date all date
+            orders.insertOne(orderJson);
+        } else {
+            orders.updateOne(
+                    eq("_id", id),
+                    push("documentId",
+                            new org.bson.Document("_id", document.getDocument_id())
+                                    .append("date", 0)));// add date all date
+        }
     }
 }

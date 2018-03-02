@@ -139,4 +139,8 @@ public class User {
     public void setUser_id(Object user_id) {
         this.user_id = user_id;
     }
+
+    public Object getUser_id(){
+        return user_id;
+    }
 }

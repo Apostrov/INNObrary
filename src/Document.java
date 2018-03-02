@@ -136,6 +136,10 @@ public class Document {
         this.document_id = document_id;
     }
 
+    public Object getDocument_id(){
+        return document_id;
+    }
+
     public String getPublisher() {
         return publisher;
     }
