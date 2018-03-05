@@ -1,7 +1,7 @@
-public class Librarian extends User {
+class Librarian extends User {
 
-    Librarian (String username) {
-        super(username);
+    Librarian (String username, String password) {
+        super(username, password, false);
     }
 
 }
