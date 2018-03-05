@@ -156,7 +156,7 @@ class CabinetScreen extends JFrame {
             if (libDoc == null) {
                 JOptionPane.showMessageDialog(mainPanel, "Select the document!");
             } else {
-                DataBase.deleteDoc(Main.findDoc(libDoc).getDocument_id());
+                DataBase.deleteDoc(Main.findDoc(libDoc));
                 Main.documents.remove(Main.findDoc(libDoc));
                 JOptionPane.showMessageDialog(mainPanel, "The document has been removed!");
                 Main.cabinet.setVisible(false);
@@ -206,7 +206,7 @@ class CabinetScreen extends JFrame {
                 JOptionPane.showMessageDialog(mainPanel, "Select the user!");
             } else {
                 JOptionPane.showMessageDialog(mainPanel, "The user has been removed!");
-                DataBase.deleteUser(Main.findUser(userDoc).getUser_id());
+                DataBase.deleteUser(Main.findUser(userDoc));
                 Main.users.remove(Main.findUser(userDoc));
                 Main.cabinet.setVisible(false);
                 Main.cabinet = new CabinetScreen(true);

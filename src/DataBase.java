@@ -104,29 +104,30 @@ public class DataBase {
      * @return new class Document
      */
     private static Document jsonToDoc(org.bson.Document docJson) {
-        if (docJson.get("type").toString().equals("book")) {
-            return  new Book (docJson.get("_id"), docJson.getString("title"),
-                    docJson.getString("authors"), docJson.getInteger("price"),
-                    docJson.getInteger("copies"), docJson.getBoolean("reference"),
-                    docJson.getString("description"), docJson.getString("publisher"),
-                    docJson.getInteger("edition"), docJson.getInteger("year"),
-                    docJson.getBoolean("best-seller"));
-        } else if (docJson.get("type").toString().equals("av")) {
-            return new AudioVideo (docJson.get("_id"), docJson.getString("title"),
-                    docJson.getString("authors"), docJson.getInteger("price"),
-                    docJson.getInteger("copies"), docJson.getBoolean("reference"),
-                    docJson.getString("description"), docJson.getString("publisher"),
-                    docJson.getInteger("edition"), docJson.getInteger("year"),
-                    docJson.getBoolean("best-seller"));
-        } else if (docJson.get ("type").toString().equals("ja")) {
-            return new JournalArticle (docJson.get("_id"), docJson.getString("title"),
-                    docJson.getString("authors"), docJson.getInteger("price"),
-                    docJson.getInteger("copies"), docJson.getBoolean("reference"),
-                    docJson.getString("description"), docJson.getString("publisher"),
-                    docJson.getInteger("edition"), docJson.getInteger("year"),
-                    docJson.getBoolean("best-seller"));
+        switch (docJson.get("type").toString()) {
+            case "book":
+                return new Book(docJson.get("_id"), docJson.getString("title"),
+                        docJson.getString("authors"), docJson.getInteger("price"),
+                        docJson.getInteger("copies"), docJson.getBoolean("reference"),
+                        docJson.getString("description"), docJson.getString("publisher"),
+                        docJson.getInteger("edition"), docJson.getInteger("year"),
+                        docJson.getBoolean("best-seller"));
+            case "av":
+                return new AudioVideo(docJson.get("_id"), docJson.getString("title"),
+                        docJson.getString("authors"), docJson.getInteger("price"),
+                        docJson.getInteger("copies"), docJson.getBoolean("reference"),
+                        docJson.getString("description"), docJson.getString("publisher"),
+                        docJson.getInteger("edition"), docJson.getInteger("year"),
+                        docJson.getBoolean("best-seller"));
+            case "ja":
+                return new JournalArticle(docJson.get("_id"), docJson.getString("title"),
+                        docJson.getString("authors"), docJson.getInteger("price"),
+                        docJson.getInteger("copies"), docJson.getBoolean("reference"),
+                        docJson.getString("description"), docJson.getString("publisher"),
+                        docJson.getInteger("edition"), docJson.getInteger("year"),
+                        docJson.getBoolean("best-seller"));
         }
-        return new Document (docJson.get("_id"), docJson.getString("title"),
+        return new Document(docJson.get("_id"), docJson.getString("title"),
                 docJson.getString("authors"), docJson.getInteger("price"),
                 docJson.getInteger("copies"), docJson.getBoolean("reference"),
                 docJson.getString("description"), docJson.getString("publisher"),
@@ -137,10 +138,39 @@ public class DataBase {
     /**
      * Delete document from db
      *
-     * @param id of document
+     * @param document to delete
      */
-    public static void deleteDoc(Object id) {
-        documents.deleteOne(eq("_id", id));
+    public static void deleteDoc(Document document) {
+        documents.deleteOne(eq("_id", document.getDocument_id()));
+        deleteDocFromOrder(document);
+    }
+
+    /**
+     * Delete document from order
+     *
+     * @param document to delete
+     */
+    public static void deleteDocFromOrder(Document document) {
+        for (org.bson.Document order : orders.find()) {
+            ArrayList<org.bson.Document> userOrder = (ArrayList<org.bson.Document>) order.get("documents");
+            boolean edited = false;
+            // find book in order
+            for (int i = 0; i < userOrder.size(); i++) {
+                // update one of request
+                org.bson.Document doc = userOrder.get(i);
+                if (!edited && doc.get("_id").equals(document.getDocument_id())) {
+                    userOrder.remove(i);
+                    edited = true;
+                }
+            }
+            if (edited) {
+                orders.updateOne(
+                        eq("_id", order.get("_id")),
+                        set("documents", userOrder));
+
+            }
+        }
+
     }
 
     /**
@@ -229,45 +259,12 @@ public class DataBase {
     /**
      * Delete user from database
      *
-     * @param id of user
+     * @param user to delete
      */
-    public static void deleteUser(Object id) {
-        users.deleteOne(eq("_id", id));
+    public static void deleteUser(User user) {
+        users.deleteOne(eq("_id", user.getUser_id()));
+        deleteAllUserOrders(user);
     }
-
-    /**
-     * Make order between user and document
-     *
-     * @param user     take doc
-     * @param document what take
-     */
-    /*public static void doOrder(User user, Document document, int duration, boolean reqBuLib, boolean reqByUser) {
-        // create unique id
-        Object id = user.getUser_id();
-
-        // find if user already took something
-        org.bson.Document orderJson = orders.find(eq("_id", id)).first();
-        if (orderJson == null) {
-            //TODO: 3 DEADLINE TASK: start and end time
-            orderJson = new org.bson.Document("_id", id)
-                    .append("userId", user.getUser_id())
-                    .append("documents", Arrays.asList(new org.bson.Document("_id", document.getDocument_id())
-                            .append("reqByLib", reqBuLib)
-                            .append("reqByUser", reqByUser)
-                            .append("date", 0) // add date all date
-                            .append("duration", duration)));
-            orders.insertOne(orderJson);
-        } else {
-            orders.updateOne(
-                    eq("_id", id),
-                    push("documents",
-                            new org.bson.Document("_id", document.getDocument_id())
-                                    .append("reqByLib", reqBuLib)
-                                    .append("reqByUser", reqByUser)
-                                    .append("date", 0)// add date all date
-                                    .append("duration", duration)));
-        }
-    }*/
 
     /**
      * Make order between user and document
@@ -293,14 +290,19 @@ public class DataBase {
             orders.insertOne(orderJson);
         } else {
             boolean hasBook = false;
-            org.bson.Document[] oldDoc = (org.bson.Document[]) orderJson.get("documents");
-            org.bson.Document[] newDoc = new org.bson.Document[oldDoc.length - 1];
+            ArrayList<org.bson.Document> userOrder = (ArrayList<org.bson.Document>) orderJson.get("documents");
+
             // find book in order
-            for (int i = 0; i < oldDoc.length; i++) {
-                org.bson.Document doc = oldDoc[i];
-                if (!(doc.get("_id") == document.getDocument_id())) {
-                    newDoc[i] = doc;
-                } else {
+            for (int i = 0; i < userOrder.size(); i++) {
+                // update one of request
+                org.bson.Document doc = userOrder.get(i);
+                if (!hasBook && doc.get("_id").equals(document.getDocument_id())) {
+                    org.bson.Document updated = new org.bson.Document("_id", document.getDocument_id())
+                            .append("reqByLib", reqBuLib)
+                            .append("reqByUser", reqByUser)
+                            .append("date", 0) // add date all date
+                            .append("duration", duration);
+                    userOrder.set(i, updated);
                     hasBook = true;
                 }
             }
@@ -317,7 +319,7 @@ public class DataBase {
             } else {
                 orders.updateOne(
                         eq("_id", id),
-                        set("documents", newDoc));
+                        set("documents", userOrder));
             }
         }
     }
@@ -399,5 +401,6 @@ public class DataBase {
         }
         return bookings;
     }
+
 
 }
