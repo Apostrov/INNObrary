@@ -60,6 +60,7 @@ class DocAddScreen extends JFrame {
         backBtn.setAlignmentX(JComponent.LEFT_ALIGNMENT);
         backBtn.addActionListener(e -> {
             Main.docAdd.setVisible(false);
+            Main.cabinet.setLocationRelativeTo(null);
             Main.cabinet.setVisible(true);
         });
         backBtnBox.add(backBtn);
@@ -201,10 +202,13 @@ class DocAddScreen extends JFrame {
                     } else if (title.equals("") || author.equals("") || price.equals("") || copies.equals("") || edition.equals("") || editionYear.equals("") || publisher.equals("")) {
                         JOptionPane.showMessageDialog(mainPanel, "Wrong input data!");
                     } else {
-                        Main.documents.add(new Book(title, author, Integer.parseInt(edition), Integer.parseInt(editionYear), publisher, Integer.parseInt(price), Integer.parseInt(copies), isBestSeller, isReference));
+                        Book b = new Book(title, author, Integer.parseInt(edition), Integer.parseInt(editionYear), publisher, Integer.parseInt(price), Integer.parseInt(copies), isBestSeller, isReference);
+                        Main.documents.add(b);
+                        DataBase.addDoc(b);
                         JOptionPane.showMessageDialog(mainPanel, "New document successfully added!");
                         Main.cabinet = new CabinetScreen(true);
                         Main.docAdd.setVisible(false);
+                        Main.cabinet.setLocationRelativeTo(null);
                         Main.cabinet.setVisible(true);
                     }
                 }
@@ -259,6 +263,7 @@ class DocAddScreen extends JFrame {
         backBtn.setAlignmentX(JComponent.LEFT_ALIGNMENT);
         backBtn.addActionListener(e -> {
             Main.docAdd.setVisible(false);
+            Main.cabinet.setLocationRelativeTo(null);
             Main.cabinet.setVisible(true);
         });
         backBtnBox.add(backBtn);
@@ -361,10 +366,13 @@ class DocAddScreen extends JFrame {
                     } else if (title.equals("") || author.equals("") || price.equals("") || copies.equals("")) {
                         JOptionPane.showMessageDialog(mainPanel, "Wrong input data!");
                     } else {
-                        Main.documents.add(new AudioVideo(title, author, Integer.parseInt(price), Integer.parseInt(copies), isReference));
+                        AudioVideo av = new AudioVideo(title, author, Integer.parseInt(price), Integer.parseInt(copies), isReference);
+                        Main.documents.add(av);
+                        DataBase.addDoc(av);
                         JOptionPane.showMessageDialog(mainPanel, "New document successfully added!");
                         Main.cabinet = new CabinetScreen(true);
                         Main.docAdd.setVisible(false);
+                        Main.cabinet.setLocationRelativeTo(null);
                         Main.cabinet.setVisible(true);
                     }
                 }
@@ -414,6 +422,7 @@ class DocAddScreen extends JFrame {
         backBtn.setAlignmentX(JComponent.LEFT_ALIGNMENT);
         backBtn.addActionListener(e -> {
             Main.docAdd.setVisible(false);
+            Main.cabinet.setLocationRelativeTo(null);
             Main.cabinet.setVisible(true);
         });
         backBtnBox.add(backBtn);
@@ -516,10 +525,13 @@ class DocAddScreen extends JFrame {
                     } else if (title.equals("") || author.equals("") || price.equals("") || copies.equals("")) {
                         JOptionPane.showMessageDialog(mainPanel, "Wrong input data!");
                     } else {
-                        Main.documents.add(new JournalArticle(title, author, Integer.parseInt(price), Integer.parseInt(copies), isReference));
+                        JournalArticle ja = new JournalArticle(title, author, Integer.parseInt(price), Integer.parseInt(copies), isReference);
+                        Main.documents.add(ja);
+                        DataBase.addDoc(ja);
                         JOptionPane.showMessageDialog(mainPanel, "New document successfully added!");
                         Main.cabinet = new CabinetScreen(true);
                         Main.docAdd.setVisible(false);
+                        Main.cabinet.setLocationRelativeTo(null);
                         Main.cabinet.setVisible(true);
                     }
                 }
@@ -575,6 +587,7 @@ class DocAddScreen extends JFrame {
     private void updateType() {
         Main.docAdd.setVisible(false);
         Main.docAdd = new DocAddScreen((String) docTypeComboBox.getSelectedItem());
+        Main.docAdd.setLocationRelativeTo(null);
         Main.docAdd.setVisible(true);
     }
 

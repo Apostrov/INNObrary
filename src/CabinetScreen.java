@@ -82,6 +82,7 @@ class CabinetScreen extends JFrame {
         logoutBtn.setAlignmentX(JComponent.RIGHT_ALIGNMENT);
         logoutBtn.addActionListener(e -> { // What to do when logout button was pressed
             Main.cabinet.setVisible(false);
+            Main.login.setLocationRelativeTo(null);
             Main.login.setVisible(true);
             Main.login.passField.setText(""); // Reset the password field
         });
@@ -94,6 +95,7 @@ class CabinetScreen extends JFrame {
         JButton addDocBtn = new JButton("Add new");
         addDocBtn.addActionListener(e -> {
             Main.cabinet.setVisible(false);
+            Main.docAdd.setLocationRelativeTo(null);
             Main.docAdd.setVisible(true);
         });
         addDocBtn.setAlignmentX(JComponent.CENTER_ALIGNMENT);
@@ -105,6 +107,7 @@ class CabinetScreen extends JFrame {
             if (docTitle != null) {
                 Document doc = Main.findDoc(docTitle);
                 doc.setCopies(doc.getCopies() + 1);
+                DataBase.addDoc(doc);
                 JOptionPane.showMessageDialog(mainPanel, "Copy added!");
             } else {
                 JOptionPane.showMessageDialog(mainPanel, "Select the document!");
@@ -126,7 +129,7 @@ class CabinetScreen extends JFrame {
                 info += "Price:  " + doc.getPrice() + " rubles.\n";
                 info += "Copies left:  " + doc.getCopies() + "\n";
                 if (doc.isReference()) info += "This is a reference document.\n";
-                if (doc instanceof Book) if(((Book) doc).isBS()) info += "This is a bestseller book.\n";
+                if (doc instanceof Book) if (doc.isBestSeller()) info += "This is a bestseller book.\n";
                 JOptionPane.showMessageDialog(mainPanel, info);
             } else {
                 JOptionPane.showMessageDialog(mainPanel, "Select the document!");
@@ -142,6 +145,7 @@ class CabinetScreen extends JFrame {
                 JOptionPane.showMessageDialog(mainPanel, "Select the document!");
             } else {
                 Main.docMod = new DocModifyScreen(Main.findDoc(libDoc));
+                Main.docMod.setLocationRelativeTo(null);
                 Main.docMod.setVisible(true);
                 Main.cabinet.setVisible(false);
             }
@@ -155,11 +159,27 @@ class CabinetScreen extends JFrame {
             if (libDoc == null) {
                 JOptionPane.showMessageDialog(mainPanel, "Select the document!");
             } else {
-                Main.documents.remove(Main.findDoc(libDoc));
-                JOptionPane.showMessageDialog(mainPanel, "The document has been removed!");
-                Main.cabinet.setVisible(false);
-                Main.cabinet = new CabinetScreen(true);
-                Main.cabinet.setVisible(true);
+                boolean docIsBooking = false;
+                String userList = "";
+                for (int i = 0; i < Main.users.size(); ++i) {
+                    for (int j = 0; j < Main.users.get(i).getBookings().size(); ++j) {
+                        if (Main.users.get(i).getBookings().get(j).getDoc().getTitle().equals(libDoc)){
+                            docIsBooking = true;
+                            userList += Main.users.get(i).getFirstName() + " " + Main.users.get(i).getSecondName() + "\n";
+                        }
+                    }
+                }
+                if (docIsBooking) {
+                    JOptionPane.showMessageDialog(mainPanel, "The document is currently ordering!\nList of users who is ordering this document:\n" + userList);
+                } else {
+                    DataBase.deleteDoc(Main.findDoc(libDoc));
+                    Main.documents.remove(Main.findDoc(libDoc));
+                    JOptionPane.showMessageDialog(mainPanel, "The document has been removed!");
+                    Main.cabinet.setVisible(false);
+                    Main.cabinet = new CabinetScreen(true);
+                    Main.cabinet.setLocationRelativeTo(null);
+                    Main.cabinet.setVisible(true);
+                }
             }
         });
         removeDocBtn.setAlignmentX(JComponent.CENTER_ALIGNMENT);
@@ -175,6 +195,7 @@ class CabinetScreen extends JFrame {
             if (username != null) { // What to do when view button (view user) was pressed
                 Main.userView = new UserViewScreen(Main.findUser(username));
                 Main.userView.setVisible(true);
+                Main.userView.setLocationRelativeTo(null);
                 Main.cabinet.setVisible(false);
             } else {
                 JOptionPane.showMessageDialog(mainPanel, "Select the user!");
@@ -184,6 +205,7 @@ class CabinetScreen extends JFrame {
         addUserBtn.setAlignmentX(JComponent.CENTER_ALIGNMENT);
         addUserBtn.addActionListener(l -> {
             Main.cabinet.setVisible(false);
+            Main.userAdd.setLocationRelativeTo(null);
             Main.userAdd.setVisible(true);
         });
         JButton modifyUserBtn = new JButton("Modify");
@@ -194,6 +216,7 @@ class CabinetScreen extends JFrame {
             } else {
                 Main.cabinet.setVisible(false);
                 Main.userMod = new UserModifyScreen(Main.findUser(userDoc));
+                Main.userMod.setLocationRelativeTo(null);
                 Main.userMod.setVisible(true);
             }
         });
@@ -204,9 +227,11 @@ class CabinetScreen extends JFrame {
                 JOptionPane.showMessageDialog(mainPanel, "Select the user!");
             } else {
                 JOptionPane.showMessageDialog(mainPanel, "The user has been removed!");
+                DataBase.deleteUser(Main.findUser(userDoc));
                 Main.users.remove(Main.findUser(userDoc));
                 Main.cabinet.setVisible(false);
                 Main.cabinet = new CabinetScreen(true);
+                Main.cabinet.setLocationRelativeTo(null);
                 Main.cabinet.setVisible(true);
             }
         });
@@ -323,6 +348,7 @@ class CabinetScreen extends JFrame {
                 if (Main.users.get(i).getUsername().equals(Main.activeUser.getUsername()))
                     Main.users.get(i).copyData(Main.activeUser);
             Main.cabinet.setVisible(false);
+            Main.login.setLocationRelativeTo(null);
             Main.login.setVisible(true);
             Main.login.passField.setText("");
         });
@@ -348,6 +374,7 @@ class CabinetScreen extends JFrame {
         changeProfBtn.addActionListener(e -> { // What to do when my profile button was pressed
             Main.changeProf = new ProfChangeScreen(Main.findUser(Main.activeUser.getUsername()));
             Main.cabinet.setVisible(false);
+            Main.changeProf.setLocationRelativeTo(null);
             Main.changeProf.setVisible(true);
         });
         profileBox.add(logoutBtn);
@@ -376,12 +403,15 @@ class CabinetScreen extends JFrame {
                 } else {
                     Main.cabinet.setVisible(false);
                     doc.setCopies(doc.getCopies() - 1);
-                    int delay = 21;                                                 // Usually it is 3 weeks
-                    if (Main.activeUser.isFaculty()) delay = 28;                    // If user is faculty member, then 4 weeks
-                    if (doc instanceof Book) if (((Book) doc).isBS()) delay = 14;   // If the document is book-bestseller, then 2 weeks
-                    if (doc instanceof AudioVideo) delay = 14;                      // If the document is AV-material, then 2 weeks
-                    Main.activeUser.addBooking(new Booking(doc, delay));
+                    DataBase.addDoc(doc);
+                    int duration = 21;                                                 // Usually it is 3 weeks
+                    if (Main.activeUser.isFaculty()) duration = 28;                    // If user is faculty member, then 4 weeks
+                    if (doc instanceof Book) if (doc.isBestSeller()) duration = 14;    // If the document is book-bestseller, then 2 weeks
+                    if (doc instanceof AudioVideo) duration = 14;                      // If the document is AV-material, then 2 weeks
+                    DataBase.doOrder(Main.activeUser, doc, duration, false, false);
+                    Main.activeUser.addBooking(new Booking(doc, duration));
                     Main.cabinet = new CabinetScreen(false);
+                    Main.cabinet.setLocationRelativeTo(null);
                     Main.cabinet.setVisible(true);
                 }
             } else {
@@ -410,7 +440,7 @@ class CabinetScreen extends JFrame {
                 info += "Price: " + booking.getDoc().getPrice() + " rubles.\n";
                 info += "Time left: " + booking.getTimeLeft() + " days.\n";
                 if (booking.getDoc().isReference()) info += "This is a reference document.\n";
-                if (booking.getDoc() instanceof Book) if(((Book) booking.getDoc()).isBS()) info += "This is a bestseller book.\n";
+                if (booking.getDoc() instanceof Book) if(booking.getDoc().isBestSeller()) info += "This is a bestseller book.\n";
                 JOptionPane.showMessageDialog(mainPanel, info);
             } else {
                 JOptionPane.showMessageDialog(mainPanel, "Select the order!");
@@ -433,8 +463,11 @@ class CabinetScreen extends JFrame {
                 } else {
                     JOptionPane.showMessageDialog(mainPanel, "Successfully requested!");
                     booking.userRequest();
+                    DataBase.doOrder(Main.activeUser, booking.getDoc(), booking.getTimeLeft(), booking.hasRequestedByLib(), booking.hasRequestedByUser());
+                    //DataBase.deleteOrder(Main.activeUser, booking.getDoc());
                     Main.cabinet.setVisible(false);
                     Main.cabinet = new CabinetScreen(false);
+                    Main.cabinet.setLocationRelativeTo(null);
                     Main.cabinet.setVisible(true);
                 }
             }
@@ -472,6 +505,7 @@ class CabinetScreen extends JFrame {
         mainPanel.add(Box.createRigidArea(new Dimension(0, 20)));
 
         getContentPane().add(mainPanel);
+
 
         setPreferredSize(new Dimension(450, 640));
         pack();

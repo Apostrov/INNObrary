@@ -40,6 +40,7 @@ class RegistrationScreen extends JFrame {
         backBtn.setAlignmentX(JComponent.LEFT_ALIGNMENT);
         backBtn.addActionListener(e -> {
             Main.register.setVisible(false);
+            Main.login.setLocationRelativeTo(null);
             Main.login.setVisible(true);
         });
         backBtnBox.add(backBtn);
@@ -145,9 +146,12 @@ class RegistrationScreen extends JFrame {
                 JOptionPane.showMessageDialog(mainPanel, "Wrong input data!");
             } else {
                 Main.activeUser = new User(username, password, false, firstName, secondName, address, phone);
+                DataBase.addUser(Main.activeUser);
                 Main.users.add(Main.activeUser);
                 JOptionPane.showMessageDialog(mainPanel, "Successfully registered!");
                 Main.register.setVisible(false);
+                Main.cabinet = new CabinetScreen(false);
+                Main.cabinet.setLocationRelativeTo(null);
                 Main.cabinet.setVisible(true);
             }
         }

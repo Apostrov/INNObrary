@@ -41,6 +41,7 @@ class UserAddScreen extends JFrame {
         backBtn.setAlignmentX(JComponent.LEFT_ALIGNMENT);
         backBtn.addActionListener(e -> {
             Main.userAdd.setVisible(false);
+            Main.cabinet.setLocationRelativeTo(null);
             Main.cabinet.setVisible(true);
         });
         backBtnBox.add(backBtn);
@@ -145,10 +146,13 @@ class UserAddScreen extends JFrame {
                     } else if (username.equals("") || password.equals("") || firstName.equals("") || secondName.equals("") || address.equals("") || phone.equals("")) {
                         JOptionPane.showMessageDialog(mainPanel, "Wrong input data!");
                     } else {
-                        Main.users.add(new User(username, password, isFaculty, firstName, secondName, address, phone));
+                        User u = new User(username, password, isFaculty, firstName, secondName, address, phone);
+                        Main.users.add(u);
+                        DataBase.addUser(u);
                         JOptionPane.showMessageDialog(mainPanel, "New user successfully added!");
                         Main.cabinet = new CabinetScreen(true);
                         Main.userAdd.setVisible(false);
+                        Main.cabinet.setLocationRelativeTo(null);
                         Main.cabinet.setVisible(true);
                     }
                 }

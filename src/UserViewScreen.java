@@ -61,6 +61,7 @@ public class UserViewScreen extends JFrame {
         JButton backBtn = new JButton("Back");
         backBtn.setAlignmentX(JComponent.RIGHT_ALIGNMENT);
         backBtn.addActionListener(e -> { // What to do when back button was pressed
+            Main.cabinet.setLocationRelativeTo(null);
             Main.cabinet.setVisible(true);
             Main.userView.setVisible(false);
         });
@@ -81,8 +82,10 @@ public class UserViewScreen extends JFrame {
                 } else {
                     JOptionPane.showMessageDialog(mainPanel, "Successfully requested!");
                     booking.libRequest();
+                    DataBase.doOrder(userForView, booking.getDoc(), booking.getTimeLeft(), booking.hasRequestedByLib(), booking.hasRequestedByUser());
                     Main.userView.setVisible(false);
                     Main.userView = new UserViewScreen(userForView);
+                    Main.userView.setLocationRelativeTo(null);
                     Main.userView.setVisible(true);
                 }
             }
@@ -101,14 +104,24 @@ public class UserViewScreen extends JFrame {
                 }
                 if (booking.hasRequestedByUser()) {
                     JOptionPane.showMessageDialog(mainPanel, "Successfully returned!");
+                    boolean hasFound = false;
                     for (int i = 0; i < Main.documents.size(); ++i) {
                         if (Main.documents.get(i).getTitle().equals(booking.getDoc().getTitle())) {
+                            hasFound = true;
                             Main.documents.get(i).setCopies(Main.documents.get(i).getCopies() + 1);
-                            userForView.getBookings().remove(booking);
+                            DataBase.deleteOrder(userForView, booking.getDoc());
+                            boolean found = userForView.getBookings().remove(booking);
+                            System.out.println(found);
                         }
+                    }
+                    if (!hasFound) {
+                        booking.getDoc().setCopies(1);
+                        Main.documents.add(booking.getDoc());
+                        DataBase.addDoc(booking.getDoc());
                     }
                     Main.userView.setVisible(false);
                     Main.userView = new UserViewScreen(userForView);
+                    Main.userView.setLocationRelativeTo(null);
                     Main.userView.setVisible(true);
                 } else {
                     JOptionPane.showMessageDialog(mainPanel, "User has not requested yet!");
@@ -138,7 +151,7 @@ public class UserViewScreen extends JFrame {
                 info += "Price:  " + booking.getDoc().getPrice() + " rubles.\n";
                 info += "Time left:  " + booking.getTimeLeft() + " days.\n";
                 if (booking.getDoc().isReference()) info += "This is a reference document.\n";
-                if (booking.getDoc() instanceof Book) if(((Book) booking.getDoc()).isBS()) info += "This is a bestseller book.\n";
+                if (booking.getDoc() instanceof Book) if(booking.getDoc().isBestSeller()) info += "This is a bestseller book.\n";
                 JOptionPane.showMessageDialog(mainPanel, info);
             } else {
                 JOptionPane.showMessageDialog(mainPanel, "Select user's order!");

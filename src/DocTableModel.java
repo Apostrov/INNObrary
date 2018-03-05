@@ -54,7 +54,7 @@ public class DocTableModel implements TableModel {
         boolean isBS = false;
         if (doc instanceof Book){
             type = "Book";
-            if (((Book)doc).isBS()) isBS = true;
+            if (doc.isBestSeller()) isBS = true;
         }
         if (doc instanceof Book) type = "A book";
         if (doc instanceof AudioVideo) type = "An AV material";

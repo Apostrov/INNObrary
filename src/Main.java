@@ -18,44 +18,22 @@ public class Main {
 
     /** Main method of INNObrary */
     public static void main(String[] args) {
-        // For test cases
-        users = new ArrayList<>();
-        documents = new ArrayList<>();
-        String[] books = {
-                "War and peace", "1984", "Three comrades", "The Catcher in the Rye",
-                "Pride and Prejudice", "To Kill a Mockingbird", "The Great Gatsby",
-                "Catch-22", "Animal Farm", "Great Expectations", "Jane Eyre",
-                "Wuthering Heights", "Lord of the Flies", "Little Women", "Anna Karenina",
-                "Brave New World", "The Grapes of Wrath", "Gone with the Wind", "Charlotte's Web"
-        };
+        // Run-time storage
+        users = DataBase.getAllUser();
+        documents = DataBase.getAllDoc();
 
-        for (int i = 0; i < 3; ++i) {
-            Patron nextPatron = new Patron("patron_" + (i + 1), "123", false, "1" + i, "1" + i, "1" + i, "1" + i);
-            users.add(nextPatron);
-        }
-        Patron facultyPatron = new Patron("faculty_1", "123", true, "1f", "1f", "1f", "1f");
-        users.add(facultyPatron);
         users.add(new Librarian("admin", "admin"));
-        for (int i = 0; i < 19; ++i){
-            documents.add(new Book(books[i], "Somebody", 1, 2007, "DownTown pub. house", 100, 1, false, false));
-        }
-        documents.get(0).setCopies(0);
-        documents.get(1).setReference(true);
-        if (documents.get(2) instanceof Book) ((Book) documents.get(2)).setBS(true);
-        documents.get(3).setCopies(2);
-        documents.get(4).setCopies(3);
-        documents.get(5).setCopies(4);
 
         // Load interface
-        login = new LoginScreen();
-        register = new RegistrationScreen();
-        cabinet = new CabinetScreen(false);
-        userView = new UserViewScreen(null);
-        userAdd = new UserAddScreen();
-        userMod = new UserModifyScreen(new User("", "", false));
-        docAdd = new DocAddScreen("Book");
-        docMod = new DocModifyScreen(new Document("","",1,1,false));
-        changeProf = new ProfChangeScreen(new User("", "", false));
+        login = new LoginScreen(); login.setLocationRelativeTo(null);
+        register = new RegistrationScreen(); register.setLocationRelativeTo(null);
+        cabinet = new CabinetScreen(false); cabinet.setLocationRelativeTo(null);
+        userView = new UserViewScreen(null); userView.setLocationRelativeTo(null);
+        userAdd = new UserAddScreen(); userAdd.setLocationRelativeTo(null);
+        userMod = new UserModifyScreen(new User("", "", false)); userMod.setLocationRelativeTo(null);
+        docAdd = new DocAddScreen("Book"); docAdd.setLocationRelativeTo(null);
+        docMod = new DocModifyScreen(new Document("","",1,1,false)); docMod.setLocationRelativeTo(null);
+        changeProf = new ProfChangeScreen(new User("", "", false)); changeProf.setLocationRelativeTo(null);
 
         login.setVisible(true);
         register.setVisible(false);

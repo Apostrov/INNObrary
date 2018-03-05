@@ -38,6 +38,7 @@ class LoginScreen extends JFrame {
                 if (checkForUser(userField.getText(), new String(passField.getPassword()))){
                     Main.activeUser = Main.findUser(userField.getText());
                     Main.cabinet = new CabinetScreen(Main.activeUser instanceof Librarian);
+                    Main.cabinet.setLocationRelativeTo(null);
                     Main.cabinet.setVisible(true);
                     Main.login.setVisible(false);
                 } else {
@@ -50,6 +51,7 @@ class LoginScreen extends JFrame {
         registerBtn.setAlignmentX(JComponent.CENTER_ALIGNMENT);
         registerBtn.addActionListener(e -> {
             Main.login.setVisible(false);
+            Main.register.setLocationRelativeTo(null);
             Main.register.setVisible(true);
         });
 

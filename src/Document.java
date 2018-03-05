@@ -132,6 +132,8 @@ public class Document {
         return year;
     }
 
+    public void setYear(int year) { this.year = year; }
+
     public void setDocument_id(Object document_id) {
         this.document_id = document_id;
     }
@@ -144,11 +146,16 @@ public class Document {
         return publisher;
     }
 
+    public void setPublisher(String publisher) { this.publisher = publisher; }
+
     public int getEdition() {
         return edition;
     }
 
-    public boolean isBestSeller() {
-        return isBestSeller;
-    }
+    public void setEdition(int edition) { this.edition = edition; }
+
+    public boolean isBestSeller() { return isBestSeller; }
+
+    public void setBestSeller(boolean isBestSeller) { this.isBestSeller = isBestSeller; }
+
 }

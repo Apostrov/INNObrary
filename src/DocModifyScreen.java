@@ -46,6 +46,7 @@ class DocModifyScreen extends JFrame {
         backBtn.setAlignmentX(JComponent.LEFT_ALIGNMENT);
         backBtn.addActionListener(e -> {
             Main.docMod.setVisible(false);
+            Main.cabinet.setLocationRelativeTo(null);
             Main.cabinet.setVisible(true);
         });
         backBtnBox.add(backBtn);
@@ -122,7 +123,7 @@ class DocModifyScreen extends JFrame {
         editionField = new JTextField();
         editionField.setAlignmentX(JComponent.CENTER_ALIGNMENT);
         editionField.setMaximumSize(new Dimension(160, 20));
-        editionField.setText(Integer.toString(((Book) doc).getEdition()));
+        editionField.setText(Integer.toString(doc.getEdition()));
         fieldBox.add(Box.createRigidArea(new Dimension(0, 5)));
         fieldBox.add(editionField);
 
@@ -136,7 +137,7 @@ class DocModifyScreen extends JFrame {
         editionYField = new JTextField();
         editionYField.setAlignmentX(JComponent.CENTER_ALIGNMENT);
         editionYField.setMaximumSize(new Dimension(160, 20));
-        editionYField.setText(Integer.toString(((Book) doc).getYear()));
+        editionYField.setText(Integer.toString(doc.getYear()));
         fieldBox.add(Box.createRigidArea(new Dimension(0, 5)));
         fieldBox.add(editionYField);
 
@@ -150,7 +151,7 @@ class DocModifyScreen extends JFrame {
         publisherField = new JTextField();
         publisherField.setAlignmentX(JComponent.CENTER_ALIGNMENT);
         publisherField.setMaximumSize(new Dimension(160, 20));
-        publisherField.setText(((Book) doc).getPublisher());
+        publisherField.setText(doc.getPublisher());
         fieldBox.add(Box.createRigidArea(new Dimension(0, 5)));
         fieldBox.add(publisherField);
 
@@ -177,13 +178,15 @@ class DocModifyScreen extends JFrame {
                         doc.setPrice(Integer.parseInt(price));
                         doc.setCopies(Integer.parseInt(copies));
                         doc.setReference(isReference);
-                        ((Book) doc).setEdition(Integer.parseInt(edition));
-                        ((Book) doc).setYear(Integer.parseInt(editionYear));
-                        ((Book) doc).setPublisher(publisher);
-                        ((Book) doc).setBS(isBestSeller);
+                        doc.setEdition(Integer.parseInt(edition));
+                        doc.setYear(Integer.parseInt(editionYear));
+                        doc.setPublisher(publisher);
+                        doc.setBestSeller(isBestSeller);
+                        DataBase.addDoc(doc);
                         JOptionPane.showMessageDialog(mainPanel, "Document successfully modified!");
                         Main.cabinet = new CabinetScreen(true);
                         Main.docMod.setVisible(false);
+                        Main.cabinet.setLocationRelativeTo(null);
                         Main.cabinet.setVisible(true);
                     }
                 }
@@ -201,7 +204,7 @@ class DocModifyScreen extends JFrame {
 
         JCheckBox BSCheckBox = new JCheckBox("Is bestseller");
         BSCheckBox.setAlignmentX(JComponent.LEFT_ALIGNMENT);
-        BSCheckBox.setSelected(((Book) doc).isBS());
+        BSCheckBox.setSelected(doc.isBestSeller());
         BSCheckBox.addItemListener(e -> isBestSeller = BSCheckBox.isSelected());
 
         refBSBox.add(refCheckBox);
@@ -238,6 +241,7 @@ class DocModifyScreen extends JFrame {
         backBtn.setAlignmentX(JComponent.LEFT_ALIGNMENT);
         backBtn.addActionListener(e -> {
             Main.docMod.setVisible(false);
+            Main.cabinet.setLocationRelativeTo(null);
             Main.cabinet.setVisible(true);
         });
         backBtnBox.add(backBtn);
@@ -327,9 +331,11 @@ class DocModifyScreen extends JFrame {
                         doc.setPrice(Integer.parseInt(price));
                         doc.setCopies(Integer.parseInt(copies));
                         doc.setReference(isReference);
+                        DataBase.addDoc(doc);
                         JOptionPane.showMessageDialog(mainPanel, "Document successfully modidfied!");
                         Main.cabinet = new CabinetScreen(true);
                         Main.docMod.setVisible(false);
+                        Main.cabinet.setLocationRelativeTo(null);
                         Main.cabinet.setVisible(true);
                     }
                 }

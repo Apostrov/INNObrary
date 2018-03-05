@@ -3,13 +3,11 @@ import java.awt.*;
 
 class ProfChangeScreen extends JFrame {
 
-    private String username;
     private String password;
     private String firstName;
     private String secondName;
     private String address;
     private String phone;
-    private JTextField usernameField;
     private JTextField passwordField;
     private JTextField fNameField;
     private JTextField sNameField;
@@ -38,6 +36,7 @@ class ProfChangeScreen extends JFrame {
         backBtn.setAlignmentX(JComponent.LEFT_ALIGNMENT);
         backBtn.addActionListener(e -> {
             Main.changeProf.setVisible(false);
+            Main.cabinet.setLocationRelativeTo(null);
             Main.cabinet.setVisible(true);
         });
         backBtnBox.add(backBtn);
@@ -47,20 +46,6 @@ class ProfChangeScreen extends JFrame {
         Box changeBox = Box.createHorizontalBox();
         Box labelBox = Box.createVerticalBox();
         Box fieldBox = Box.createVerticalBox();
-
-        // Username label
-        JLabel usernameLabel = new JLabel();
-        usernameLabel.setText("Username:  ");
-        usernameLabel.setFont(new Font("name", Font.BOLD, 15));
-        labelBox.add(usernameLabel);
-        labelBox.add(Box.createRigidArea(new Dimension(0, 5)));
-        // Username field
-        usernameField = new JTextField();
-        usernameField.setAlignmentX(JComponent.CENTER_ALIGNMENT);
-        usernameField.setMaximumSize(new Dimension(160, 20));
-        usernameField.setText(user.getUsername());
-        fieldBox.add(Box.createRigidArea(new Dimension(0, 5)));
-        fieldBox.add(usernameField);
 
         // Password label
         JLabel passwordLabel = new JLabel();
@@ -143,12 +128,11 @@ class ProfChangeScreen extends JFrame {
         changeBtn.setAlignmentX(JComponent.LEFT_ALIGNMENT);
         changeBtn.addActionListener(e -> {
             updateData();
-            if (username == null || password == null || firstName == null || secondName == null || address == null || phone == null) {
+            if (password == null || firstName == null || secondName == null || address == null || phone == null) {
                 JOptionPane.showMessageDialog(mainPanel, "Wrong input data!");
-            } else if (username.equals("") || password.equals("") || firstName.equals("") || secondName.equals("") || address.equals("") || phone.equals("")) {
+            } else if (password.equals("") || firstName.equals("") || secondName.equals("") || address.equals("") || phone.equals("")) {
                 JOptionPane.showMessageDialog(mainPanel, "Wrong input data!");
             } else {
-                user.setUsername(username);
                 user.setPassword(password);
                 user.setFirstName(firstName);
                 user.setSecondName(secondName);
@@ -158,6 +142,7 @@ class ProfChangeScreen extends JFrame {
                 JOptionPane.showMessageDialog(mainPanel, "Successfully changed!");
                 Main.changeProf.setVisible(false);
                 Main.cabinet = new CabinetScreen(false);
+                Main.cabinet.setLocationRelativeTo(null);
                 Main.cabinet.setVisible(true);
             }
         }
@@ -180,7 +165,6 @@ class ProfChangeScreen extends JFrame {
     }
 
     private void updateData () {
-        username = usernameField.getText();
         password = passwordField.getText();
         firstName = fNameField.getText();
         secondName = sNameField.getText();
