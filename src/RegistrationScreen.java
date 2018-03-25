@@ -1,7 +1,7 @@
+package main.java;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 
 class RegistrationScreen extends JFrame {
 
@@ -40,6 +40,7 @@ class RegistrationScreen extends JFrame {
         backBtn.setAlignmentX(JComponent.LEFT_ALIGNMENT);
         backBtn.addActionListener(e -> {
             Main.register.setVisible(false);
+            Main.login.setLocationRelativeTo(null);
             Main.login.setVisible(true);
         });
         backBtnBox.add(backBtn);
@@ -139,17 +140,23 @@ class RegistrationScreen extends JFrame {
         registerBtn.setAlignmentX(JComponent.LEFT_ALIGNMENT);
         registerBtn.addActionListener(e -> {
             updateData();
-            if (username == null || password == null || firstName == null || secondName == null || address == null || phone == null) {
+            if (username == null || password == null || firstName == null || secondName == null || address == null || phone == null || username.equals("admin")) {
                 JOptionPane.showMessageDialog(mainPanel, "Wrong input data!");
             } else if (username.equals("") || password.equals("") || firstName.equals("") || secondName.equals("") || address.equals("") || phone.equals("")) {
                 JOptionPane.showMessageDialog(mainPanel, "Wrong input data!");
             } else {
-                Main.activeUser = new User(username, password, false, firstName, secondName, address, phone);
-                DataBase.addUser(Main.activeUser);
-                Main.users.add(Main.activeUser);
-                JOptionPane.showMessageDialog(mainPanel, "Successfully registered!");
-                Main.register.setVisible(false);
-                Main.cabinet.setVisible(true);
+                Main.activeUser = new User(username, password, false, firstName, secondName, address, phone, 0);
+                if (!DataBase.findUser(Main.activeUser)) {
+                    DataBase.addUser(Main.activeUser);
+                    Main.users.add(Main.activeUser);
+                    JOptionPane.showMessageDialog(mainPanel, "Successfully registered!");
+                    Main.register.setVisible(false);
+                    Main.cabinet = new CabinetScreen(false);
+                    Main.cabinet.setLocationRelativeTo(null);
+                    Main.cabinet.setVisible(true);
+                } else {
+                    JOptionPane.showMessageDialog(mainPanel, "User with this username already exist!");
+                }
             }
         }
         );

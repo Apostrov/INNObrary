@@ -1,7 +1,10 @@
+package main.java;
+
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -57,7 +60,8 @@ public class DataBase {
                 .append("price", document.getPrice())
                 .append("copies", document.getCopies())
                 .append("reference", document.isReference())
-                .append("best-seller", document.isBestSeller());
+                .append("best-seller", document.isBestSeller())
+                .append("isOutstanding", document.isOutstanding());
 
         // check if already have in db this id
         Document check = getDoc(id);
@@ -104,35 +108,38 @@ public class DataBase {
      * @return new class Document
      */
     private static Document jsonToDoc(org.bson.Document docJson) {
-        switch (docJson.get("type").toString()) {
-            case "book":
-                return new Book(docJson.get("_id"), docJson.getString("title"),
-                        docJson.getString("authors"), docJson.getInteger("price"),
-                        docJson.getInteger("copies"), docJson.getBoolean("reference"),
-                        docJson.getString("description"), docJson.getString("publisher"),
-                        docJson.getInteger("edition"), docJson.getInteger("year"),
-                        docJson.getBoolean("best-seller"));
-            case "av":
-                return new AudioVideo(docJson.get("_id"), docJson.getString("title"),
-                        docJson.getString("authors"), docJson.getInteger("price"),
-                        docJson.getInteger("copies"), docJson.getBoolean("reference"),
-                        docJson.getString("description"), docJson.getString("publisher"),
-                        docJson.getInteger("edition"), docJson.getInteger("year"),
-                        docJson.getBoolean("best-seller"));
-            case "ja":
-                return new JournalArticle(docJson.get("_id"), docJson.getString("title"),
-                        docJson.getString("authors"), docJson.getInteger("price"),
-                        docJson.getInteger("copies"), docJson.getBoolean("reference"),
-                        docJson.getString("description"), docJson.getString("publisher"),
-                        docJson.getInteger("edition"), docJson.getInteger("year"),
-                        docJson.getBoolean("best-seller"));
+        if (docJson != null) {
+            switch (docJson.get("type").toString()) {
+                case "book":
+                    return new Book(docJson.get("_id"), docJson.getString("title"),
+                            docJson.getString("authors"), docJson.getInteger("price"),
+                            docJson.getInteger("copies"), docJson.getBoolean("reference"),
+                            docJson.getString("description"), docJson.getString("publisher"),
+                            docJson.getInteger("edition"), docJson.getInteger("year"),
+                            docJson.getBoolean("best-seller"), docJson.getBoolean("isOutstanding"));
+                case "av":
+                    return new AudioVideo(docJson.get("_id"), docJson.getString("title"),
+                            docJson.getString("authors"), docJson.getInteger("price"),
+                            docJson.getInteger("copies"), docJson.getBoolean("reference"),
+                            docJson.getString("description"), docJson.getString("publisher"),
+                            docJson.getInteger("edition"), docJson.getInteger("year"),
+                            docJson.getBoolean("best-seller"), docJson.getBoolean("isOutstanding"));
+                case "ja":
+                    return new JournalArticle(docJson.get("_id"), docJson.getString("title"),
+                            docJson.getString("authors"), docJson.getInteger("price"),
+                            docJson.getInteger("copies"), docJson.getBoolean("reference"),
+                            docJson.getString("description"), docJson.getString("publisher"),
+                            docJson.getInteger("edition"), docJson.getInteger("year"),
+                            docJson.getBoolean("best-seller"), docJson.getBoolean("isOutstanding"));
+            }
+            return new Document(docJson.get("_id"), docJson.getString("title"),
+                    docJson.getString("authors"), docJson.getInteger("price"),
+                    docJson.getInteger("copies"), docJson.getBoolean("reference"),
+                    docJson.getString("description"), docJson.getString("publisher"),
+                    docJson.getInteger("edition"), docJson.getInteger("year"),
+                    docJson.getBoolean("best-seller"), docJson.getBoolean("isOutstanding"));
         }
-        return new Document(docJson.get("_id"), docJson.getString("title"),
-                docJson.getString("authors"), docJson.getInteger("price"),
-                docJson.getInteger("copies"), docJson.getBoolean("reference"),
-                docJson.getString("description"), docJson.getString("publisher"),
-                docJson.getInteger("edition"), docJson.getInteger("year"),
-                docJson.getBoolean("best-seller"));
+        return null;
     }
 
     /**
@@ -182,7 +189,6 @@ public class DataBase {
     public static void addUser(User user) {
         // create unique id
         Object id = user.getUsername();
-
         user.setUser_id(id);
 
         // create Json document
@@ -193,7 +199,8 @@ public class DataBase {
                 .append("firstName", user.getFirstName())
                 .append("secondName", user.getSecondName())
                 .append("phone", user.getPhone())
-                .append("isFaculty", user.isFaculty());
+                .append("isFaculty", user.isFaculty())
+                .append("priority", user.getPriority());
 
         // check if already have in DataBase this id
         User check = getUser(id);
@@ -207,6 +214,17 @@ public class DataBase {
         // parse booking to order
         for (Booking booking : user.getBookings()) {
             doOrderWithBooking(user, booking);
+        }
+    }
+
+    public static boolean findUser (User user) {
+        Object id = user.getUsername();
+        user.setUser_id(id);
+        User check = getUser(id);
+        if (check != null) {
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -251,8 +269,31 @@ public class DataBase {
         User user = new User(userJson.get("_id"), userJson.getString("username"),
                 userJson.getString("password"), userJson.getBoolean("isFaculty"),
                 userJson.getString("firstName"), userJson.getString("secondName"),
-                userJson.getString("address"), userJson.getString("phone"));
+                userJson.getString("address"), userJson.getString("phone"),
+                userJson.getInteger("priority"));
         user.setBookings(bookings);
+        switch (user.getPriority()) {
+            case 4: {
+                user = new Student(user);
+                break;
+            }
+            case 3: {
+                user = new Instructor(user);
+                break;
+            }
+            case 2: {
+                user = new TA(user);
+                break;
+            }
+            case 1: {
+                user = new VisitingProfessor(user);
+                break;
+            }
+            case 0: {
+                user = new Professor(user);
+                break;
+            }
+        }
         return user;
     }
 
@@ -272,21 +313,21 @@ public class DataBase {
      * @param user     take doc
      * @param document what take
      */
-    public static void doOrder(User user, Document document, int duration, boolean reqBuLib, boolean reqByUser) {
+    public static void doOrder(User user, Document document, int duration, Date date, boolean reqBuLib, boolean reqByUser, boolean hasReceived) {
         // create unique id
         Object id = user.getUser_id();
 
         // find if user already took something
         org.bson.Document orderJson = orders.find(eq("_id", id)).first();
         if (orderJson == null) {
-            //TODO: 3 DEADLINE TASK: start and end time
             orderJson = new org.bson.Document("_id", id)
                     .append("userId", user.getUser_id())
                     .append("documents", Arrays.asList(new org.bson.Document("_id", document.getDocument_id())
                             .append("reqByLib", reqBuLib)
                             .append("reqByUser", reqByUser)
-                            .append("date", 0) // add date all date
-                            .append("duration", duration)));
+                            .append("date", date.toString())
+                            .append("duration", duration)
+                            .append("hasReceived", hasReceived)));
             orders.insertOne(orderJson);
         } else {
             boolean hasBook = false;
@@ -300,8 +341,9 @@ public class DataBase {
                     org.bson.Document updated = new org.bson.Document("_id", document.getDocument_id())
                             .append("reqByLib", reqBuLib)
                             .append("reqByUser", reqByUser)
-                            .append("date", 0) // add date all date
-                            .append("duration", duration);
+                            .append("date", date.toString())
+                            .append("duration", duration)
+                            .append("hasReceived", hasReceived);
                     userOrder.set(i, updated);
                     hasBook = true;
                 }
@@ -314,8 +356,9 @@ public class DataBase {
                                 new org.bson.Document("_id", document.getDocument_id())
                                         .append("reqByLib", reqBuLib)
                                         .append("reqByUser", reqByUser)
-                                        .append("date", 0)// add date all date
-                                        .append("duration", duration)));
+                                        .append("date", date.toString())
+                                        .append("duration", duration)
+                                        .append("hasReceived", hasReceived)));
             } else {
                 orders.updateOne(
                         eq("_id", id),
@@ -331,7 +374,7 @@ public class DataBase {
      * @param booking with book and date
      */
     private static void doOrderWithBooking(User user, Booking booking) {
-        doOrder(user, booking.getDoc(), booking.getTimeLeft(), booking.hasRequestedByLib(), booking.hasRequestedByUser());
+        doOrder(user, booking.getDoc(), booking.getDuration(), booking.getDate(), booking.hasRequestedByLib(), booking.hasRequestedByUser(), booking.hasReceived());
     }
 
     /**
@@ -354,12 +397,10 @@ public class DataBase {
         deleteAllUserOrders(user);
 
         for (Booking old : oldBookings) {
-            if (!old.getDoc().equals(document)) {
+            if (!old.getDoc().getDocument_id().equals(document.getDocument_id())) {
                 doOrderWithBooking(user, old);
             }
         }
-
-        user.setBookings(oldBookings);
     }
 
     /**
@@ -394,13 +435,13 @@ public class DataBase {
         for (Object doc : list) {
             Object document_id = ((org.bson.Document) doc).get("_id");
             Document document = jsonToDoc(documents.find(eq("_id", document_id)).first());
-            Booking booking = new Booking(document, ((org.bson.Document) doc).getInteger("duration"));
+            Booking booking = new Booking(document, ((org.bson.Document) doc).getInteger("duration"), Date.valueOf(((org.bson.Document) doc).getString("date")));
             if (((org.bson.Document) doc).getBoolean("reqByLib")) booking.libRequest();
             if (((org.bson.Document) doc).getBoolean("reqByUser")) booking.userRequest();
+            if (((org.bson.Document) doc).getBoolean("hasReceived")) booking.setReceived();
             bookings.add(booking);
         }
         return bookings;
     }
-
 
 }

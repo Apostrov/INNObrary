@@ -1,3 +1,5 @@
+package main.java;
+
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 import java.util.ArrayList;
@@ -5,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/** This class is used only for building the user table. */
 public class UserTableModel implements TableModel {
 
     private Set<TableModelListener> listeners = new HashSet<>();
@@ -14,6 +17,7 @@ public class UserTableModel implements TableModel {
     UserTableModel(List<User> users) {
         this.users = new ArrayList<>();
         this.users.addAll(users);
+        // There is no need to contain the librarian in the table
         for (int i = 0; i < this.users.size(); ++i) if (this.users.get(i) instanceof Librarian) this.users.remove(i);
     }
 

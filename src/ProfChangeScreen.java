@@ -1,3 +1,5 @@
+package main.java;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -36,6 +38,7 @@ class ProfChangeScreen extends JFrame {
         backBtn.setAlignmentX(JComponent.LEFT_ALIGNMENT);
         backBtn.addActionListener(e -> {
             Main.changeProf.setVisible(false);
+            Main.cabinet.setLocationRelativeTo(null);
             Main.cabinet.setVisible(true);
         });
         backBtnBox.add(backBtn);
@@ -120,9 +123,9 @@ class ProfChangeScreen extends JFrame {
         changeBox.add(fieldBox);
         changeBox.add(Box.createRigidArea(new Dimension(15, 0)));
 
-        // Register button box
+        // Change button box
         Box changeBtnBox = Box.createHorizontalBox();
-        // Register button
+        // Change button
         JButton changeBtn = new JButton("Change");
         changeBtn.setAlignmentX(JComponent.LEFT_ALIGNMENT);
         changeBtn.addActionListener(e -> {
@@ -141,6 +144,7 @@ class ProfChangeScreen extends JFrame {
                 JOptionPane.showMessageDialog(mainPanel, "Successfully changed!");
                 Main.changeProf.setVisible(false);
                 Main.cabinet = new CabinetScreen(false);
+                Main.cabinet.setLocationRelativeTo(null);
                 Main.cabinet.setVisible(true);
             }
         }

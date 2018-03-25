@@ -1,3 +1,5 @@
+package main.java;
+
 import java.util.ArrayList;
 
 public class User {
@@ -9,6 +11,7 @@ public class User {
     private String address;
     private String phone;
     private boolean isFaculty;
+    private int priority;
 
     private ArrayList<Booking> bookings; // Current documents on hands
     private Object user_id;
@@ -18,21 +21,29 @@ public class User {
         this.password = password;
         bookings = new ArrayList<>();
         this.isFaculty = isFaculty;
+        priority = 4;
     }
 
-    User (String username, String password, boolean isFaculty, String firstName, String secondName, String address, String phone) {
+    User(String username, String password, boolean isFaculty, String firstName, String secondName, String address, String phone, int priority) {
         this(username, password, isFaculty);
         this.firstName = firstName;
         this.secondName = secondName;
         this.address = address;
         this.phone = phone;
+        this.priority = priority;
     }
 
-    // constructor for getting from DataBase
-    User (Object user_id,String username, String password, boolean isFaculty, String firstName, String secondName, String address, String phone) {
-        this(username, password, isFaculty, firstName, secondName, address, phone);
+    // Constructor for getting from DataBase
+    User (Object user_id,String username, String password, boolean isFaculty, String firstName, String secondName, String address, String phone, int priority) {
+        this(username, password, isFaculty, firstName, secondName, address, phone, priority);
         this.user_id = user_id;
     }
+
+    User (User userToCopy) {
+        this(userToCopy.user_id, userToCopy.username, userToCopy.password, userToCopy.isFaculty, userToCopy.firstName, userToCopy.secondName, userToCopy.address, userToCopy.phone, userToCopy.priority);
+        copyData(userToCopy);
+    }
+
 
     /** Addition of new booking
      *  @param booking user's offer */
@@ -43,6 +54,7 @@ public class User {
         return bookings;
     }
 
+    /** Auxiliary method to copy all field from another user */
     void copyData (User user){
         setBookings(user.getBookings());
         setFaculty(user.isFaculty());
@@ -50,6 +62,7 @@ public class User {
         setSecondName(user.getSecondName());
         setAddress(user.getAddress());
         setPhone(user.getPhone());
+        setPriority(user.getPriority());
     }
 
     /** Returns all current bookings */
@@ -58,30 +71,24 @@ public class User {
         this.bookings.addAll(bookings);
     }
 
-    /** Returns booking from current bookings with id 'bookingID'
-     *  @param bookingID id of booking that is need to return */
-    Booking getBooking (int bookingID) {
-        if (bookingID - 1 >= bookings.size()) {
-            return null;
-        } else {
-            return bookings.get(bookingID - 1);
-        }
+    /** Auxiliary method that returns the number of the user debts */
+    int getDebtsNum() {
+        int debts = 0;
+        for (int i = 0; i < bookings.size(); ++i) if (bookings.get(i).isOverdue()) debts++;
+        return debts;
     }
 
-    /** Deletion of user's booking with id 'bookingID'
-     *  @param bookingID id of booking that is need to delete */
-    public void removeBooking (int bookingID) {
-        if (bookingID - 1 < bookings.size()) {
-            bookings.remove(bookingID - 1);
-        }
+    /** Returns the booking of the user by given title of the document. */
+    Booking findBooking(String title) {
+        for (int i = 0; i < bookings.size(); ++i) if (bookings.get(i).getDoc().getTitle().equals(title)) return bookings.get(i);
+        return null;
     }
 
-    public void sendRequest(Booking booking) {
-
-    }
-
-    public void removeRequest(Booking booking) {
-
+    /** Returns the number of requests for the unavailable documents. */
+    int getRequestNum () {
+        int num = 0;
+        for (int i = 0; i < bookings.size(); ++i) if (!bookings.get(i).hasReceived()) num++;
+        return num;
     }
 
     public String getUsername() {
@@ -96,11 +103,11 @@ public class User {
 
     public void setPassword (String password) { this.password = password; }
 
-    public boolean isFaculty() {
+    boolean isFaculty() {
         return isFaculty;
     }
 
-    public void setFaculty(boolean faculty) {
+    void setFaculty(boolean faculty) {
         isFaculty = faculty;
     }
 
@@ -136,11 +143,19 @@ public class User {
         this.phone = phone;
     }
 
-    public void setUser_id(Object user_id) {
+    void setUser_id(Object user_id) {
         this.user_id = user_id;
     }
 
-    public Object getUser_id(){
+    Object getUser_id(){
         return user_id;
+    }
+
+    int getPriority() {
+        return priority;
+    }
+
+    void setPriority(int priority) {
+        this.priority = priority;
     }
 }

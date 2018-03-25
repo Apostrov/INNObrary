@@ -1,7 +1,11 @@
+package main.java;
+
 import javax.swing.*;
 import javax.swing.table.TableModel;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 public class UserViewScreen extends JFrame {
 		
@@ -60,46 +64,48 @@ public class UserViewScreen extends JFrame {
         Box backBox = Box.createHorizontalBox();
         JButton backBtn = new JButton("Back");
         backBtn.setAlignmentX(JComponent.RIGHT_ALIGNMENT);
-        backBtn.addActionListener(e -> { // What to do when back button was pressed
+        backBtn.addActionListener(e -> {
+            Main.cabinet.setLocationRelativeTo(null);
             Main.cabinet.setVisible(true);
             Main.userView.setVisible(false);
         });
         // Request button
         JButton requestBtn = new JButton("Request");
         requestBtn.setAlignmentX(JComponent.RIGHT_ALIGNMENT);
-        requestBtn.addActionListener(e -> { // What to do when libRequest button was pressed
+        requestBtn.addActionListener(e -> {
             if (userDoc == null) {
                 JOptionPane.showMessageDialog(mainPanel, "Select user's order!");
             } else {
-                Booking booking = new Booking(null, 0);
-                for (int i = 0; i < userForView.getBookings().size(); ++i) {
-                    if (userForView.getBookings().get(i).getDoc().getTitle().equals(userDoc))
-                        booking = userForView.getBookings().get(i);
-                }
-                if (booking.hasRequestedByLib()) {
+                Booking booking = userForView.findBooking(userDoc);
+                if (booking.hasRequestedByUser()) {
+                    JOptionPane.showMessageDialog(mainPanel, "User has already requested for returning!\n" +
+                            "Press the 'Return' button!");
+                } else if (booking.hasRequestedByLib()) {
                     JOptionPane.showMessageDialog(mainPanel, "Already requested!");
+                } else if (!booking.hasReceived()) {
+                    JOptionPane.showMessageDialog(mainPanel, "User has not received the document yet!");
                 } else {
                     JOptionPane.showMessageDialog(mainPanel, "Successfully requested!");
                     booking.libRequest();
-                    DataBase.doOrder(userForView, booking.getDoc(), booking.getTimeLeft(), booking.hasRequestedByLib(), booking.hasRequestedByUser());
+                    DataBase.doOrder(userForView, booking.getDoc(), booking.getDuration(), booking.getDate(), booking.hasRequestedByLib(), booking.hasRequestedByUser(), booking.hasReceived());
                     Main.userView.setVisible(false);
                     Main.userView = new UserViewScreen(userForView);
+                    Main.userView.setLocationRelativeTo(null);
                     Main.userView.setVisible(true);
                 }
             }
         });
+
+        Queue<User> pq = new PriorityQueue<>();
+
         // Return button
         JButton returnBtn = new JButton("Return");
         returnBtn.setAlignmentX(JComponent.RIGHT_ALIGNMENT);
-        returnBtn.addActionListener(e -> { // What to do when libRequest button was pressed
+        returnBtn.addActionListener(e -> {
             if (userDoc == null) {
                 JOptionPane.showMessageDialog(mainPanel, "Select user's order!");
-            } else{
-                Booking booking = new Booking(null, 0);
-                for (int i = 0; i < userForView.getBookings().size(); ++i) {
-                    if (userForView.getBookings().get(i).getDoc().getTitle().equals(userDoc))
-                        booking = userForView.getBookings().get(i);
-                }
+            } else {
+                Booking booking = userForView.findBooking(userDoc);
                 if (booking.hasRequestedByUser()) {
                     JOptionPane.showMessageDialog(mainPanel, "Successfully returned!");
                     boolean hasFound = false;
@@ -109,6 +115,25 @@ public class UserViewScreen extends JFrame {
                             Main.documents.get(i).setCopies(Main.documents.get(i).getCopies() + 1);
                             DataBase.deleteOrder(userForView, booking.getDoc());
                             userForView.getBookings().remove(booking);
+                            // Check for the users who has requested for this document
+                            for (int j = 0; j < Main.reqDocs.size(); ++j) {
+                                if (Main.reqDocs.get(j).getTitle().equals(booking.getDoc().getTitle())) {
+                                    Main.documents.get(i).setCopies(Main.documents.get(i).getCopies() - 1);
+                                    User user = Main.priorityQueues.get(j).poll();
+                                    DataBase.addDoc(Main.documents.get(i));
+                                    if (user == null) {
+                                        Main.documents.get(i).setCopies(Main.documents.get(i).getCopies() + 1);
+                                        DataBase.addDoc(Main.documents.get(i));
+                                        Main.reqDocs.remove(j);
+                                        Main.priorityQueues.remove(j);
+                                        break;
+                                    }
+                                    Main.userToNotify = user.getUsername();
+                                    Booking b = user.findBooking(booking.getDoc().getTitle());
+                                    b.setReceived();
+                                    DataBase.doOrder(user, b.getDoc(), b.getDuration(), Main.date, false, false, true);
+                                }
+                            }
                         }
                     }
                     if (!hasFound) {
@@ -118,6 +143,7 @@ public class UserViewScreen extends JFrame {
                     }
                     Main.userView.setVisible(false);
                     Main.userView = new UserViewScreen(userForView);
+                    Main.userView.setLocationRelativeTo(null);
                     Main.userView.setVisible(true);
                 } else {
                     JOptionPane.showMessageDialog(mainPanel, "User has not requested yet!");
@@ -132,20 +158,22 @@ public class UserViewScreen extends JFrame {
 
         // Info about order button
         JButton orderInfoBtn = new JButton(" Order info ");
-        orderInfoBtn.addActionListener(e -> { // What to do when order info button was pressed
+        orderInfoBtn.addActionListener(e -> {
             String orderTitle = userDoc; 
             if (orderTitle != null) {
-                Booking booking = userForView.getBookings().get(0);
-                for (int i = 0; i < userForView.getBookings().size(); ++i) {
-                    if (userForView.getBookings().get(i).getDoc().getTitle().equals(orderTitle))
-                        booking = userForView.getBookings().get(i);
-                }
+                Booking booking = userForView.findBooking(userDoc);
                 String info = "";
                 info += "Information about user's order:\n";
-                info += "Title:  " + booking.getDoc().getTitle() + "\n";
-                info += "Authors:  " + booking.getDoc().getAuthors() + "\n";
+                info += "Title:  " + booking.getDoc().getTitle() + ".\n";
+                info += "Authors:  " + booking.getDoc().getAuthors() + ".\n";
                 info += "Price:  " + booking.getDoc().getPrice() + " rubles.\n";
-                info += "Time left:  " + booking.getTimeLeft() + " days.\n";
+                if (booking.hasReceived()) {
+                    info += "Date of booking: " + booking.getDate().toString() + ".\n";
+                    info += "Time left:  " + booking.getTimeLeft() + " days.\n";
+                } else {
+                    info += "Date of booking:  unknown\n(User has not received the document yet).\n";
+                    info += "Time left:   unknown\n(User has not received the document yet).\n";
+                }
                 if (booking.getDoc().isReference()) info += "This is a reference document.\n";
                 if (booking.getDoc() instanceof Book) if(booking.getDoc().isBestSeller()) info += "This is a bestseller book.\n";
                 JOptionPane.showMessageDialog(mainPanel, info);

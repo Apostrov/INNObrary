@@ -1,20 +1,25 @@
 package main.java;
 
 import javax.swing.event.TableModelListener;
+import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 /** This class is used only for building the user documents table. */
-public class UserDocTableModel implements TableModel {
+public class ReqTableModel extends AbstractTableModel {
 
     private Set<TableModelListener> listeners = new HashSet<>();
 
     private List<Booking> bookings;
 
-    public UserDocTableModel(List<Booking> bookings) {
-        this.bookings = bookings;
+    public ReqTableModel(List<Booking> bookings) {
+        this.bookings = new LinkedList<>();
+        for (int i = 0; i < bookings.size(); ++i)
+            if (!bookings.get(i).hasReceived())
+                this.bookings.add(bookings.get(i));
     }
 
     public void addTableModelListener(TableModelListener listener) {
@@ -26,7 +31,7 @@ public class UserDocTableModel implements TableModel {
     }
 
     public int getColumnCount() {
-        return 5;
+        return 3;
     }
 
     public String getColumnName(int columnIndex) {
@@ -34,13 +39,9 @@ public class UserDocTableModel implements TableModel {
             case 0:
                 return "Title";
             case 1:
-                return "Days left";
+                return "Date";
             case 2:
-                return "Price";
-            case 3:
-                return "Request from library";
-            case 4:
-                return "Request for library";
+                return "Duration";
         }
         return "";
     }
@@ -55,15 +56,21 @@ public class UserDocTableModel implements TableModel {
             case 0:
                 return booking.getDoc().getTitle();
             case 1:
-                return booking.getTimeLeft();
+                return booking.getDate().toString();
             case 2:
-                return booking.getDoc().getPrice();
-            case 3:
-                return booking.hasRequestedByLib();
-            case 4:
-                return booking.hasRequestedByUser();
+                return booking.getDuration() + " days";
         }
         return "";
+    }
+
+    /** Special method that is used to real-time update of the table. */
+    void replace (List<Booking> bookings) {
+        this.bookings.clear();
+        fireTableRowsDeleted(0, getRowCount());
+        for (int i = 0; i < bookings.size(); ++i)
+            if (!bookings.get(i).hasReceived())
+                this.bookings.add(bookings.get(i));
+        fireTableRowsInserted(0, bookings.size());
     }
 
     public boolean isCellEditable(int rowIndex, int columnIndex) {

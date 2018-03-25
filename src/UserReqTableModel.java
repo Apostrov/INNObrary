@@ -2,19 +2,23 @@ package main.java;
 
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 /** This class is used only for building the user documents table. */
-public class UserDocTableModel implements TableModel {
+public class UserReqTableModel implements TableModel {
 
     private Set<TableModelListener> listeners = new HashSet<>();
 
-    private List<Booking> bookings;
+    private List<User> users;
 
-    public UserDocTableModel(List<Booking> bookings) {
-        this.bookings = bookings;
+    UserReqTableModel(List<User> users) {
+        this.users = new ArrayList<>();
+        this.users.addAll(users);
+        // There is no need to contain the librarian in the table
+        for (int i = 0; i < this.users.size(); ++i) if (this.users.get(i) instanceof Librarian) this.users.remove(i);
     }
 
     public void addTableModelListener(TableModelListener listener) {
@@ -26,42 +30,34 @@ public class UserDocTableModel implements TableModel {
     }
 
     public int getColumnCount() {
-        return 5;
+        return 3;
     }
 
     public String getColumnName(int columnIndex) {
         switch (columnIndex) {
             case 0:
-                return "Title";
+                return "Username";
             case 1:
-                return "Days left";
+                return "Priority";
             case 2:
-                return "Price";
-            case 3:
-                return "Request from library";
-            case 4:
-                return "Request for library";
+                return "Requests number";
         }
         return "";
     }
 
     public int getRowCount() {
-        return bookings.size();
+        return users.size();
     }
 
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Booking booking = bookings.get(rowIndex);
+        User user = users.get(rowIndex);
         switch (columnIndex) {
             case 0:
-                return booking.getDoc().getTitle();
+                return user.getUsername();
             case 1:
-                return booking.getTimeLeft();
+                return user.getPriority();
             case 2:
-                return booking.getDoc().getPrice();
-            case 3:
-                return booking.hasRequestedByLib();
-            case 4:
-                return booking.hasRequestedByUser();
+                return user.getRequestNum();
         }
         return "";
     }
