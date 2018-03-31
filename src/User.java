@@ -1,5 +1,3 @@
-package main.java;
-
 import java.util.ArrayList;
 
 public class User {
@@ -15,11 +13,13 @@ public class User {
 
     private ArrayList<Booking> bookings; // Current documents on hands
     private Object user_id;
+    private ArrayList<Notification> notifications;
 
     User (String username, String password, boolean isFaculty) {
         this.username = username;
         this.password = password;
         bookings = new ArrayList<>();
+        notifications = new ArrayList<>();
         this.isFaculty = isFaculty;
         priority = 4;
     }
@@ -157,5 +157,13 @@ public class User {
 
     void setPriority(int priority) {
         this.priority = priority;
+    }
+
+    public ArrayList<Notification> getNotifications() {
+        return notifications;
+    }
+
+    public void setNotifications(ArrayList<Notification> notifications) {
+        this.notifications = notifications;
     }
 }

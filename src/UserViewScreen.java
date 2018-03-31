@@ -1,5 +1,3 @@
-package main.java;
-
 import javax.swing.*;
 import javax.swing.table.TableModel;
 import java.awt.*;

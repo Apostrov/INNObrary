@@ -1,5 +1,3 @@
-package main.java;
-
 class AudioVideo extends Document {
 
     /** Initialisation of the audio/video material.

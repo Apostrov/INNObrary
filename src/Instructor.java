@@ -1,5 +1,3 @@
-package main.java;
-
 class Instructor extends Patron {
 
     Instructor (String username, String password, String firstName, String secondName, String address, String phone) {

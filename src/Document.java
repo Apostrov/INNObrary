@@ -1,5 +1,3 @@
-package main.java;
-
 public class Document {
 
     private String title; // title of the document

@@ -1,5 +1,3 @@
-package main.java;
-
 class JournalArticle extends Document {
 
     /** Initialisation of the journal article.

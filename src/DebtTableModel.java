@@ -1,5 +1,3 @@
-package main.java;
-
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import java.util.HashSet;

@@ -1,5 +1,3 @@
-package main.java;
-
 import java.sql.Date;
 
 class Booking {

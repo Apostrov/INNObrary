@@ -1,5 +1,3 @@
-package main.java;
-
 import javax.swing.*;
 import javax.swing.table.TableModel;
 import java.awt.*;
@@ -633,6 +631,7 @@ class CabinetScreen extends JFrame {
 
         setPreferredSize(new Dimension(450, 640));
         pack();
+        frameInit();
         setLocationRelativeTo(null);
 
         // Notification about receiving of the requested document

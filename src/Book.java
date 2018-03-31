@@ -1,5 +1,3 @@
-package main.java;
-
 class Book extends Document {
 
     /** Initialisation of the book. */

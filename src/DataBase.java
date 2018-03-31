@@ -1,5 +1,3 @@
-package main.java;
-
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -200,7 +198,8 @@ public class DataBase {
                 .append("secondName", user.getSecondName())
                 .append("phone", user.getPhone())
                 .append("isFaculty", user.isFaculty())
-                .append("priority", user.getPriority());
+                .append("priority", user.getPriority())
+                .append("notifications", Arrays.asList());
 
         // check if already have in DataBase this id
         User check = getUser(id);
@@ -211,15 +210,99 @@ public class DataBase {
             users.insertOne(userJson);
         }
 
+        // add notification
+        replaceNotifications(user);
+
         // parse booking to order
         for (Booking booking : user.getBookings()) {
             doOrderWithBooking(user, booking);
         }
     }
 
-    public static boolean findUser (User user) {
+    /**
+     * Add notification to db
+     * WARING: BEFORE ADD - CHECK THAT NO DUPLICATES (use replaceNotifications)
+     *
+     * @param notification to add
+     * @param user         who has notification
+     */
+    public static void addNotification(Notification notification, User user) {
+        org.bson.Document userJson = users.find(eq("_id", user.getUser_id())).first();
+
+        // if in db
+        // TODO: check duplicates
+        if (userJson != null) {
+            users.updateOne(
+                    eq("_id", user.getUser_id()),
+                    push("notifications",
+                            new org.bson.Document("tpe", notification.getType())
+                                    .append("document", notification.getDocument().getDocument_id())));
+
+        }
+    }
+
+    /**
+     * Get ArrayList of all user notification
+     *
+     * @param user who has notification
+     * @return ArrayList of all user notification
+     */
+    public static ArrayList<Notification> getUserNotifications(User user) {
+        return getUserNotifications(user.getUser_id());
+    }
+
+    /**
+     * Get ArrayList of all user notification
+     * @param user_id who has notification
+     * @return
+     */
+    private static ArrayList<Notification> getUserNotifications(Object user_id) {
+        org.bson.Document userJson = users.find(eq("_id", user_id)).first();
+
+        // if not in DataBase
+        if (userJson == null) {
+            return null;
+        }
+
+        ArrayList<Notification> notifications = new ArrayList<>();
+        // list of notification in db
+        ArrayList list = (ArrayList) userJson.get("notifications");
+        if (list == null) return null;
+        for (Object notif : list) {
+            org.bson.Document notifDoc = (org.bson.Document) notif;
+            Document doc = getDoc(((org.bson.Document) notif).get("document"));
+            notifications.add(new Notification(notifDoc.getInteger("type"), doc));
+        }
+
+        return notifications;
+    }
+
+    /**
+     * Replace all user notifications in db to users real-time notifications
+     *
+     * @param user who has notifications
+     */
+    public static void replaceNotifications(User user) {
+        org.bson.Document userJson = users.find(eq("_id", user.getUser_id())).first();
+
+        // if in db
+        if (userJson != null) {
+            ArrayList<org.bson.Document> notifJson = new ArrayList<>();
+
+            for (Notification notif : user.getNotifications()) {
+                notifJson.add(new org.bson.Document("type", notif.getType())
+                        .append("document", notif.getDocument().getDocument_id()));
+            }
+
+            users.updateOne(
+                    eq("_id", user.getUser_id()),
+                    set("notifications", notifJson));
+
+        }
+    }
+
+    public static boolean findUser(User user) {
         Object id = user.getUsername();
-        user.setUser_id(id);
         User check = getUser(id);
         if (check != null) {
             return true;
@@ -266,12 +349,14 @@ public class DataBase {
      */
     private static User jsonToUser(org.bson.Document userJson) {
         ArrayList<Booking> bookings = getAllOrderedDoc(userJson.get("_id"));
+        ArrayList<Notification> notifications = getUserNotifications(userJson.get("_id"));
         User user = new User(userJson.get("_id"), userJson.getString("username"),
                 userJson.getString("password"), userJson.getBoolean("isFaculty"),
                 userJson.getString("firstName"), userJson.getString("secondName"),
                 userJson.getString("address"), userJson.getString("phone"),
                 userJson.getInteger("priority"));
         user.setBookings(bookings);
+        user.setNotifications(notifications);
         switch (user.getPriority()) {
             case 4: {
                 user = new Student(user);
@@ -313,7 +398,8 @@ public class DataBase {
      * @param user     take doc
      * @param document what take
      */
-    public static void doOrder(User user, Document document, int duration, Date date, boolean reqBuLib, boolean reqByUser, boolean hasReceived) {
+    public static void doOrder(User user, Document document, int duration, Date date, boolean reqBuLib,
+                               boolean reqByUser, boolean hasReceived) {
         // create unique id
         Object id = user.getUser_id();
 

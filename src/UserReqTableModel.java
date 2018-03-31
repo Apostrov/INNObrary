@@ -1,5 +1,3 @@
-package main.java;
-
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 import java.util.ArrayList;
