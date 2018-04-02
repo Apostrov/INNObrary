@@ -28,12 +28,11 @@ public class Main {
     static RequestsScreen requests;
 
     static ArrayList<Queue<User>> priorityQueues;
-    static String userToNotify = "null";
 
     /** Main method of INNObrary */
     public static void main(String[] args) {
         // For debug
-        date = new Date(118, 3, 6);
+        date = new Date(118, 7, 25);
 
         // Run-time storage
         users = DataBase.getAllUser();
@@ -85,7 +84,7 @@ public class Main {
         docMod.setVisible(false);
         debtors.setVisible(false);
         requests.setVisible(false);
-	}
+    }
 
 	/** Returns user instance if the user with given username exists otherwise null */
 	static User findUser (String username) {

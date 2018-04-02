@@ -1,24 +1,21 @@
 package main.java;
 
 import javax.swing.event.TableModelListener;
-import javax.swing.table.TableModel;
-import java.util.ArrayList;
+import javax.swing.table.AbstractTableModel;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 /** This class is used only for building the user documents table. */
-public class UserReqTableModel implements TableModel {
+public class UserReqTableModel extends AbstractTableModel {
 
     private Set<TableModelListener> listeners = new HashSet<>();
 
     private List<User> users;
 
-    UserReqTableModel(List<User> users) {
-        this.users = new ArrayList<>();
-        this.users.addAll(users);
-        // There is no need to contain the librarian in the table
-        for (int i = 0; i < this.users.size(); ++i) if (this.users.get(i) instanceof Librarian) this.users.remove(i);
+    public UserReqTableModel(List<User> users) {
+        this.users = users;
     }
 
     public void addTableModelListener(TableModelListener listener) {
@@ -30,7 +27,7 @@ public class UserReqTableModel implements TableModel {
     }
 
     public int getColumnCount() {
-        return 3;
+        return 2;
     }
 
     public String getColumnName(int columnIndex) {
@@ -39,8 +36,6 @@ public class UserReqTableModel implements TableModel {
                 return "Username";
             case 1:
                 return "Priority";
-            case 2:
-                return "Requests number";
         }
         return "";
     }
@@ -56,10 +51,17 @@ public class UserReqTableModel implements TableModel {
                 return user.getUsername();
             case 1:
                 return user.getPriority();
-            case 2:
-                return user.getRequestNum();
         }
         return "";
+    }
+
+    /** Special method that is used to real-time update of the table. */
+    void replace (List<User> users) {
+        this.users.clear();
+        fireTableRowsDeleted(0, getRowCount());
+        for (int i = 0; i < users.size(); ++i)
+            this.users.add(users.get(i));
+        fireTableRowsInserted(0, users.size());
     }
 
     public boolean isCellEditable(int rowIndex, int columnIndex) {

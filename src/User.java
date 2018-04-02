@@ -13,6 +13,7 @@ public class User {
     private boolean isFaculty;
     private int priority;
 
+    private ArrayList<Notification> notifications;
     private ArrayList<Booking> bookings; // Current documents on hands
     private Object user_id;
 
@@ -20,6 +21,7 @@ public class User {
         this.username = username;
         this.password = password;
         bookings = new ArrayList<>();
+        notifications = new ArrayList<>();
         this.isFaculty = isFaculty;
         priority = 4;
     }
@@ -63,6 +65,7 @@ public class User {
         setAddress(user.getAddress());
         setPhone(user.getPhone());
         setPriority(user.getPriority());
+        setNotifications(user.getNotifications());
     }
 
     /** Returns all current bookings */
@@ -89,6 +92,17 @@ public class User {
         int num = 0;
         for (int i = 0; i < bookings.size(); ++i) if (!bookings.get(i).hasReceived()) num++;
         return num;
+    }
+
+    /** Replaces all notifications. */
+    public void setNotifications(ArrayList<Notification> notifications) {
+        this.notifications = new ArrayList<>();
+        this.notifications.addAll(notifications);
+    }
+
+    /** Adds new notification to the user. */
+    public void notify(Notification n) {
+        notifications.add(n);
     }
 
     public String getUsername() {
@@ -157,5 +171,9 @@ public class User {
 
     void setPriority(int priority) {
         this.priority = priority;
+    }
+
+    public ArrayList<Notification> getNotifications() {
+        return notifications;
     }
 }

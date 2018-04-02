@@ -76,18 +76,18 @@ public class UserViewScreen extends JFrame {
             if (userDoc == null) {
                 JOptionPane.showMessageDialog(mainPanel, "Select user's order!");
             } else {
-                Booking booking = userForView.findBooking(userDoc);
-                if (booking.hasRequestedByUser()) {
+                Booking b = userForView.findBooking(userDoc);
+                if (b.hasRequestedByUser()) {
                     JOptionPane.showMessageDialog(mainPanel, "User has already requested for returning!\n" +
                             "Press the 'Return' button!");
-                } else if (booking.hasRequestedByLib()) {
+                } else if (b.hasRequestedByLib()) {
                     JOptionPane.showMessageDialog(mainPanel, "Already requested!");
-                } else if (!booking.hasReceived()) {
+                } else if (!b.hasReceived()) {
                     JOptionPane.showMessageDialog(mainPanel, "User has not received the document yet!");
                 } else {
                     JOptionPane.showMessageDialog(mainPanel, "Successfully requested!");
-                    booking.libRequest();
-                    DataBase.doOrder(userForView, booking.getDoc(), booking.getDuration(), booking.getDate(), booking.hasRequestedByLib(), booking.hasRequestedByUser(), booking.hasReceived());
+                    b.libRequest();
+                    DataBase.doOrder(userForView, b.getDoc(), b.getDuration(), b.getDate(), b.hasRequestedByLib(), b.hasRequestedByUser(), b.hasReceived(), b.hasRenewed());
                     Main.userView.setVisible(false);
                     Main.userView = new UserViewScreen(userForView);
                     Main.userView.setLocationRelativeTo(null);
@@ -107,35 +107,43 @@ public class UserViewScreen extends JFrame {
             } else {
                 Booking booking = userForView.findBooking(userDoc);
                 if (booking.hasRequestedByUser()) {
-                    JOptionPane.showMessageDialog(mainPanel, "Successfully returned!");
                     boolean hasFound = false;
+                    User user = null;
                     for (int i = 0; i < Main.documents.size(); ++i) {
                         if (Main.documents.get(i).getTitle().equals(booking.getDoc().getTitle())) {
                             hasFound = true;
                             Main.documents.get(i).setCopies(Main.documents.get(i).getCopies() + 1);
+                            DataBase.addDoc(Main.documents.get(i));
                             DataBase.deleteOrder(userForView, booking.getDoc());
                             userForView.getBookings().remove(booking);
                             // Check for the users who has requested for this document
                             for (int j = 0; j < Main.reqDocs.size(); ++j) {
                                 if (Main.reqDocs.get(j).getTitle().equals(booking.getDoc().getTitle())) {
-                                    Main.documents.get(i).setCopies(Main.documents.get(i).getCopies() - 1);
-                                    User user = Main.priorityQueues.get(j).poll();
-                                    DataBase.addDoc(Main.documents.get(i));
+                                    Main.reqDocs.get(j).setCopies(Main.documents.get(i).getCopies() - 1);
+                                    user = Main.priorityQueues.get(j).poll();
+                                    DataBase.addDoc(Main.reqDocs.get(j));
                                     if (user == null) {
-                                        Main.documents.get(i).setCopies(Main.documents.get(i).getCopies() + 1);
-                                        DataBase.addDoc(Main.documents.get(i));
+                                        Main.reqDocs.get(j).setCopies(Main.reqDocs.get(j).getCopies() + 1);
+                                        DataBase.addDoc(Main.reqDocs.get(j));
                                         Main.reqDocs.remove(j);
                                         Main.priorityQueues.remove(j);
                                         break;
                                     }
-                                    Main.userToNotify = user.getUsername();
-                                    Booking b = user.findBooking(booking.getDoc().getTitle());
-                                    b.setReceived();
-                                    DataBase.doOrder(user, b.getDoc(), b.getDuration(), Main.date, false, false, true);
+                                    user.notify(new Notification(1, Main.reqDocs.get(j).getTitle()));
+                                    DataBase.replaceNotifications(user);
                                 }
                             }
                         }
                     }
+                    String info = "Successfully returned!\n";
+                    if (booking.isOverdue()) {
+                        info += "The order is overdue.\nThe user will be notified to pay fee.";
+                        int fine = (-1 * booking.getTimeLeft()) * 100 >= booking.getDoc().getPrice() ? booking.getDoc().getPrice() : (-1 * booking.getTimeLeft()) * 100;
+                        userForView.notify(new Notification(3, booking.getDoc().getTitle(), fine));
+                        DataBase.replaceNotifications(userForView);
+                    }
+                    if (user != null) info += "\nThe next user in the queue was notified\nabout availability of the document.";
+                    JOptionPane.showMessageDialog(mainPanel, info);
                     if (!hasFound) {
                         booking.getDoc().setCopies(1);
                         Main.documents.add(booking.getDoc());

@@ -200,7 +200,8 @@ public class DataBase {
                 .append("secondName", user.getSecondName())
                 .append("phone", user.getPhone())
                 .append("isFaculty", user.isFaculty())
-                .append("priority", user.getPriority());
+                .append("priority", user.getPriority())
+                .append("notifications", Arrays.asList());
 
         // check if already have in DataBase this id
         User check = getUser(id);
@@ -214,6 +215,49 @@ public class DataBase {
         // parse booking to order
         for (Booking booking : user.getBookings()) {
             doOrderWithBooking(user, booking);
+        }
+    }
+
+    public static ArrayList<Notification> getNotifications(Object id) {
+        org.bson.Document orderJson = users.find(eq("_id", id)).first();
+        ArrayList<Notification> notifications = new ArrayList<>();
+
+        if (orderJson == null) {
+            return notifications;
+        }
+
+        ArrayList list = (ArrayList) orderJson.get("notifications");
+        for (Object doc : list) {
+            Notification n = new Notification(((org.bson.Document) doc).getInteger("type"), ((org.bson.Document) doc).getString("document"), Date.valueOf(((org.bson.Document) doc).getString("date")), ((org.bson.Document) doc).getInteger("fine"));
+            notifications.add(n);
+        }
+
+        return notifications;
+    }
+
+    /**
+     * Replace all user notifications in db to users real-time notifications
+     *
+     * @param user who has notifications
+     */
+    public static void replaceNotifications(User user) {
+        org.bson.Document userJson = users.find(eq("_id", user.getUser_id())).first();
+
+        // if in db
+        if (userJson != null) {
+            ArrayList<org.bson.Document> notifJson = new ArrayList<>();
+
+            for (Notification notif : user.getNotifications()) {
+                notifJson.add(new org.bson.Document("type", notif.getType())
+                        .append("document", notif.getDoc())
+                        .append("date", notif.getDate().toString())
+                        .append("fine", notif.getFine()));
+            }
+
+            users.updateOne(
+                    eq("_id", user.getUser_id()),
+                    set("notifications", notifJson));
+
         }
     }
 
@@ -266,11 +310,14 @@ public class DataBase {
      */
     private static User jsonToUser(org.bson.Document userJson) {
         ArrayList<Booking> bookings = getAllOrderedDoc(userJson.get("_id"));
+        ArrayList<Notification> notifications = getNotifications(userJson.get("_id"));
+
         User user = new User(userJson.get("_id"), userJson.getString("username"),
                 userJson.getString("password"), userJson.getBoolean("isFaculty"),
                 userJson.getString("firstName"), userJson.getString("secondName"),
                 userJson.getString("address"), userJson.getString("phone"),
                 userJson.getInteger("priority"));
+        user.setNotifications(notifications);
         user.setBookings(bookings);
         switch (user.getPriority()) {
             case 4: {
@@ -313,7 +360,7 @@ public class DataBase {
      * @param user     take doc
      * @param document what take
      */
-    public static void doOrder(User user, Document document, int duration, Date date, boolean reqBuLib, boolean reqByUser, boolean hasReceived) {
+    public static void doOrder(User user, Document document, int duration, Date date, boolean reqBuLib, boolean reqByUser, boolean hasReceived, boolean hasRenewed) {
         // create unique id
         Object id = user.getUser_id();
 
@@ -327,7 +374,8 @@ public class DataBase {
                             .append("reqByUser", reqByUser)
                             .append("date", date.toString())
                             .append("duration", duration)
-                            .append("hasReceived", hasReceived)));
+                            .append("hasReceived", hasReceived)
+                            .append("hasRenewed", hasRenewed)));
             orders.insertOne(orderJson);
         } else {
             boolean hasBook = false;
@@ -343,7 +391,8 @@ public class DataBase {
                             .append("reqByUser", reqByUser)
                             .append("date", date.toString())
                             .append("duration", duration)
-                            .append("hasReceived", hasReceived);
+                            .append("hasReceived", hasReceived)
+                            .append("hasRenewed", hasRenewed);
                     userOrder.set(i, updated);
                     hasBook = true;
                 }
@@ -358,7 +407,8 @@ public class DataBase {
                                         .append("reqByUser", reqByUser)
                                         .append("date", date.toString())
                                         .append("duration", duration)
-                                        .append("hasReceived", hasReceived)));
+                                        .append("hasReceived", hasReceived)
+                                        .append("hasRenewed", hasRenewed)));
             } else {
                 orders.updateOne(
                         eq("_id", id),
@@ -374,7 +424,7 @@ public class DataBase {
      * @param booking with book and date
      */
     private static void doOrderWithBooking(User user, Booking booking) {
-        doOrder(user, booking.getDoc(), booking.getDuration(), booking.getDate(), booking.hasRequestedByLib(), booking.hasRequestedByUser(), booking.hasReceived());
+        doOrder(user, booking.getDoc(), booking.getDuration(), booking.getDate(), booking.hasRequestedByLib(), booking.hasRequestedByUser(), booking.hasReceived(), booking.hasRenewed());
     }
 
     /**
@@ -438,7 +488,8 @@ public class DataBase {
             Booking booking = new Booking(document, ((org.bson.Document) doc).getInteger("duration"), Date.valueOf(((org.bson.Document) doc).getString("date")));
             if (((org.bson.Document) doc).getBoolean("reqByLib")) booking.libRequest();
             if (((org.bson.Document) doc).getBoolean("reqByUser")) booking.userRequest();
-            if (((org.bson.Document) doc).getBoolean("hasReceived")) booking.setReceived();
+            if (((org.bson.Document) doc).getBoolean("hasReceived")) booking.setReceived(true);
+            if (((org.bson.Document) doc).getBoolean("hasRenewed")) booking.setRenewed();
             bookings.add(booking);
         }
         return bookings;

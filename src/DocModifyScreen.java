@@ -144,6 +144,7 @@ class DocModifyScreen extends JFrame {
                     } else {
                         doc.setPrice(Integer.parseInt(price));
                         doc.setCopies(Integer.parseInt(copies));
+                        // TODO: If someone in the queue - add to this users bookings with this document
                         doc.setReference(isReference);
                         doc.setEdition(Integer.parseInt(edition));
                         doc.setYear(Integer.parseInt(editionYear));

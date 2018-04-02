@@ -10,6 +10,7 @@ class Booking {
     private boolean reqByLib;
     private boolean reqByUser;
     private boolean hasReceived;
+    private boolean hasRenewed;
 
     /** Represents a single offer of any document
      *  @param doc document to be booked
@@ -21,6 +22,7 @@ class Booking {
         date = Main.date;
         reqByLib = false;
         reqByUser = false;
+        hasRenewed = false;
     }
 
     /** Represents a single offer of any document
@@ -34,6 +36,7 @@ class Booking {
         reqByLib = false;
         reqByUser = false;
         hasReceived = false;
+        hasRenewed = false;
     }
 
     /** Returns whether the order is overdue or not. */
@@ -75,11 +78,22 @@ class Booking {
         }
     }
 
+    /** Returns whether the document was renewed or not. */
+    boolean hasRenewed () {
+        return hasRenewed;
+    }
+
+    /** Sets renewed true. */
+    void setRenewed() { hasRenewed = true; }
+
     /** Returns how much days from the beginning date can user hold the document. */
     int getDuration() { return duration; }
 
     /** Returns the date when the document was booked. */
     Date getDate() { return date; }
+
+    /** Sets new value for the date. */
+    void setDate(Date date) { this.date = date; }
 
     /** Returns the instance of the document. */
     Document getDoc () {
@@ -96,4 +110,7 @@ class Booking {
         this.hasReceived = true;
         date = Main.date;
     }
+
+    /** Overload for the database */
+    void setReceived(boolean received) { hasReceived = received; }
 }

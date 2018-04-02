@@ -2,13 +2,17 @@ package main.java;
 
 import javax.swing.*;
 import javax.swing.table.TableModel;
+import javax.xml.crypto.Data;
 import java.awt.*;
+import java.util.LinkedList;
 import java.util.PriorityQueue;
 
 class CabinetScreen extends JFrame {
 
     private String libDoc = null;
     private String userDoc = null;
+
+    JPanel mainPanel = new JPanel();
 
     /** Creates the window according to the type of the user (librarian or not) */
     CabinetScreen(boolean isLibrarian) {
@@ -26,7 +30,6 @@ class CabinetScreen extends JFrame {
     private void createLibGUI() {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-        JPanel mainPanel = new JPanel(); // Main container
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS)); // From top to bottom
         setResizable(false);
 
@@ -95,6 +98,7 @@ class CabinetScreen extends JFrame {
         requestsBtn.setAlignmentX(JComponent.RIGHT_ALIGNMENT);
         requestsBtn.addActionListener(e -> {
             Main.cabinet.setVisible(false);
+            Main.requests = new RequestsScreen();
             Main.requests.setLocationRelativeTo(null);
             Main.requests.setVisible(true);
         });
@@ -144,6 +148,7 @@ class CabinetScreen extends JFrame {
                 info += "Copies left:  " + doc.getCopies() + "\n";
                 if (doc.isReference()) info += "This is a reference document.\n";
                 if (doc instanceof Book) if (doc.isBestSeller()) info += "This is a bestseller book.\n";
+                if (doc.isOutstanding()) info += "For this document is placed the outstanding request.";
                 JOptionPane.showMessageDialog(mainPanel, info);
             } else {
                 JOptionPane.showMessageDialog(mainPanel, "Select the document!");
@@ -313,7 +318,6 @@ class CabinetScreen extends JFrame {
     private void createUserGUI() {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-        JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         setResizable(false);
 
@@ -321,7 +325,7 @@ class CabinetScreen extends JFrame {
         Box libDocBox = Box.createHorizontalBox();
         libDocBox.add(Box.createRigidArea(new Dimension(10, 0)));
 
-        TableModel docModel = new DocTableModel(Main.documents);
+        DocTableModel docModel = new DocTableModel(Main.documents);
         JTable libDocTable = new JTable(docModel);
         ListSelectionModel libCellSelectionModel = libDocTable.getSelectionModel();
         libCellSelectionModel.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
@@ -447,16 +451,16 @@ class CabinetScreen extends JFrame {
                                 hasReqBefore = true;
                                 Main.priorityQueues.get(i).add(Main.activeUser);
                                 Main.cabinet.setVisible(false);
-                                int duration = 21;                                                 // Usually it is 3 weeks
+                                int duration = 21;                      // Usually it is 3 weeks
                                 if (doc instanceof Book) if (doc.isBestSeller())
-                                    duration = 14;    // If the document is book-bestseller, then 2 weeks
+                                    duration = 14;                      // If the document is book-bestseller, then 2 weeks
                                 if (Main.activeUser.isFaculty())
-                                    duration = 28;                    // If user is faculty member, then 4 weeks
+                                    duration = 28;                      // If user is faculty member, then 4 weeks
                                 if (doc instanceof AudioVideo)
                                     duration = 14;                      // If the document is AV-material, then 2 weeks
                                 if (Main.activeUser instanceof VisitingProfessor)
                                     duration = 7;    // Special duration for the VP
-                                DataBase.doOrder(Main.activeUser, doc, duration, Main.date, false, false, false);
+                                DataBase.doOrder(Main.activeUser, doc, duration, Main.date, false, false, false, false);
                                 Main.activeUser.addBooking(new Booking(doc, duration, false));
                                 Main.cabinet = new CabinetScreen(false);
                                 Main.cabinet.setLocationRelativeTo(null);
@@ -468,16 +472,16 @@ class CabinetScreen extends JFrame {
                             Main.priorityQueues.add(new PriorityQueue<>(Main.priorityComparator));
                             Main.priorityQueues.get(0).add(Main.activeUser);
                             Main.cabinet.setVisible(false);
-                            int duration = 21;                                                 // Usually it is 3 weeks
+                            int duration = 21; // Usually it is 3 weeks
                             if (doc instanceof Book) if (doc.isBestSeller())
-                                duration = 14;    // If the document is book-bestseller, then 2 weeks
+                                duration = 14; // If the document is book-bestseller, then 2 weeks
                             if (Main.activeUser.isFaculty())
-                                duration = 28;                    // If user is faculty member, then 4 weeks
+                                duration = 28; // If user is faculty member, then 4 weeks
                             if (doc instanceof AudioVideo)
-                                duration = 14;                      // If the document is AV-material, then 2 weeks
+                                duration = 14; // If the document is AV-material, then 2 weeks
                             if (Main.activeUser instanceof VisitingProfessor)
-                                duration = 7;    // Special duration for the VP
-                            DataBase.doOrder(Main.activeUser, doc, duration, Main.date, false, false, false);
+                                duration = 7;  // Special duration for the VP
+                            DataBase.doOrder(Main.activeUser, doc, duration, Main.date, false, false, false, false);
                             Main.activeUser.addBooking(new Booking(doc, duration, false));
                             Main.cabinet = new CabinetScreen(false);
                             Main.cabinet.setLocationRelativeTo(null);
@@ -487,6 +491,7 @@ class CabinetScreen extends JFrame {
                 } else if (doc.isReference()) {
                     JOptionPane.showMessageDialog(mainPanel, "You cannot order a reference document!");
                 }else {
+                    JOptionPane.showMessageDialog(mainPanel, "Successfully ordered!");
                     Main.cabinet.setVisible(false);
                     doc.setCopies(doc.getCopies() - 1);
                     DataBase.addDoc(doc);
@@ -495,7 +500,7 @@ class CabinetScreen extends JFrame {
                     if (Main.activeUser.isFaculty()) duration = 28;                    // If user is faculty member, then 4 weeks
                     if (doc instanceof AudioVideo) duration = 14;                      // If the document is AV-material, then 2 weeks
                     if (Main.activeUser instanceof VisitingProfessor) duration = 7;    // Special duration for the VP
-                    DataBase.doOrder(Main.activeUser, doc, duration, Main.date, false, false, true);
+                    DataBase.doOrder(Main.activeUser, doc, duration, Main.date, false, false, true, false);
                     Main.activeUser.addBooking(new Booking(doc, duration, true));
                     Main.cabinet = new CabinetScreen(false);
                     Main.cabinet.setLocationRelativeTo(null);
@@ -529,6 +534,10 @@ class CabinetScreen extends JFrame {
                 }
                 if (booking.getDoc().isReference()) info += "This is a reference document.\n";
                 if (booking.getDoc() instanceof Book) if(booking.getDoc().isBestSeller()) info += "This is a bestseller book.\n";
+                if (booking.isOverdue()) {
+                    int fine = (-1 * booking.getTimeLeft()) * 100 >= booking.getDoc().getPrice() ? booking.getDoc().getPrice() : (-1 * booking.getTimeLeft()) * 100;
+                    info += "The booking is overdue. The fee is: " + fine + " rubles.";
+                }
                 JOptionPane.showMessageDialog(mainPanel, info);
             } else {
                 JOptionPane.showMessageDialog(mainPanel, "Select the order!");
@@ -547,20 +556,27 @@ class CabinetScreen extends JFrame {
                 } else if (!booking.hasReceived()) {
                     JOptionPane.showMessageDialog(mainPanel, "You have not received the document yet!");
                 } else if (booking.hasRequestedByLib()) {
+                    if (booking.isOverdue()) {
+                        int fine = (-1 * booking.getTimeLeft()) * 100 >= booking.getDoc().getPrice() ? booking.getDoc().getPrice() : (-1 * booking.getTimeLeft()) * 100;
+                        JOptionPane.showMessageDialog(mainPanel, "Your order of document \"" + booking.getDoc().getTitle() + "\" is overdue!\n" +
+                                "For this reason you have to pay fee of " + fine + " rubles.");
+                    }
                     JOptionPane.showMessageDialog(mainPanel, "The document has successfully returned!");
                     boolean hasFound = false;
                     for (int i = 0; i < Main.documents.size(); ++i) {
                         if (Main.documents.get(i).getTitle().equals(booking.getDoc().getTitle())) {
                             hasFound = true;
                             Main.documents.get(i).setCopies(Main.documents.get(i).getCopies() + 1);
+                            if (Main.documents.get(i).isOutstanding()) Main.documents.get(i).setOutstanding(false);
+                            DataBase.addDoc(Main.documents.get(i));
                             DataBase.deleteOrder(Main.activeUser, booking.getDoc());
                             Main.activeUser.getBookings().remove(booking);
                             // Check for the users who has requested for this document
                             for (int j = 0; j < Main.reqDocs.size(); ++j) {
                                 if (Main.reqDocs.get(j).getTitle().equals(booking.getDoc().getTitle())) {
                                     Main.documents.get(i).setCopies(Main.documents.get(i).getCopies() - 1);
-                                    User user = Main.priorityQueues.get(j).poll();
                                     DataBase.addDoc(Main.documents.get(i));
+                                    User user = Main.priorityQueues.get(j).poll();
                                     if (user == null) {
                                         Main.documents.get(i).setCopies(Main.documents.get(i).getCopies() + 1);
                                         DataBase.addDoc(Main.documents.get(i));
@@ -569,16 +585,15 @@ class CabinetScreen extends JFrame {
                                         break;
                                     }
                                     booking.getDoc().setOutstanding(false);
-                                    Main.userToNotify = user.getUsername();
-                                    Booking nextUserBooking = user.findBooking(booking.getDoc().getTitle());
-                                    nextUserBooking.setReceived();
-                                    DataBase.doOrder(user, nextUserBooking.getDoc(), nextUserBooking.getDuration(), Main.date, false, false, true);
+                                    user.notify(new Notification(1, Main.reqDocs.get(j).getTitle()));
+                                    DataBase.replaceNotifications(user);
                                 }
                             }
                         }
                     }
                     if (!hasFound) {
                         booking.getDoc().setCopies(1);
+                        if (booking.getDoc().isOutstanding()) booking.getDoc().setOutstanding(false);
                         Main.documents.add(booking.getDoc());
                         DataBase.addDoc(booking.getDoc());
                     }
@@ -589,7 +604,7 @@ class CabinetScreen extends JFrame {
                 } else {
                     JOptionPane.showMessageDialog(mainPanel, "Successfully requested for returning!");
                     booking.userRequest();
-                    DataBase.doOrder(Main.activeUser, booking.getDoc(), booking.getDuration(), booking.getDate(), booking.hasRequestedByLib(), booking.hasRequestedByUser(), booking.hasReceived());
+                    DataBase.doOrder(Main.activeUser, booking.getDoc(), booking.getDuration(), booking.getDate(), booking.hasRequestedByLib(), booking.hasRequestedByUser(), booking.hasReceived(), booking.hasRenewed());
                     Main.cabinet.setVisible(false);
                     Main.cabinet = new CabinetScreen(false);
                     Main.cabinet.setLocationRelativeTo(null);
@@ -598,10 +613,51 @@ class CabinetScreen extends JFrame {
             }
         });
         returnDocBtn.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+        // Renew button
+        JButton renewBtn = new JButton("  Renew  ");
+        renewBtn.addActionListener(e -> {
+            if (userDoc != null) {
+                if (!Main.activeUser.findBooking(userDoc).hasReceived()) {
+                    JOptionPane.showMessageDialog(mainPanel, "You have not received the document yet!");
+                } else if (!Main.activeUser.findBooking(userDoc).isOverdue()) {
+                    JOptionPane.showMessageDialog(mainPanel, "This booking is not overdue yet!");
+                } else if (Main.findDoc(userDoc).isOutstanding()) {
+                    JOptionPane.showMessageDialog(mainPanel, "The outstanding request is\nplaced for this docuemnt!\n" +
+                            "You cannot renew it!");
+                } else if (Main.activeUser.findBooking(Main.findDoc(userDoc).getTitle()).hasRenewed() && !(Main.activeUser instanceof VisitingProfessor)) {
+                    JOptionPane.showMessageDialog(mainPanel, "You have already renewed this document!\nYou are not" +
+                            "allowed to do it again!");
+                } else {
+                    Booking booking = Main.activeUser.findBooking(userDoc);
+                    Main.cabinet.setVisible(false);
+                    int duration = 21; // Usually it is 3 weeks
+                    if (booking.getDoc() instanceof Book) if (booking.getDoc().isBestSeller())
+                        duration = 14; // If the document is book-bestseller, then 2 weeks
+                    if (Main.activeUser.isFaculty())
+                        duration = 28; // If user is faculty member, then 4 weeks
+                    if (booking.getDoc() instanceof AudioVideo)
+                        duration = 14; // If the document is AV-material, then 2 weeks
+                    if (Main.activeUser instanceof VisitingProfessor)
+                        duration = 7;  // Special duration for the VP
+                    booking.setRenewed();
+                    booking.setDate(Main.date);
+                    DataBase.doOrder(Main.activeUser, booking.getDoc(), duration, Main.date, false, false, true, true);
+                    Main.cabinet = new CabinetScreen(false);
+                    Main.cabinet.setLocationRelativeTo(null);
+                    Main.cabinet.setVisible(true);
+                    JOptionPane.showMessageDialog(mainPanel, "Successfully renewed for " + duration + " days!");
+                }
+            } else {
+                JOptionPane.showMessageDialog(mainPanel, "Select the order!");
+            }
+        });
+        infoDocBtn.setAlignmentX(JComponent.CENTER_ALIGNMENT);
 
         orderBtnBox.add(infoDocBtn);
         orderBtnBox.add(Box.createRigidArea(new Dimension(5, 0)));
         orderBtnBox.add(returnDocBtn);
+        orderBtnBox.add(Box.createRigidArea(new Dimension(5, 0)));
+        orderBtnBox.add(renewBtn);
 
         //Label of library documents
         JLabel libLabel = new JLabel();
@@ -635,12 +691,91 @@ class CabinetScreen extends JFrame {
         pack();
         setLocationRelativeTo(null);
 
-        // Notification about receiving of the requested document
-        if (!Main.userToNotify.equals("null") && Main.activeUser.getUsername().equals(Main.userToNotify)) {
-            Main.userToNotify = "null";
-            JOptionPane.showMessageDialog(mainPanel, "You have received the requested document.");
+        if (Main.activeUser != null) {
+            for (int i = 0; i < Main.activeUser.getNotifications().size(); ++i) {
+                showNotification(Main.activeUser.getNotifications().get(i));
+                Main.activeUser.getNotifications().remove(i);
+            }
+            DataBase.replaceNotifications(Main.activeUser);
         }
+    }
 
+    private void showNotification (Notification n) {
+        switch (n.getType()) {
+            case 1: { // Document receiving
+                if (Main.date.compareTo(n.getDate()) > 0 && Main.date.getDay() != n.getDate().getDay()) {
+                    // Notification about not receiving of the requested document
+                    JOptionPane.showMessageDialog(mainPanel, "You have been removed from the queue\n" +
+                            "due to your absense.");
+                    DataBase.deleteOrder(Main.activeUser, Main.findDoc(n.getDoc()));
+                    Main.activeUser.getBookings().remove(Main.activeUser.findBooking(n.getDoc()));
+                    for (int i = 0; i < Main.reqDocs.size(); ++i) {
+                        if (Main.reqDocs.get(i).getTitle().equals(n.getDoc())) {
+                            Main.priorityQueues.get(i).poll();
+                            User u = Main.priorityQueues.get(i).poll();
+                            if (u == null) {
+                                Main.documents.get(i).setCopies(Main.documents.get(i).getCopies() + 1);
+                                DataBase.addDoc(Main.documents.get(i));
+                                Main.reqDocs.remove(i);
+                                Main.priorityQueues.remove(i);
+                                break;
+                            }
+                            Main.findDoc(n.getDoc()).setOutstanding(false);
+                            u.notify(new Notification(1, n.getDoc()));
+                        }
+                    }
+                } else {
+                    // Dialog window about receiving or rejection of the requested document
+                    String info = "";
+                    info += "The requested document is available.\n" +
+                            "Do you want to order it?\n";
+                    Object[] obj = new Object[]{"Yes","No"};
+                    info += "Document's title: " + n.getDoc() + "\n";
+                    int result = JOptionPane.showOptionDialog(mainPanel,
+                            info,
+                            "Message",
+                            JOptionPane.YES_NO_OPTION,
+                            JOptionPane.QUESTION_MESSAGE,
+                            null,
+                            obj,
+                            obj[0]
+                            );
+                    if (result == JOptionPane.YES_OPTION) {
+                        Booking b = Main.activeUser.findBooking(n.getDoc());
+                        b.setReceived();
+                        DataBase.doOrder(Main.activeUser, b.getDoc(), b.getDuration(), b.getDate(), b.hasRequestedByLib(), b.hasRequestedByUser(),
+                        true, false);
+                    } else {
+                        DataBase.deleteOrder(Main.activeUser, Main.activeUser.findBooking(n.getDoc()).getDoc());
+                        Main.activeUser.getBookings().remove(Main.activeUser.findBooking(n.getDoc()));
+                        for (int i = 0; i < Main.reqDocs.size(); ++i) {
+                            if (Main.reqDocs.get(i).getTitle().equals(n.getDoc())) {
+                                Main.reqDocs.get(i).setOutstanding(false);
+                                User u = Main.priorityQueues.get(i).poll();
+                                if (u != null) {
+                                    u.notify(new Notification(1, Main.reqDocs.get(i).getTitle()));
+                                    DataBase.replaceNotifications(u);
+                                }
+                            }
+                        }
+                    }
+                }
+                break;
+            }
+            case 2: {
+                JOptionPane.showMessageDialog(mainPanel, "You have been removed from the queue\n" +
+                        "due to the outstanding request.");
+                break;
+            }
+            case 3: {
+                Booking booking = Main.activeUser.findBooking(n.getDoc());
+                JOptionPane.showMessageDialog(mainPanel, "Your order of document \"" + n.getDoc() + "\" is overdue!\n" +
+                        "For this reason you have to pay fee of " + n.getFine() + " rubles.");
+                break;
+            }
+            case 4: { break; }
+            default: { break; }
+        }
     }
 
 }
