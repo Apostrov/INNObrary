@@ -1,9 +1,11 @@
+package main.java;
+
 import javax.swing.*;
 import java.awt.*;
 
 class UserModifyScreen extends JFrame {
 
-    private boolean isFaculty = false;
+    private JComboBox<String> userTypeComboBox;
     private String password;
     private String firstName;
     private String secondName;
@@ -15,8 +17,11 @@ class UserModifyScreen extends JFrame {
     private JTextField addressField;
     private JTextField phoneField;
 
-    UserModifyScreen(User user) {
+    private User finalUser;
+
+    UserModifyScreen(User user, User finalUser) {
         super("INNObrary");
+        this.finalUser = finalUser;
         SwingUtilities.invokeLater(() -> {
             JFrame.setDefaultLookAndFeelDecorated(true);
             createGUI(user);
@@ -43,8 +48,51 @@ class UserModifyScreen extends JFrame {
         backBtnBox.add(backBtn);
         backBtnBox.add(Box.createRigidArea(new Dimension(200, 0)));
 
+        // Type of the document label
+        JLabel typeLabel = new JLabel();
+        typeLabel.setText("Type: ");
+        typeLabel.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+
+        String[] items = new String[]{"Student", "Instructor", "TA", "Visiting Professor", "Professor"};
+        if (finalUser == null) {
+            if (user instanceof Student) {
+                items = new String[]{"Student", "Instructor", "TA", "Visiting Professor", "Professor"};
+            } else if (user instanceof Instructor) {
+                items = new String[]{"Instructor", "TA", "Visiting Professor", "Professor", "Student"};
+            } else if (user instanceof TA) {
+                items = new String[]{"TA", "Visiting Professor", "Professor", "Student", "Instructor"};
+            } else if (user instanceof VisitingProfessor) {
+                items = new String[]{"Visiting Professor", "Professor", "Student", "Instructor", "TA"};
+            } else if (user instanceof Professor) {
+                items = new String[]{"Professor", "Student", "Instructor", "TA", "Visiting Professor"};
+            }
+        } else {
+            if (finalUser instanceof Student) {
+                items = new String[]{"Student", "Instructor", "TA", "Visiting Professor", "Professor"};
+            } else if (finalUser instanceof Instructor) {
+                items = new String[]{"Instructor", "TA", "Visiting Professor", "Professor", "Student"};
+            } else if (finalUser instanceof TA) {
+                items = new String[]{"TA", "Visiting Professor", "Professor", "Student", "Instructor"};
+            } else if (finalUser instanceof VisitingProfessor) {
+                items = new String[]{"Visiting Professor", "Professor", "Student", "Instructor", "TA"};
+            } else if (finalUser instanceof Professor) {
+                items = new String[]{"Professor", "Student", "Instructor", "TA", "Visiting Professor"};
+            }
+        }
+
+        // List of user types
+        Box userTypeBox = Box.createHorizontalBox();
+        userTypeBox.setMaximumSize(new Dimension(250, 25));
+        userTypeBox.add(Box.createRigidArea(new Dimension(15, 0)));
+        userTypeComboBox = new JComboBox<>(items);
+        userTypeComboBox.addActionListener(e -> updateType(user));
+        userTypeBox.add(typeLabel);
+        userTypeBox.add(Box.createRigidArea(new Dimension(5, 0)));
+        userTypeBox.add(userTypeComboBox);
+        userTypeBox.add(Box.createRigidArea(new Dimension(15, 0)));
+
         // Boxes for input fields
-        Box registerBox = Box.createHorizontalBox();
+        Box modifyBox = Box.createHorizontalBox();
         Box labelBox = Box.createVerticalBox();
         Box fieldBox = Box.createVerticalBox();
 
@@ -117,31 +165,39 @@ class UserModifyScreen extends JFrame {
         fieldBox.add(Box.createRigidArea(new Dimension(0, 5)));
         fieldBox.add(phoneField);
 
-        registerBox.add(Box.createRigidArea(new Dimension(15, 0)));
-        registerBox.add(labelBox);
-        registerBox.add(fieldBox);
-        registerBox.add(Box.createRigidArea(new Dimension(15, 0)));
+        modifyBox.add(Box.createRigidArea(new Dimension(15, 0)));
+        modifyBox.add(labelBox);
+        modifyBox.add(fieldBox);
+        modifyBox.add(Box.createRigidArea(new Dimension(15, 0)));
 
-        // Register button box
-        Box registerBtnBox = Box.createHorizontalBox();
-        // Register button
-        JButton registerBtn = new JButton("Modify user");
-        registerBtn.setAlignmentX(JComponent.LEFT_ALIGNMENT);
-        registerBtn.addActionListener(e -> {
+        // Modify button box
+        Box modifyBtnBox = Box.createHorizontalBox();
+        // Modify button
+        JButton modifyBtn = new JButton("Modify user");
+        modifyBtn.setAlignmentX(JComponent.LEFT_ALIGNMENT);
+        modifyBtn.addActionListener(e -> {
                     updateData();
                     if (password == null || firstName == null || secondName == null || address == null || phone == null) {
                         JOptionPane.showMessageDialog(mainPanel, "Wrong input data!");
                     } else if (password.equals("") || firstName.equals("") || secondName.equals("") || address.equals("") || phone.equals("")) {
                         JOptionPane.showMessageDialog(mainPanel, "Wrong input data!");
                     } else {
-                        user.setPassword(password);
-                        user.setFaculty(isFaculty);
-                        user.setFirstName(firstName);
-                        user.setSecondName(secondName);
-                        user.setAddress(address);
-                        user.setPhone(phone);
-                        DataBase.addUser(user);
+                        if (finalUser == null) updateType(user);
+                        finalUser.setPassword(password);
+                        finalUser.setFirstName(firstName);
+                        finalUser.setSecondName(secondName);
+                        finalUser.setAddress(address);
+                        finalUser.setPhone(phone);
+                        Main.users.remove(Main.findUser(user.getUsername()));
+                        Main.users.add(finalUser);
+                        DataBase.addUser(finalUser);
                         JOptionPane.showMessageDialog(mainPanel, "The user successfully modified!");
+                        passwordField.setText("");
+                        fNameField.setText("");
+                        sNameField.setText("");
+                        addressField.setText("");
+                        phoneField.setText("");
+                        Main.requests = new RequestsScreen();
                         Main.cabinet = new CabinetScreen(true);
                         Main.userMod.setVisible(false);
                         Main.cabinet.setLocationRelativeTo(null);
@@ -149,28 +205,17 @@ class UserModifyScreen extends JFrame {
                     }
                 }
         );
-        registerBtnBox.add(registerBtn);
-        registerBtnBox.add(Box.createRigidArea(new Dimension(0, 0)));
-
-        // Faculty check box
-        Box facultyBox = Box.createHorizontalBox();
-
-        JCheckBox facultyCheckBox = new JCheckBox("Is faculty member");
-        facultyCheckBox.setAlignmentX(JComponent.LEFT_ALIGNMENT);
-        facultyCheckBox.setSelected(user.isFaculty());
-        facultyCheckBox.addItemListener(e -> isFaculty = facultyCheckBox.isSelected());
-
-        facultyBox.add(facultyCheckBox);
-        facultyBox.add(Box.createRigidArea(new Dimension(0, 0)));
+        modifyBtnBox.add(modifyBtn);
+        modifyBtnBox.add(Box.createRigidArea(new Dimension(0, 0)));
 
         mainPanel.add(Box.createRigidArea(new Dimension(0, 15)));
         mainPanel.add(backBtnBox);
-        mainPanel.add(Box.createRigidArea(new Dimension(0, 65)));
-        mainPanel.add(registerBox);
-        mainPanel.add(Box.createRigidArea(new Dimension(0, 15)));
-        mainPanel.add(facultyBox);
-        mainPanel.add(Box.createRigidArea(new Dimension(0, 15)));
-        mainPanel.add(registerBtnBox);
+        mainPanel.add(Box.createRigidArea(new Dimension(0, 45)));
+        mainPanel.add(userTypeBox);
+        mainPanel.add(Box.createRigidArea(new Dimension(0, 25)));
+        mainPanel.add(modifyBox);
+        mainPanel.add(Box.createRigidArea(new Dimension(0, 45)));
+        mainPanel.add(modifyBtnBox);
 
         getContentPane().add(mainPanel);
 
@@ -185,6 +230,20 @@ class UserModifyScreen extends JFrame {
         secondName = sNameField.getText();
         address = addressField.getText();
         phone = phoneField.getText();
+    }
+
+    private void updateType(User user) {
+        Main.userMod.setVisible(false);
+        switch ((String) userTypeComboBox.getSelectedItem()) {
+            case "Student": {finalUser = new Student(user); break;}
+            case "Instructor": {finalUser = new Instructor(user); break;}
+            case "TA": {finalUser = new TA(user); break;}
+            case "Visiting Professor": {finalUser = new VisitingProfessor(user); break;}
+            case "Professor": {finalUser = new Professor(user); break;}
+        }
+        Main.userMod = new UserModifyScreen(user, finalUser);
+        Main.userMod.setLocationRelativeTo(null);
+        Main.userMod.setVisible(true);
     }
 
 }

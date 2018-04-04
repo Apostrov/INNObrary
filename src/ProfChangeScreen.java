@@ -1,3 +1,5 @@
+package main.java;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -121,9 +123,9 @@ class ProfChangeScreen extends JFrame {
         changeBox.add(fieldBox);
         changeBox.add(Box.createRigidArea(new Dimension(15, 0)));
 
-        // Register button box
+        // Change button box
         Box changeBtnBox = Box.createHorizontalBox();
-        // Register button
+        // Change button
         JButton changeBtn = new JButton("Change");
         changeBtn.setAlignmentX(JComponent.LEFT_ALIGNMENT);
         changeBtn.addActionListener(e -> {

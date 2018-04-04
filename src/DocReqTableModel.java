@@ -2,19 +2,21 @@ package main.java;
 
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 /** This class is used only for building the user documents table. */
-public class UserDocTableModel implements TableModel {
+public class DocReqTableModel implements TableModel {
 
     private Set<TableModelListener> listeners = new HashSet<>();
 
-    private List<Booking> bookings;
+    private List<Document> documents;
 
-    public UserDocTableModel(List<Booking> bookings) {
-        this.bookings = bookings;
+    DocReqTableModel() {
+        documents = new ArrayList<>();
+        documents.addAll(Main.reqDocs);
     }
 
     public void addTableModelListener(TableModelListener listener) {
@@ -26,7 +28,7 @@ public class UserDocTableModel implements TableModel {
     }
 
     public int getColumnCount() {
-        return 5;
+        return 2;
     }
 
     public String getColumnName(int columnIndex) {
@@ -34,34 +36,22 @@ public class UserDocTableModel implements TableModel {
             case 0:
                 return "Title";
             case 1:
-                return "Days left";
-            case 2:
-                return "Price";
-            case 3:
-                return "Request from library";
-            case 4:
-                return "Request for library";
+                return "Requests number";
         }
         return "";
     }
 
     public int getRowCount() {
-        return bookings.size();
+        return documents.size();
     }
 
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Booking booking = bookings.get(rowIndex);
+        Document document = documents.get(rowIndex);
         switch (columnIndex) {
             case 0:
-                return booking.getDoc().getTitle();
+                return document.getTitle();
             case 1:
-                return booking.getTimeLeft();
-            case 2:
-                return booking.getDoc().getPrice();
-            case 3:
-                return booking.hasRequestedByLib();
-            case 4:
-                return booking.hasRequestedByUser();
+                return Main.priorityQueues.get(rowIndex).size();
         }
         return "";
     }

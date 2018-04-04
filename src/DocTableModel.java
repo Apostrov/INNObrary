@@ -1,9 +1,13 @@
+package main.java;
+
 import javax.swing.event.TableModelListener;
+import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/** This class is used only for building the library document table. */
 public class DocTableModel implements TableModel {
 
     private Set<TableModelListener> listeners = new HashSet<TableModelListener>();
@@ -51,6 +55,7 @@ public class DocTableModel implements TableModel {
     public Object getValueAt(int rowIndex, int columnIndex) {
         Document doc = documents.get(rowIndex);
         String type = "Document";
+        // Check if the document is a book
         boolean isBS = false;
         if (doc instanceof Book){
             type = "Book";

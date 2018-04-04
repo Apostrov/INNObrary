@@ -1,7 +1,7 @@
+package main.java;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 
 class UserAddScreen extends JFrame {
 
@@ -134,9 +134,9 @@ class UserAddScreen extends JFrame {
         registerBox.add(fieldBox);
         registerBox.add(Box.createRigidArea(new Dimension(15, 0)));
 
-        // Register button box
+        // Add user button box
         Box registerBtnBox = Box.createHorizontalBox();
-        // Register button
+        // Add user button
         JButton registerBtn = new JButton("Add user");
         registerBtn.setAlignmentX(JComponent.LEFT_ALIGNMENT);
         registerBtn.addActionListener(e -> {
@@ -146,14 +146,24 @@ class UserAddScreen extends JFrame {
                     } else if (username.equals("") || password.equals("") || firstName.equals("") || secondName.equals("") || address.equals("") || phone.equals("")) {
                         JOptionPane.showMessageDialog(mainPanel, "Wrong input data!");
                     } else {
-                        User u = new User(username, password, isFaculty, firstName, secondName, address, phone);
-                        Main.users.add(u);
-                        DataBase.addUser(u);
-                        JOptionPane.showMessageDialog(mainPanel, "New user successfully added!");
-                        Main.cabinet = new CabinetScreen(true);
-                        Main.userAdd.setVisible(false);
-                        Main.cabinet.setLocationRelativeTo(null);
-                        Main.cabinet.setVisible(true);
+                        User u = new User(username, password, isFaculty, firstName, secondName, address, phone, 0);
+                        if (!DataBase.findUser(u)) {
+                            Main.users.add(u);
+                            DataBase.addUser(u);
+                            JOptionPane.showMessageDialog(mainPanel, "New user successfully added!");
+                            usernameField.setText("");
+                            passwordField.setText("");
+                            fNameField.setText("");
+                            sNameField.setText("");
+                            addressField.setText("");
+                            phoneField.setText("");
+                            Main.cabinet = new CabinetScreen(true);
+                            Main.userAdd.setVisible(false);
+                            Main.cabinet.setLocationRelativeTo(null);
+                            Main.cabinet.setVisible(true);
+                        } else {
+                            JOptionPane.showMessageDialog(mainPanel, "User with this username already exist!");
+                        }
                     }
                 }
         );

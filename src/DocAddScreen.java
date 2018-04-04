@@ -1,3 +1,5 @@
+package main.java;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -206,6 +208,13 @@ class DocAddScreen extends JFrame {
                         Main.documents.add(b);
                         DataBase.addDoc(b);
                         JOptionPane.showMessageDialog(mainPanel, "New document successfully added!");
+                        titleField.setText("");
+                        authorField.setText("");
+                        priceField.setText("");
+                        copiesField.setText("");
+                        editionField.setText("");
+                        editionYField.setText("");
+                        publisherField.setText("");
                         Main.cabinet = new CabinetScreen(true);
                         Main.docAdd.setVisible(false);
                         Main.cabinet.setLocationRelativeTo(null);
@@ -370,6 +379,10 @@ class DocAddScreen extends JFrame {
                         Main.documents.add(av);
                         DataBase.addDoc(av);
                         JOptionPane.showMessageDialog(mainPanel, "New document successfully added!");
+                        titleField.setText("");
+                        authorField.setText("");
+                        priceField.setText("");
+                        copiesField.setText("");
                         Main.cabinet = new CabinetScreen(true);
                         Main.docAdd.setVisible(false);
                         Main.cabinet.setLocationRelativeTo(null);
@@ -529,6 +542,10 @@ class DocAddScreen extends JFrame {
                         Main.documents.add(ja);
                         DataBase.addDoc(ja);
                         JOptionPane.showMessageDialog(mainPanel, "New document successfully added!");
+                        titleField.setText("");
+                        authorField.setText("");
+                        priceField.setText("");
+                        copiesField.setText("");
                         Main.cabinet = new CabinetScreen(true);
                         Main.docAdd.setVisible(false);
                         Main.cabinet.setLocationRelativeTo(null);

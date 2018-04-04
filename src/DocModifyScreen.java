@@ -1,11 +1,10 @@
+package main.java;
+
 import javax.swing.*;
 import java.awt.*;
 
 class DocModifyScreen extends JFrame {
 
-    private JComboBox<String> docTypeComboBox;
-    private String title;
-    private String author;
     private String price;
     private String copies;
     private String edition;
@@ -13,13 +12,13 @@ class DocModifyScreen extends JFrame {
     private String publisher;
     private boolean isReference;
     private boolean isBestSeller;
-    private JTextField titleField;
-    private JTextField authorField;
     private JTextField priceField;
     private JTextField copiesField;
     private JTextField editionField;
     private JTextField editionYField;
     private JTextField publisherField;
+    private JCheckBox refCheckBox;
+    private JCheckBox BSCheckBox;
 
     DocModifyScreen(Document doc) {
         super("INNObrary");
@@ -56,34 +55,6 @@ class DocModifyScreen extends JFrame {
         Box docAddBox = Box.createHorizontalBox();
         Box labelBox = Box.createVerticalBox();
         Box fieldBox = Box.createVerticalBox();
-
-        // Title label
-        JLabel titleLabel = new JLabel();
-        titleLabel.setText("Title:  ");
-        titleLabel.setFont(new Font("name", Font.BOLD, 15));
-        labelBox.add(Box.createRigidArea(new Dimension(0, 5)));
-        labelBox.add(titleLabel);
-        // Title field
-        titleField = new JTextField();
-        titleField.setAlignmentX(JComponent.CENTER_ALIGNMENT);
-        titleField.setMaximumSize(new Dimension(160, 20));
-        titleField.setText(doc.getTitle());
-        fieldBox.add(Box.createRigidArea(new Dimension(0, 5)));
-        fieldBox.add(titleField);
-
-        // Author label
-        JLabel authorLabel = new JLabel();
-        authorLabel.setText("Author:  ");
-        authorLabel.setFont(new Font("name", Font.BOLD, 15));
-        labelBox.add(Box.createRigidArea(new Dimension(0, 5)));
-        labelBox.add(authorLabel);
-        // Title field
-        authorField = new JTextField();
-        authorField.setAlignmentX(JComponent.CENTER_ALIGNMENT);
-        authorField.setMaximumSize(new Dimension(160, 20));
-        authorField.setText(doc.getAuthors());
-        fieldBox.add(Box.createRigidArea(new Dimension(0, 5)));
-        fieldBox.add(authorField);
 
         // Price label
         JLabel priceLabel = new JLabel();
@@ -161,22 +132,21 @@ class DocModifyScreen extends JFrame {
         docAddBox.add(fieldBox);
         docAddBox.add(Box.createRigidArea(new Dimension(5, 0)));
 
-        // Add document button box
+        // Modify document button box
         Box docAddBtnBox = Box.createHorizontalBox();
-        // Add document button
+        // Modify document button
         JButton docAddBtn = new JButton("Modify document");
         docAddBtn.setAlignmentX(JComponent.LEFT_ALIGNMENT);
         docAddBtn.addActionListener(e -> {
                     updateBookData();
-                    if (title == null || author == null || price == null || copies == null || edition == null || editionYear == null || publisher == null) {
+                    if (price == null || copies == null || edition == null || editionYear == null || publisher == null) {
                         JOptionPane.showMessageDialog(mainPanel, "Wrong input data!");
-                    } else if (title.equals("") || author.equals("") || price.equals("") || copies.equals("") || edition.equals("") || editionYear.equals("") || publisher.equals("")) {
+                    } else if (price.equals("") || copies.equals("") || edition.equals("") || editionYear.equals("") || publisher.equals("")) {
                         JOptionPane.showMessageDialog(mainPanel, "Wrong input data!");
                     } else {
-                        doc.setTitle(title);
-                        doc.setAuthors(author);
                         doc.setPrice(Integer.parseInt(price));
                         doc.setCopies(Integer.parseInt(copies));
+                        // TODO: If someone in the queue - add to this users bookings with this document
                         doc.setReference(isReference);
                         doc.setEdition(Integer.parseInt(edition));
                         doc.setYear(Integer.parseInt(editionYear));
@@ -197,12 +167,12 @@ class DocModifyScreen extends JFrame {
         // Bestseller & reference check boxes
         Box refBSBox = Box.createHorizontalBox();
 
-        JCheckBox refCheckBox = new JCheckBox("Is reference");
+        refCheckBox = new JCheckBox("Is reference");
         refCheckBox.setAlignmentX(JComponent.LEFT_ALIGNMENT);
         refCheckBox.setSelected(doc.isReference());
         refCheckBox.addItemListener(e -> isReference = refCheckBox.isSelected());
 
-        JCheckBox BSCheckBox = new JCheckBox("Is bestseller");
+        BSCheckBox = new JCheckBox("Is bestseller");
         BSCheckBox.setAlignmentX(JComponent.LEFT_ALIGNMENT);
         BSCheckBox.setSelected(doc.isBestSeller());
         BSCheckBox.addItemListener(e -> isBestSeller = BSCheckBox.isSelected());
@@ -213,7 +183,7 @@ class DocModifyScreen extends JFrame {
 
         mainPanel.add(Box.createRigidArea(new Dimension(0, 15)));
         mainPanel.add(backBtnBox);
-        mainPanel.add(Box.createRigidArea(new Dimension(0, 15)));
+        mainPanel.add(Box.createRigidArea(new Dimension(0, 55)));
         mainPanel.add(docAddBox);
         mainPanel.add(Box.createRigidArea(new Dimension(0, 15)));
         mainPanel.add(refBSBox);
@@ -252,34 +222,6 @@ class DocModifyScreen extends JFrame {
         Box labelBox = Box.createVerticalBox();
         Box fieldBox = Box.createVerticalBox();
 
-        // Title label
-        JLabel titleLabel = new JLabel();
-        titleLabel.setText("Title:  ");
-        titleLabel.setFont(new Font("name", Font.BOLD, 15));
-        labelBox.add(Box.createRigidArea(new Dimension(0, 5)));
-        labelBox.add(titleLabel);
-        // Title field
-        titleField = new JTextField();
-        titleField.setAlignmentX(JComponent.CENTER_ALIGNMENT);
-        titleField.setMaximumSize(new Dimension(160, 20));
-        titleField.setText(doc.getTitle());
-        fieldBox.add(Box.createRigidArea(new Dimension(0, 5)));
-        fieldBox.add(titleField);
-
-        // Author label
-        JLabel authorLabel = new JLabel();
-        authorLabel.setText("Author:  ");
-        authorLabel.setFont(new Font("name", Font.BOLD, 15));
-        labelBox.add(Box.createRigidArea(new Dimension(0, 5)));
-        labelBox.add(authorLabel);
-        // Title field
-        authorField = new JTextField();
-        authorField.setAlignmentX(JComponent.CENTER_ALIGNMENT);
-        authorField.setMaximumSize(new Dimension(160, 20));
-        authorField.setText(doc.getAuthors());
-        fieldBox.add(Box.createRigidArea(new Dimension(0, 5)));
-        fieldBox.add(authorField);
-
         // Price label
         JLabel priceLabel = new JLabel();
         priceLabel.setText("Price:  ");
@@ -314,25 +256,25 @@ class DocModifyScreen extends JFrame {
         docAddBox.add(fieldBox);
         docAddBox.add(Box.createRigidArea(new Dimension(5, 0)));
 
-        // Add document button box
+        // Modify document button box
         Box docAddBtnBox = Box.createHorizontalBox();
-        // Add document button
-        JButton docAddBtn = new JButton("Add document");
+        // Modify document button
+        JButton docAddBtn = new JButton("Modify document");
         docAddBtn.setAlignmentX(JComponent.LEFT_ALIGNMENT);
         docAddBtn.addActionListener(e -> {
                     updateAVData();
-                    if (title == null || author == null || price == null || copies == null) {
+                    if (price == null || copies == null) {
                         JOptionPane.showMessageDialog(mainPanel, "Wrong input data!");
-                    } else if (title.equals("") || author.equals("") || price.equals("") || copies.equals("")) {
+                    } else if (price.equals("") || copies.equals("")) {
                         JOptionPane.showMessageDialog(mainPanel, "Wrong input data!");
                     } else {
-                        doc.setTitle(title);
-                        doc.setAuthors(author);
                         doc.setPrice(Integer.parseInt(price));
                         doc.setCopies(Integer.parseInt(copies));
                         doc.setReference(isReference);
                         DataBase.addDoc(doc);
-                        JOptionPane.showMessageDialog(mainPanel, "Document successfully modidfied!");
+                        JOptionPane.showMessageDialog(mainPanel, "Document successfully modified!");
+                        priceField.setText("");
+                        copiesField.setText("");
                         Main.cabinet = new CabinetScreen(true);
                         Main.docMod.setVisible(false);
                         Main.cabinet.setLocationRelativeTo(null);
@@ -356,7 +298,7 @@ class DocModifyScreen extends JFrame {
 
         mainPanel.add(Box.createRigidArea(new Dimension(0, 15)));
         mainPanel.add(backBtnBox);
-        mainPanel.add(Box.createRigidArea(new Dimension(0, 15)));
+        mainPanel.add(Box.createRigidArea(new Dimension(0, 55)));
         mainPanel.add(docAddBox);
         mainPanel.add(Box.createRigidArea(new Dimension(0, 15)));
         mainPanel.add(refBSBox);
@@ -371,8 +313,8 @@ class DocModifyScreen extends JFrame {
     }
 
     private void updateBookData() {
-        title = titleField.getText();
-        author = authorField.getText();
+        isBestSeller = BSCheckBox.isSelected();
+        isReference = refCheckBox.isSelected();
         price = priceField.getText();
         copies = copiesField.getText();
         edition = editionField.getText();
@@ -381,8 +323,6 @@ class DocModifyScreen extends JFrame {
     }
 
     private void updateAVData() {
-        title = titleField.getText();
-        author = authorField.getText();
         price = priceField.getText();
         copies = copiesField.getText();
     }
