@@ -31,6 +31,29 @@ public class DataBase {
     private static MongoCollection<org.bson.Document> users = database.getCollection("users");
     private static MongoCollection<org.bson.Document> documents = database.getCollection("documents");
     private static MongoCollection<org.bson.Document> orders = database.getCollection("orders");
+    private static MongoCollection<org.bson.Document> random = database.getCollection("random");
+
+    /** Returns saved date value in the database. */
+    public static Date getDate() {
+        org.bson.Document dateJson = random.find(eq("_id", "date")).first();
+
+        if (dateJson != null) {
+            return Date.valueOf(((org.bson.Document) dateJson).getString("date"));
+        }
+
+        return null;
+    }
+
+    /** Saves the date value in the database. */
+    public static void saveDate() {
+        org.bson.Document dateJson = random.find(eq("_id", "date")).first();
+
+        if (dateJson != null) {
+            random.updateOne(
+                    eq("_id", "date"),
+                    set("date", Main.date.toString()));
+        }
+    }
 
     /**
      * Add document to DataBase and set id to class

@@ -17,6 +17,8 @@ class DocModifyScreen extends JFrame {
     private JTextField editionField;
     private JTextField editionYField;
     private JTextField publisherField;
+    private JCheckBox refCheckBox;
+    private JCheckBox BSCheckBox;
 
     DocModifyScreen(Document doc) {
         super("INNObrary");
@@ -165,12 +167,12 @@ class DocModifyScreen extends JFrame {
         // Bestseller & reference check boxes
         Box refBSBox = Box.createHorizontalBox();
 
-        JCheckBox refCheckBox = new JCheckBox("Is reference");
+        refCheckBox = new JCheckBox("Is reference");
         refCheckBox.setAlignmentX(JComponent.LEFT_ALIGNMENT);
         refCheckBox.setSelected(doc.isReference());
         refCheckBox.addItemListener(e -> isReference = refCheckBox.isSelected());
 
-        JCheckBox BSCheckBox = new JCheckBox("Is bestseller");
+        BSCheckBox = new JCheckBox("Is bestseller");
         BSCheckBox.setAlignmentX(JComponent.LEFT_ALIGNMENT);
         BSCheckBox.setSelected(doc.isBestSeller());
         BSCheckBox.addItemListener(e -> isBestSeller = BSCheckBox.isSelected());
@@ -273,9 +275,6 @@ class DocModifyScreen extends JFrame {
                         JOptionPane.showMessageDialog(mainPanel, "Document successfully modified!");
                         priceField.setText("");
                         copiesField.setText("");
-                        editionField.setText("");
-                        editionYField.setText("");
-                        publisherField.setText("");
                         Main.cabinet = new CabinetScreen(true);
                         Main.docMod.setVisible(false);
                         Main.cabinet.setLocationRelativeTo(null);
@@ -314,6 +313,8 @@ class DocModifyScreen extends JFrame {
     }
 
     private void updateBookData() {
+        isBestSeller = BSCheckBox.isSelected();
+        isReference = refCheckBox.isSelected();
         price = priceField.getText();
         copies = copiesField.getText();
         edition = editionField.getText();

@@ -26,13 +26,14 @@ public class Main {
     static ProfChangeScreen changeProf;
     static DebtorViewScreen debtors;
     static RequestsScreen requests;
+    static DateModifyScreen dateMod;
 
     static ArrayList<Queue<User>> priorityQueues;
 
     /** Main method of INNObrary */
     public static void main(String[] args) {
         // For debug
-        date = new Date(118, 7, 25);
+        date = DataBase.getDate();
 
         // Run-time storage
         users = DataBase.getAllUser();
@@ -72,6 +73,7 @@ public class Main {
         changeProf = new ProfChangeScreen(new User("", "", false)); changeProf.setLocationRelativeTo(null);
         debtors = new DebtorViewScreen(); debtors.setLocationRelativeTo(null);
         requests = new RequestsScreen(); requests.setLocationRelativeTo(null);
+        dateMod = new DateModifyScreen(); dateMod.setLocationRelativeTo(null);
 
         // Show only the login screen first
         login.setVisible(true);
@@ -84,6 +86,7 @@ public class Main {
         docMod.setVisible(false);
         debtors.setVisible(false);
         requests.setVisible(false);
+        dateMod.setVisible(false);
     }
 
 	/** Returns user instance if the user with given username exists otherwise null */

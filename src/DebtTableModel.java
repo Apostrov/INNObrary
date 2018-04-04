@@ -73,11 +73,14 @@ public class DebtTableModel extends AbstractTableModel {
 
     /** Special method that is used to real-time update of the table. */
     void replace (List<Booking> bookings) {
+        int size = this.bookings.size();
         this.bookings.clear();
-        fireTableRowsDeleted(0, getRowCount());
-        for (int i = 0; i < bookings.size(); ++i)
-            if (bookings.get(i).isOverdue())
+        fireTableRowsDeleted(0, size);
+        for (int i = 0; i < bookings.size(); ++i) {
+            if (bookings.get(i).isOverdue()) {
                 this.bookings.add(bookings.get(i));
+            }
+        }
         fireTableRowsInserted(0, bookings.size());
     }
 

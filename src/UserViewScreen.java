@@ -88,6 +88,8 @@ public class UserViewScreen extends JFrame {
                     JOptionPane.showMessageDialog(mainPanel, "Successfully requested!");
                     b.libRequest();
                     DataBase.doOrder(userForView, b.getDoc(), b.getDuration(), b.getDate(), b.hasRequestedByLib(), b.hasRequestedByUser(), b.hasReceived(), b.hasRenewed());
+                    userForView.notify(new Notification(4, b.getDoc().getTitle()));
+                    DataBase.replaceNotifications(userForView);
                     Main.userView.setVisible(false);
                     Main.userView = new UserViewScreen(userForView);
                     Main.userView.setLocationRelativeTo(null);
@@ -95,8 +97,6 @@ public class UserViewScreen extends JFrame {
                 }
             }
         });
-
-        Queue<User> pq = new PriorityQueue<>();
 
         // Return button
         JButton returnBtn = new JButton("Return");

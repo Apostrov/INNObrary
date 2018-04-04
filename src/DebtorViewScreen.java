@@ -76,6 +76,8 @@ public class DebtorViewScreen extends JFrame {
             }
             // The lines below are used to real-time update the table
             List<Booking> list = new LinkedList<>();
+            debtModel.replace(list);
+            debtTable.revalidate();
             list.addAll(Main.findUser(debtor).getBookings());
             debtModel.replace(list);
             debtTable.revalidate();

@@ -102,8 +102,19 @@ class CabinetScreen extends JFrame {
             Main.requests.setLocationRelativeTo(null);
             Main.requests.setVisible(true);
         });
+        // Date modify button
+        JButton dateBtn = new JButton("Set date");
+        dateBtn.setAlignmentX(JComponent.RIGHT_ALIGNMENT);
+        dateBtn.addActionListener(e -> {
+            Main.cabinet.setVisible(false);
+            Main.dateMod = new DateModifyScreen();
+            Main.dateMod.setLocationRelativeTo(null);
+            Main.dateMod.setVisible(true);
+        });
         logoutBox.add(logoutBtn);
-        logoutBox.add(Box.createRigidArea(new Dimension(250, 0)));
+        logoutBox.add(Box.createRigidArea(new Dimension(170, 0)));
+        logoutBox.add(dateBtn);
+        logoutBox.add(Box.createRigidArea(new Dimension(5, 0)));
         logoutBox.add(requestsBtn);
 
         // Buttons related to documents
@@ -619,8 +630,9 @@ class CabinetScreen extends JFrame {
             if (userDoc != null) {
                 if (!Main.activeUser.findBooking(userDoc).hasReceived()) {
                     JOptionPane.showMessageDialog(mainPanel, "You have not received the document yet!");
-                } else if (!Main.activeUser.findBooking(userDoc).isOverdue()) {
-                    JOptionPane.showMessageDialog(mainPanel, "This booking is not overdue yet!");
+                } else if (Main.activeUser.findBooking(userDoc).isOverdue()) {
+                    JOptionPane.showMessageDialog(mainPanel, "This booking is overdue!\n" +
+                            "You should pay the fine!");
                 } else if (Main.findDoc(userDoc).isOutstanding()) {
                     JOptionPane.showMessageDialog(mainPanel, "The outstanding request is\nplaced for this docuemnt!\n" +
                             "You cannot renew it!");
@@ -694,8 +706,8 @@ class CabinetScreen extends JFrame {
         if (Main.activeUser != null) {
             for (int i = 0; i < Main.activeUser.getNotifications().size(); ++i) {
                 showNotification(Main.activeUser.getNotifications().get(i));
-                Main.activeUser.getNotifications().remove(i);
             }
+            Main.activeUser.getNotifications().clear();
             DataBase.replaceNotifications(Main.activeUser);
         }
     }
@@ -738,8 +750,7 @@ class CabinetScreen extends JFrame {
                             JOptionPane.QUESTION_MESSAGE,
                             null,
                             obj,
-                            obj[0]
-                            );
+                            obj[0]);
                     if (result == JOptionPane.YES_OPTION) {
                         Booking b = Main.activeUser.findBooking(n.getDoc());
                         b.setReceived();
@@ -751,10 +762,15 @@ class CabinetScreen extends JFrame {
                         for (int i = 0; i < Main.reqDocs.size(); ++i) {
                             if (Main.reqDocs.get(i).getTitle().equals(n.getDoc())) {
                                 Main.reqDocs.get(i).setOutstanding(false);
+                                Main.priorityQueues.get(i).poll();
                                 User u = Main.priorityQueues.get(i).poll();
                                 if (u != null) {
                                     u.notify(new Notification(1, Main.reqDocs.get(i).getTitle()));
                                     DataBase.replaceNotifications(u);
+                                } else {
+                                    Main.reqDocs.get(i).setCopies(Main.reqDocs.get(i).getCopies() + 1);
+                                    Main.reqDocs.remove(i);
+                                    Main.priorityQueues.remove(i);
                                 }
                             }
                         }
@@ -768,12 +784,14 @@ class CabinetScreen extends JFrame {
                 break;
             }
             case 3: {
-                Booking booking = Main.activeUser.findBooking(n.getDoc());
                 JOptionPane.showMessageDialog(mainPanel, "Your order of document \"" + n.getDoc() + "\" is overdue!\n" +
                         "For this reason you have to pay fee of " + n.getFine() + " rubles.");
                 break;
             }
-            case 4: { break; }
+            case 4: {
+                JOptionPane.showMessageDialog(mainPanel, "You have received the request for returning the document \"" + n.getDoc() + "\".");
+                break;
+            }
             default: { break; }
         }
     }
