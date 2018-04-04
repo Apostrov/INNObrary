@@ -454,13 +454,13 @@ class CabinetScreen extends JFrame {
                         JOptionPane.showMessageDialog(mainPanel, "This document has been placed by an outstanding\n" +
                                 "request. Please wait before it will be available.");
                     } else {
-                        JOptionPane.showMessageDialog(mainPanel, "All these documents are booked!\nYou have" +
-                                " been added to the queue!");
+                        int num = 1, time = 1000000;
                         boolean hasReqBefore = false;
                         for (int i = 0; i < Main.reqDocs.size(); ++i) {
                             if (doc.getTitle().equals(Main.reqDocs.get(i).getTitle())) {
                                 hasReqBefore = true;
                                 Main.priorityQueues.get(i).add(Main.activeUser);
+                                num = Main.priorityQueues.get(i).size();
                                 Main.cabinet.setVisible(false);
                                 int duration = 21;                      // Usually it is 3 weeks
                                 if (doc instanceof Book) if (doc.isBestSeller())
@@ -472,6 +472,15 @@ class CabinetScreen extends JFrame {
                                 if (Main.activeUser instanceof VisitingProfessor)
                                     duration = 7;    // Special duration for the VP
                                 DataBase.doOrder(Main.activeUser, doc, duration, Main.date, false, false, false, false);
+
+                                for (int j = 0; j < Main.users.size(); ++j) {
+                                    Booking b = Main.users.get(j).findBooking(Main.reqDocs.get(i).getTitle());
+                                    if (b != null) {
+                                        System.out.println(j);
+                                        if (time > b.getTimeLeft()) time = b.getTimeLeft();
+                                    }
+                                }
+
                                 Main.activeUser.addBooking(new Booking(doc, duration, false));
                                 Main.cabinet = new CabinetScreen(false);
                                 Main.cabinet.setLocationRelativeTo(null);
@@ -493,11 +502,22 @@ class CabinetScreen extends JFrame {
                             if (Main.activeUser instanceof VisitingProfessor)
                                 duration = 7;  // Special duration for the VP
                             DataBase.doOrder(Main.activeUser, doc, duration, Main.date, false, false, false, false);
+
+                            for (int j = 0; j < Main.users.size(); ++j) {
+                                Booking b = Main.users.get(j).findBooking(doc.getTitle());
+                                if (b != null) {
+                                    if (time > b.getTimeLeft()) time = b.getTimeLeft();
+                                }
+                            }
+
                             Main.activeUser.addBooking(new Booking(doc, duration, false));
                             Main.cabinet = new CabinetScreen(false);
                             Main.cabinet.setLocationRelativeTo(null);
                             Main.cabinet.setVisible(true);
                         }
+                        JOptionPane.showMessageDialog(mainPanel, "All these documents are booked!\nYou have" +
+                                " been added to the queue!\nYour number in the queue is " + num + "\n" +
+                                "Approximate wating time is " + time + " days.");
                     }
                 } else if (doc.isReference()) {
                     JOptionPane.showMessageDialog(mainPanel, "You cannot order a reference document!");
