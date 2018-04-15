@@ -142,8 +142,10 @@ class RegistrationScreen extends JFrame {
             updateData();
             if (username == null || password == null || firstName == null || secondName == null || address == null || phone == null || username.equals("admin")) {
                 JOptionPane.showMessageDialog(mainPanel, "Wrong input data!");
+                DataBase.log("[" + Main.date.toString() + "][unknown]--(Someone tried to register.)");
             } else if (username.equals("") || password.equals("") || firstName.equals("") || secondName.equals("") || address.equals("") || phone.equals("")) {
                 JOptionPane.showMessageDialog(mainPanel, "Wrong input data!");
+                DataBase.log("[" + Main.date.toString() + "][unknown]--(Someone tried to register.)");
             } else {
                 Main.activeUser = new User(username, password, false, firstName, secondName, address, phone, 0);
                 if (!DataBase.findUser(Main.activeUser)) {
@@ -154,8 +156,12 @@ class RegistrationScreen extends JFrame {
                     Main.cabinet = new CabinetScreen(false);
                     Main.cabinet.setLocationRelativeTo(null);
                     Main.cabinet.setVisible(true);
+                    DataBase.log("[" + Main.date.toString() + "][" + Main.activeUser.getUsername() +
+                            "]--(The new user " + Main.activeUser.getUsername() + " has registered in the system.)");
                 } else {
                     JOptionPane.showMessageDialog(mainPanel, "User with this username already exist!");
+                    DataBase.log("[" + Main.date.toString() + "][unknown]--(Someone tried to register" +
+                            " with existing username.)");
                 }
             }
         }

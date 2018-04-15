@@ -32,6 +32,7 @@ public class DataBase {
     private static MongoCollection<org.bson.Document> documents = database.getCollection("documents");
     private static MongoCollection<org.bson.Document> orders = database.getCollection("orders");
     private static MongoCollection<org.bson.Document> random = database.getCollection("random");
+    private static MongoCollection<org.bson.Document> logs = database.getCollection("logs");
 
     /** Returns saved date value in the database. */
     public static Date getDate() {
@@ -44,6 +45,7 @@ public class DataBase {
         return null;
     }
 
+
     /** Saves the date value in the database. */
     public static void saveDate() {
         org.bson.Document dateJson = random.find(eq("_id", "date")).first();
@@ -53,6 +55,21 @@ public class DataBase {
                     eq("_id", "date"),
                     set("date", Main.date.toString()));
         }
+    }
+
+    public static ArrayList<String> getAllLogs(){
+        ArrayList<String> allLogs = new ArrayList<>();
+        for (org.bson.Document json : logs.find()) {
+            allLogs.add(((org.bson.Document) json).getString("log"));
+        }
+        return allLogs;
+    }
+
+    public static void log(String action) {
+        Main.logs.add(action);
+        org.bson.Document logJson = new org.bson.Document()
+                .append("log", action);
+        logs.insertOne(logJson);
     }
 
     /**
@@ -251,7 +268,7 @@ public class DataBase {
 
         ArrayList list = (ArrayList) orderJson.get("notifications");
         for (Object doc : list) {
-            Notification n = new Notification(((org.bson.Document) doc).getInteger("type"), ((org.bson.Document) doc).getString("document"), Date.valueOf(((org.bson.Document) doc).getString("date")), ((org.bson.Document) doc).getInteger("fine"));
+            Notification n = new Notification(((org.bson.Document) doc).getInteger("type"), ((org.bson.Document) doc).getString("document"), ((org.bson.Document) doc).getString("user"), Date.valueOf(((org.bson.Document) doc).getString("date")), ((org.bson.Document) doc).getInteger("fine"));
             notifications.add(n);
         }
 
@@ -273,6 +290,7 @@ public class DataBase {
             for (Notification notif : user.getNotifications()) {
                 notifJson.add(new org.bson.Document("type", notif.getType())
                         .append("document", notif.getDoc())
+                        .append("user", notif.getUser())
                         .append("date", notif.getDate().toString())
                         .append("fine", notif.getFine()));
             }
@@ -343,6 +361,22 @@ public class DataBase {
         user.setNotifications(notifications);
         user.setBookings(bookings);
         switch (user.getPriority()) {
+            case 8: {
+                user = new Admin(user, 8);
+                break;
+            }
+            case 7: {
+                user = new Librarian(user, 7);
+                break;
+            }
+            case 6: {
+                user = new Librarian(user, 6);
+                break;
+            }
+            case 5: {
+                user = new Librarian(user, 5);
+                break;
+            }
             case 4: {
                 user = new Student(user);
                 break;

@@ -17,7 +17,7 @@ public class DebtorTableModel implements TableModel {
         this.users = new ArrayList<>();
         this.users.addAll(users);
         // Remove the librarian. There is no need to contain him in the table
-        for (int i = 0; i < this.users.size(); ++i) if (this.users.get(i) instanceof Librarian) this.users.remove(i);
+        for (int i = 0; i < this.users.size(); ++i) if (this.users.get(i) instanceof Admin) this.users.remove(i);
     }
 
     public void addTableModelListener(TableModelListener listener) {

@@ -2,10 +2,7 @@ package main.java;
 
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /** This class is used only for building the user documents table. */
 public class DocReqTableModel implements TableModel {
@@ -14,9 +11,9 @@ public class DocReqTableModel implements TableModel {
 
     private List<Document> documents;
 
-    DocReqTableModel() {
-        documents = new ArrayList<>();
-        documents.addAll(Main.reqDocs);
+    DocReqTableModel(List<Document> documents) {
+        this.documents = new LinkedList<>();
+        this.documents.addAll(documents);
     }
 
     public void addTableModelListener(TableModelListener listener) {
@@ -28,7 +25,7 @@ public class DocReqTableModel implements TableModel {
     }
 
     public int getColumnCount() {
-        return 2;
+        return 3;
     }
 
     public String getColumnName(int columnIndex) {
@@ -37,6 +34,8 @@ public class DocReqTableModel implements TableModel {
                 return "Title";
             case 1:
                 return "Requests number";
+            case 2:
+                return "Is outstanding";
         }
         return "";
     }
@@ -52,6 +51,8 @@ public class DocReqTableModel implements TableModel {
                 return document.getTitle();
             case 1:
                 return Main.priorityQueues.get(rowIndex).size();
+            case 2:
+                return document.isOutstanding();
         }
         return "";
     }

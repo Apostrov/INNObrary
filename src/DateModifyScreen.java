@@ -35,7 +35,7 @@ class DateModifyScreen extends JFrame {
         JButton backBtn = new JButton("Back");
         backBtn.setAlignmentX(JComponent.LEFT_ALIGNMENT);
         backBtn.addActionListener(e -> {
-            Main.docMod.setVisible(false);
+            Main.dateMod.setVisible(false);
             Main.cabinet.setLocationRelativeTo(null);
             Main.cabinet.setVisible(true);
         });
@@ -104,8 +104,12 @@ class DateModifyScreen extends JFrame {
                     updateDateData();
                     if (day == null || month == null || year == null) {
                         JOptionPane.showMessageDialog(mainPanel, "Wrong input data!");
+                        DataBase.log("[" + Main.date.toString() + "][" + Main.activeUser.getUsername() +
+                                "]--(The user has tried to modify the date value of the system.)");
                     } else if (day.equals("") || month.equals("") || year.equals("")) {
                         JOptionPane.showMessageDialog(mainPanel, "Wrong input data!");
+                        DataBase.log("[" + Main.date.toString() + "][" + Main.activeUser.getUsername() +
+                                "]--(The user has tried to modify the date value of the system.)");
                     } else {
                         Main.date = new Date(Integer.parseInt(year) - 1900, Integer.parseInt(month) - 1, Integer.parseInt(day));
                         DataBase.saveDate();
@@ -114,6 +118,8 @@ class DateModifyScreen extends JFrame {
                         Main.dateMod.setVisible(false);
                         Main.cabinet.setLocationRelativeTo(null);
                         Main.cabinet.setVisible(true);
+                        DataBase.log("[" + Main.date.toString() + "][" + Main.activeUser.getUsername() +
+                                "]--(The user has modified the date value of the system.)");
                     }
                 }
         );

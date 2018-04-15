@@ -132,8 +132,12 @@ class ProfChangeScreen extends JFrame {
             updateData();
             if (password == null || firstName == null || secondName == null || address == null || phone == null) {
                 JOptionPane.showMessageDialog(mainPanel, "Wrong input data!");
+                DataBase.log("[" + Main.date.toString() + "][" + Main.activeUser.getUsername() +
+                        "]--(The user has tried to modify his profile info.)");
             } else if (password.equals("") || firstName.equals("") || secondName.equals("") || address.equals("") || phone.equals("")) {
                 JOptionPane.showMessageDialog(mainPanel, "Wrong input data!");
+                DataBase.log("[" + Main.date.toString() + "][" + Main.activeUser.getUsername() +
+                        "]--(The user has tried to modify his profile info.)");
             } else {
                 user.setPassword(password);
                 user.setFirstName(firstName);
@@ -146,6 +150,8 @@ class ProfChangeScreen extends JFrame {
                 Main.cabinet = new CabinetScreen(false);
                 Main.cabinet.setLocationRelativeTo(null);
                 Main.cabinet.setVisible(true);
+                DataBase.log("[" + Main.date.toString() + "][" + Main.activeUser.getUsername() +
+                        "]--(The user has modified his profile info.)");
             }
         }
         );

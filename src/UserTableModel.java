@@ -18,7 +18,7 @@ public class UserTableModel implements TableModel {
         this.users = new ArrayList<>();
         this.users.addAll(users);
         // There is no need to contain the librarian in the table
-        for (int i = 0; i < this.users.size(); ++i) if (this.users.get(i) instanceof Librarian) this.users.remove(i);
+        for (int i = 0; i < this.users.size(); ++i) if (this.users.get(i) instanceof Admin) this.users.remove(i);
     }
 
     public void addTableModelListener(TableModelListener listener) {

@@ -201,8 +201,12 @@ class DocAddScreen extends JFrame {
                     updateBookData();
                     if (title == null || author == null || price == null || copies == null || edition == null || editionYear == null || publisher == null) {
                         JOptionPane.showMessageDialog(mainPanel, "Wrong input data!");
+                        DataBase.log("[" + Main.date.toString() + "][" + Main.activeUser.getUsername() +
+                                "]--(The user has tried to add a new document to the system.)");
                     } else if (title.equals("") || author.equals("") || price.equals("") || copies.equals("") || edition.equals("") || editionYear.equals("") || publisher.equals("")) {
                         JOptionPane.showMessageDialog(mainPanel, "Wrong input data!");
+                        DataBase.log("[" + Main.date.toString() + "][" + Main.activeUser.getUsername() +
+                                "]--(The user has tried to add a new document to the system.)");
                     } else {
                         Book b = new Book(title, author, Integer.parseInt(edition), Integer.parseInt(editionYear), publisher, Integer.parseInt(price), Integer.parseInt(copies), isBestSeller, isReference);
                         Main.documents.add(b);
@@ -219,6 +223,8 @@ class DocAddScreen extends JFrame {
                         Main.docAdd.setVisible(false);
                         Main.cabinet.setLocationRelativeTo(null);
                         Main.cabinet.setVisible(true);
+                        DataBase.log("[" + Main.date.toString() + "][" + Main.activeUser.getUsername() +
+                                "]--(The user has added the new document \"" + b.getTitle() + "\" to the system.)");
                     }
                 }
         );
@@ -372,8 +378,12 @@ class DocAddScreen extends JFrame {
                     updateAVData();
                     if (title == null || author == null || price == null || copies == null) {
                         JOptionPane.showMessageDialog(mainPanel, "Wrong input data!");
+                        DataBase.log("[" + Main.date.toString() + "][" + Main.activeUser.getUsername() +
+                                "]--(The user has tried to add a new document to the system.)");
                     } else if (title.equals("") || author.equals("") || price.equals("") || copies.equals("")) {
                         JOptionPane.showMessageDialog(mainPanel, "Wrong input data!");
+                        DataBase.log("[" + Main.date.toString() + "][" + Main.activeUser.getUsername() +
+                                "]--(The user has tried to add a new document to the system.)");
                     } else {
                         AudioVideo av = new AudioVideo(title, author, Integer.parseInt(price), Integer.parseInt(copies), isReference);
                         Main.documents.add(av);
@@ -387,6 +397,8 @@ class DocAddScreen extends JFrame {
                         Main.docAdd.setVisible(false);
                         Main.cabinet.setLocationRelativeTo(null);
                         Main.cabinet.setVisible(true);
+                        DataBase.log("[" + Main.date.toString() + "][" + Main.activeUser.getUsername() +
+                                "]--(The user has added the new document \"" + av.getTitle() + "\" to the system.)");
                     }
                 }
         );
@@ -535,8 +547,12 @@ class DocAddScreen extends JFrame {
                     updateAVData();
                     if (title == null || author == null || price == null || copies == null) {
                         JOptionPane.showMessageDialog(mainPanel, "Wrong input data!");
+                        DataBase.log("[" + Main.date.toString() + "][" + Main.activeUser.getUsername() +
+                                "]--(The user has tried to add a new document to the system.)");
                     } else if (title.equals("") || author.equals("") || price.equals("") || copies.equals("")) {
                         JOptionPane.showMessageDialog(mainPanel, "Wrong input data!");
+                        DataBase.log("[" + Main.date.toString() + "][" + Main.activeUser.getUsername() +
+                                "]--(The user has tried to add a new document to the system.)");
                     } else {
                         JournalArticle ja = new JournalArticle(title, author, Integer.parseInt(price), Integer.parseInt(copies), isReference);
                         Main.documents.add(ja);
@@ -550,6 +566,8 @@ class DocAddScreen extends JFrame {
                         Main.docAdd.setVisible(false);
                         Main.cabinet.setLocationRelativeTo(null);
                         Main.cabinet.setVisible(true);
+                        DataBase.log("[" + Main.date.toString() + "][" + Main.activeUser.getUsername() +
+                                "]--(The user has added the new document \"" + ja.getTitle() + "\" to the system.)");
                     }
                 }
         );

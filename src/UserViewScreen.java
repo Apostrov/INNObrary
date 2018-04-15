@@ -75,20 +75,33 @@ public class UserViewScreen extends JFrame {
         requestBtn.addActionListener(e -> {
             if (userDoc == null) {
                 JOptionPane.showMessageDialog(mainPanel, "Select user's order!");
+                DataBase.log("[" + Main.date.toString() + "][" + Main.activeUser.getUsername() +
+                        "]--(The user has tried to send a request for returning of some of the orders of user " + userForView.getUsername() + ".)");
             } else {
                 Booking b = userForView.findBooking(userDoc);
                 if (b.hasRequestedByUser()) {
                     JOptionPane.showMessageDialog(mainPanel, "User has already requested for returning!\n" +
                             "Press the 'Return' button!");
+                    DataBase.log("[" + Main.date.toString() + "][" + Main.activeUser.getUsername() +
+                            "]--(The user has tried to send a request for returning of the document \"" + b.getDoc().getTitle() +
+                            "\" of user " + userForView.getUsername() + " that is already have been requested from the user.)");
                 } else if (b.hasRequestedByLib()) {
                     JOptionPane.showMessageDialog(mainPanel, "Already requested!");
+                    DataBase.log("[" + Main.date.toString() + "][" + Main.activeUser.getUsername() +
+                            "]--(The user has tried to send a request for returning of the document \"" + b.getDoc().getTitle() + "\" again.)");
                 } else if (!b.hasReceived()) {
                     JOptionPane.showMessageDialog(mainPanel, "User has not received the document yet!");
+                    DataBase.log("[" + Main.date.toString() + "][" + Main.activeUser.getUsername() +
+                            "]--(The user has tried to send a request for returning of the document \"" + b.getDoc().getTitle() + "\"" +
+                            " but user " + userForView.getUsername() + " has not received it yet.)");
                 } else {
                     JOptionPane.showMessageDialog(mainPanel, "Successfully requested!");
+                    DataBase.log("[" + Main.date.toString() + "][" + Main.activeUser.getUsername() +
+                            "]--(The user has sent the request for returning the document \"" + b.getDoc().getTitle() + "\"" +
+                            " of user " + userForView.getUsername() + ".)");
                     b.libRequest();
                     DataBase.doOrder(userForView, b.getDoc(), b.getDuration(), b.getDate(), b.hasRequestedByLib(), b.hasRequestedByUser(), b.hasReceived(), b.hasRenewed());
-                    userForView.notify(new Notification(4, b.getDoc().getTitle()));
+                    userForView.notify(new Notification(4, b.getDoc().getTitle(), "null", Main.date, 0));
                     DataBase.replaceNotifications(userForView);
                     Main.userView.setVisible(false);
                     Main.userView = new UserViewScreen(userForView);
@@ -104,6 +117,8 @@ public class UserViewScreen extends JFrame {
         returnBtn.addActionListener(e -> {
             if (userDoc == null) {
                 JOptionPane.showMessageDialog(mainPanel, "Select user's order!");
+                DataBase.log("[" + Main.date.toString() + "][" + Main.activeUser.getUsername() +
+                        "]--(The user has tried to accept some document of the user " + userForView.getUsername() + ".)");
             } else {
                 Booking booking = userForView.findBooking(userDoc);
                 if (booking.hasRequestedByUser()) {
@@ -112,34 +127,25 @@ public class UserViewScreen extends JFrame {
                     for (int i = 0; i < Main.documents.size(); ++i) {
                         if (Main.documents.get(i).getTitle().equals(booking.getDoc().getTitle())) {
                             hasFound = true;
-                            Main.documents.get(i).setCopies(Main.documents.get(i).getCopies() + 1);
-                            DataBase.addDoc(Main.documents.get(i));
                             DataBase.deleteOrder(userForView, booking.getDoc());
                             userForView.getBookings().remove(booking);
                             // Check for the users who has requested for this document
-                            for (int j = 0; j < Main.reqDocs.size(); ++j) {
-                                if (Main.reqDocs.get(j).getTitle().equals(booking.getDoc().getTitle())) {
-                                    Main.reqDocs.get(j).setCopies(Main.documents.get(i).getCopies() - 1);
-                                    user = Main.priorityQueues.get(j).poll();
-                                    DataBase.addDoc(Main.reqDocs.get(j));
-                                    if (user == null) {
-                                        Main.reqDocs.get(j).setCopies(Main.reqDocs.get(j).getCopies() + 1);
-                                        DataBase.addDoc(Main.reqDocs.get(j));
-                                        Main.reqDocs.remove(j);
-                                        Main.priorityQueues.remove(j);
-                                        break;
-                                    }
-                                    user.notify(new Notification(1, Main.reqDocs.get(j).getTitle()));
-                                    DataBase.replaceNotifications(user);
-                                }
+                            user = Main.priorityQueues.get(i).poll();
+                            if (user == null) {
+                                booking.getDoc().setCopies(booking.getDoc().getCopies() + 1);
+                                DataBase.addDoc(booking.getDoc());
+                                break;
                             }
+                            user.notify(new Notification(1, booking.getDoc().getTitle(), "null", Main.date, 0));
+                            DataBase.replaceNotifications(user);
+                            DataBase.addDoc(booking.getDoc());
                         }
                     }
                     String info = "Successfully returned!\n";
                     if (booking.isOverdue()) {
                         info += "The order is overdue.\nThe user will be notified to pay fee.";
                         int fine = (-1 * booking.getTimeLeft()) * 100 >= booking.getDoc().getPrice() ? booking.getDoc().getPrice() : (-1 * booking.getTimeLeft()) * 100;
-                        userForView.notify(new Notification(3, booking.getDoc().getTitle(), fine));
+                        userForView.notify(new Notification(3, booking.getDoc().getTitle(), "null", Main.date, fine));
                         DataBase.replaceNotifications(userForView);
                     }
                     if (user != null) info += "\nThe next user in the queue was notified\nabout availability of the document.";
@@ -153,8 +159,15 @@ public class UserViewScreen extends JFrame {
                     Main.userView = new UserViewScreen(userForView);
                     Main.userView.setLocationRelativeTo(null);
                     Main.userView.setVisible(true);
+                    DataBase.log("[" + Main.date.toString() + "][" + Main.activeUser.getUsername() +
+                            "]--(The user has accepted the document \"" + booking.getDoc().getTitle() + "\"" +
+                            " from the user " + userForView.getUsername() + ".)");
                 } else {
                     JOptionPane.showMessageDialog(mainPanel, "User has not requested yet!");
+                    DataBase.log("[" + Main.date.toString() + "][" + Main.activeUser.getUsername() +
+                            "]--(The user has tried to accept the document \"" + booking.getDoc().getTitle() + "\"" +
+                            " from the user " + userForView.getUsername() + " who has not requested for " +
+                            "returning yet.)");
                 }
             }
         });
@@ -185,8 +198,13 @@ public class UserViewScreen extends JFrame {
                 if (booking.getDoc().isReference()) info += "This is a reference document.\n";
                 if (booking.getDoc() instanceof Book) if(booking.getDoc().isBestSeller()) info += "This is a bestseller book.\n";
                 JOptionPane.showMessageDialog(mainPanel, info);
+                DataBase.log("[" + Main.date.toString() + "][" + Main.activeUser.getUsername() +
+                        "]--(The user has checked the info about the order of the document \"" + booking.getDoc().getTitle() +
+                        "\" of user " + userForView.getUsername() + ".)");
             } else {
                 JOptionPane.showMessageDialog(mainPanel, "Select user's order!");
+                DataBase.log("[" + Main.date.toString() + "][" + Main.activeUser.getUsername() +
+                        "]--(The user has tried to check the info about some of the orders of user " + userForView.getUsername() + ".)");
             }
         });
         orderInfoBtn.setAlignmentX(JComponent.CENTER_ALIGNMENT);
