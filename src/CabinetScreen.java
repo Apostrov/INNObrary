@@ -236,7 +236,7 @@ class CabinetScreen extends JFrame {
                     for (int j = 0; j < Main.users.get(i).getBookings().size(); ++j) {
                         if (Main.users.get(i).getBookings().get(j).getDoc().getTitle().equals(libDoc)){
                             docIsBooking = true;
-                            userList += Main.users.get(i).getFirstName() + " " + Main.users.get(i).getSecondName() + "\n";
+                            userList += Main.users.get(i).getUsername() + " (" + Main.users.get(i).getFirstName() + " " + Main.users.get(i).getSecondName() + ")\n";
                         }
                     }
                 }
@@ -681,7 +681,6 @@ class CabinetScreen extends JFrame {
                         if (Main.documents.get(i).getTitle().equals(booking.getDoc().getTitle())) {
                             hasFound = true;
                             Main.documents.get(i).setCopies(Main.documents.get(i).getCopies() + 1);
-                            if (Main.documents.get(i).isOutstanding()) Main.documents.get(i).setOutstanding(false);
                             DataBase.addDoc(Main.documents.get(i));
                             DataBase.deleteOrder(Main.activeUser, booking.getDoc());
                             Main.activeUser.getBookings().remove(booking);
@@ -694,7 +693,6 @@ class CabinetScreen extends JFrame {
                                     DataBase.addDoc(Main.documents.get(i));
                                     break;
                                 }
-                                booking.getDoc().setOutstanding(false);
                                 user.notify(new Notification(1, Main.documents.get(i).getTitle(), "null",
                                         Main.date, 0));
                                 DataBase.replaceNotifications(user);
@@ -703,7 +701,6 @@ class CabinetScreen extends JFrame {
                     }
                     if (!hasFound) {
                         booking.getDoc().setCopies(1);
-                        if (booking.getDoc().isOutstanding()) booking.getDoc().setOutstanding(false);
                         Main.documents.add(booking.getDoc());
                         DataBase.addDoc(booking.getDoc());
                     }

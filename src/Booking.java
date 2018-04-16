@@ -78,6 +78,12 @@ class Booking {
         }
     }
 
+    /** Sets the time left of the booking. */
+    void setTimeLeft(int days) {
+        date = Main.date;
+        duration = days;
+    }
+
     /** Returns whether the document was renewed or not. */
     boolean hasRenewed () {
         return hasRenewed;

@@ -118,17 +118,21 @@ class RequestsScreen extends JFrame {
                 for (int i = 0; i < Main.documents.size(); ++i) {
                     if (doc.getTitle().equals(Main.documents.get(i).getTitle())) {
                         // Remove all requests related to this document
-                        for (int j = 0; j < Main.priorityQueues.get(i).size(); ++j) {
+                        while (!Main.priorityQueues.get(i).isEmpty()) {
                             User u = Main.priorityQueues.get(i).poll();
-                            DataBase.deleteOrder(u, Main.documents.get(i));
-                            u.getBookings().remove(u.findBooking(Main.documents.get(i).getTitle()));
+                            DataBase.deleteOrder(u, doc);
+                            u.getBookings().remove(u.findBooking(doc.getTitle()));
                             u.notify(new Notification(2, "null", "null", Main.date, 0));
                             DataBase.replaceNotifications(u);
                         }
                         for (int j = 0; j < Main.users.size(); ++j) {
-                            if (Main.users.get(j).findBooking(doc.getTitle()) != null) {
+                            Booking b = Main.users.get(j).findBooking(doc.getTitle());
+                            if (b != null && b.hasReceived()) {
                                 Main.users.get(j).notify(new Notification(5, doc.getTitle(), "null", Main.date, 0));
                                 DataBase.replaceNotifications(Main.users.get(j));
+                                b.setTimeLeft(0);
+                                b.libRequest();
+                                DataBase.doOrder(Main.users.get(j), b.getDoc(), 0, Main.date, true, b.hasRequestedByUser(), true, b.hasRenewed());
                             }
                         }
                     }
@@ -166,8 +170,10 @@ class RequestsScreen extends JFrame {
                 DataBase.addDoc(doc);
                 // Notify all users
                 for (int i = 0; i < Main.users.size(); ++i) {
-                    Main.users.get(i).notify(new Notification(6, doc.getTitle(), "null", Main.date, 0));
-                    DataBase.replaceNotifications(Main.users.get(i));
+                    if (!(Main.users.get(i) instanceof Admin || Main.users.get(i) instanceof Librarian)) {
+                        Main.users.get(i).notify(new Notification(6, doc.getTitle(), "null", Main.date, 0));
+                        DataBase.replaceNotifications(Main.users.get(i));
+                    }
                 }
                 LinkedList<User> req_users = new LinkedList<>();
                 int index = 0;

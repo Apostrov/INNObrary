@@ -39,107 +39,107 @@ public class Document {
     }
 
     /** Returns the title of the document. */
-    public String getTitle () {
+    String getTitle () {
         return title;
     }
 
     /** Sets the title of the document. */
-    public void setTitle (String title) {
+    void setTitle (String title) {
         this.title = title;
     }
 
     /** Returns whether the document is reference or not. */
-    public boolean isReference() {
+    boolean isReference() {
         return isReference;
     }
 
     /** Sets the 'reference state' of the document. */
-    public void setReference(boolean reference) {
+    void setReference(boolean reference) {
         isReference = reference;
     }
 
     /** Returns the copies of the document. */
-    public int getCopies() {
+    int getCopies() {
         return copies;
     }
 
     /** Sets the number of copies of the document. */
-    public void setCopies(int copies) {
+    void setCopies(int copies) {
         this.copies = copies;
     }
 
     /** Returns the price of the document. */
-    public int getPrice() {
+    int getPrice() {
         return price;
     }
 
     /** Getter for authors of the document.*/
-    public String getAuthors(){
+    String getAuthors(){
         return authors;
     }
 
     /** Sets the authors of the document. */
-    public void setAuthors(String authors){
+    void setAuthors(String authors){
         this.authors = authors;
     }
 
     /** Sets the price of the document. */
-    public void setPrice(int price) {
+    void setPrice(int price) {
         this.price = price;
     }
 
     /** Returns the description of the document. */
-    public String getDescription() {
+    String getDescription() {
         return description;
     }
 
     /** Returns the year of publishing. */
-    public int getYear() {
+    int getYear() {
         return year;
     }
 
     /** Sets the year of publishing. */
-    public void setYear(int year) { this.year = year; }
+    void setYear(int year) { this.year = year; }
 
     /** Sets the id of the document (used for the database) */
-    public void setDocument_id(Object document_id) {
+    void setDocument_id(Object document_id) {
         this.document_id = document_id;
     }
 
     /** Returns the id of the document (used for the database) */
-    public Object getDocument_id(){
+    Object getDocument_id(){
         return document_id;
     }
 
     /** Returns the publisher of the document. */
-    public String getPublisher() {
+    String getPublisher() {
         return publisher;
     }
 
     /** Sets the publisher of the document. */
-    public void setPublisher(String publisher) { this.publisher = publisher; }
+    void setPublisher(String publisher) { this.publisher = publisher; }
 
     /** Returns the edition of the document. */
-    public int getEdition() {
+    int getEdition() {
         return edition;
     }
 
     /** Sets the edition of the document. */
-    public void setEdition(int edition) { this.edition = edition; }
+    void setEdition(int edition) { this.edition = edition; }
 
     /** Returns whether the document is bestseller or not. */
-    public boolean isBestSeller() { return isBestSeller; }
+    boolean isBestSeller() { return isBestSeller; }
 
     /** Sets the 'bestseller state' of the document. */
-    public void setBestSeller(boolean isBestSeller) { this.isBestSeller = isBestSeller; }
+    void setBestSeller(boolean isBestSeller) { this.isBestSeller = isBestSeller; }
 
     /** Returns whether the document has outstanding request. */
-    public boolean isOutstanding() {
+    boolean isOutstanding() {
         return isOutstanding;
     }
 
     /** Places or removes the outstanding request for the document. */
-    public void setOutstanding(boolean outstanding) {
+    void setOutstanding(boolean outstanding) {
         isOutstanding = outstanding;
     }
 }
