@@ -2,17 +2,19 @@ package main.java;
 
 import javax.swing.*;
 import javax.swing.table.TableModel;
-import javax.xml.crypto.Data;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.PriorityQueue;
 
 class CabinetScreen extends JFrame {
 
     private String libDoc = null;
     private String userDoc = null;
 
+    JTextField searchField;
     JPanel mainPanel = new JPanel();
+    DocTableModel docModel;
+    JTable libDocTable;
 
     /** Creates the window according to the type of the user (librarian or not) */
     CabinetScreen(boolean isLibrarian) {
@@ -37,8 +39,8 @@ class CabinetScreen extends JFrame {
         Box libDocBox = Box.createHorizontalBox();
         libDocBox.add(Box.createRigidArea(new Dimension(10, 0)));
 
-        TableModel docModel = new DocTableModel(Main.documents);
-        JTable libDocTable = new JTable(docModel);
+        docModel = new DocTableModel(Main.documents);
+        libDocTable = new JTable(docModel);
         ListSelectionModel libCellSelectionModel = libDocTable.getSelectionModel();
         libCellSelectionModel.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         libCellSelectionModel.addListSelectionListener(e -> {
@@ -363,12 +365,56 @@ class CabinetScreen extends JFrame {
         userLabel.setText("Users");
         userLabel.setAlignmentX(JComponent.CENTER_ALIGNMENT);
 
+        // searchDocs box
+        Box searchBox = Box.createHorizontalBox();
+        searchBox.add(Box.createRigidArea(new Dimension(0, 0)));
+        // searchDocs field
+        searchField = new JTextField();
+        searchField.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+        searchField.setMaximumSize(new Dimension(335, 30));
+        searchField.setText("");
+        searchField.addActionListener(e -> {
+            if (!searchField.getText().equals("")) {
+                String[] array = new String[Main.documents.size()];
+                for (int i = 0; i < Main.documents.size(); ++i) array[i] = Main.documents.get(i).getTitle();
+                ArrayList<String> searchTitles = searchDocs(searchField.getText(), array);
+                ArrayList<Document> searchDocs = new ArrayList<>();
+                for (int i = 0; i < searchTitles.size(); ++i) searchDocs.add(Main.findDoc(searchTitles.get(i)));
+                docModel.replace(searchDocs);
+                libDocTable.revalidate();
+            } else {
+                docModel.replace(Main.documents);
+                libDocTable.revalidate();
+            }
+        });
+        searchBox.add(searchField);
+        searchBox.add(Box.createRigidArea(new Dimension(5, 0)));
+        // searchDocs button
+        JButton searchBtn = new JButton("Search");
+        searchBtn.addActionListener(e -> {
+            if (!searchField.getText().equals("")) {
+                String[] array = new String[Main.documents.size()];
+                for (int i = 0; i < Main.documents.size(); ++i) array[i] = Main.documents.get(i).getTitle();
+                ArrayList<String> searchTitles = searchDocs(searchField.getText(), array);
+                ArrayList<Document> searchDocs = new ArrayList<>();
+                for (int i = 0; i < searchTitles.size(); ++i) searchDocs.add(Main.findDoc(searchTitles.get(i)));
+                docModel.replace(searchDocs);
+                libDocTable.revalidate();
+            } else {
+                docModel.replace(Main.documents);
+                libDocTable.revalidate();
+            }
+        });
+        searchBox.add(searchBtn);
+
         mainPanel.add(Box.createRigidArea(new Dimension(0, 15)));
         mainPanel.add(logoutBox);
         mainPanel.add(Box.createRigidArea(new Dimension(0, 15)));
         mainPanel.add(libLabel);
         mainPanel.add(Box.createRigidArea(new Dimension(0, 5)));
         mainPanel.add(libDocBox);
+        mainPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+        mainPanel.add(searchBox);
         mainPanel.add(Box.createRigidArea(new Dimension(0, 5)));
         mainPanel.add(docBtnBox, BorderLayout.CENTER);
         mainPanel.add(Box.createRigidArea(new Dimension(0, 15)));
@@ -406,8 +452,8 @@ class CabinetScreen extends JFrame {
         Box libDocBox = Box.createHorizontalBox();
         libDocBox.add(Box.createRigidArea(new Dimension(10, 0)));
 
-        DocTableModel docModel = new DocTableModel(Main.documents);
-        JTable libDocTable = new JTable(docModel);
+        docModel = new DocTableModel(Main.documents);
+        libDocTable = new JTable(docModel);
         ListSelectionModel libCellSelectionModel = libDocTable.getSelectionModel();
         libCellSelectionModel.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         libCellSelectionModel.addListSelectionListener(e -> {
@@ -809,12 +855,56 @@ class CabinetScreen extends JFrame {
         userBooksLabel.setText("Your documents");
         userBooksLabel.setAlignmentX(JComponent.CENTER_ALIGNMENT);
 
+        // searchDocs box
+        Box searchBox = Box.createHorizontalBox();
+        searchBox.add(Box.createRigidArea(new Dimension(0, 0)));
+        // searchDocs field
+        searchField = new JTextField();
+        searchField.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+        searchField.setMaximumSize(new Dimension(335, 30));
+        searchField.setText("");
+        searchField.addActionListener(e -> {
+            if (!searchField.getText().equals("")) {
+                String[] array = new String[Main.documents.size()];
+                for (int i = 0; i < Main.documents.size(); ++i) array[i] = Main.documents.get(i).getTitle();
+                ArrayList<String> searchTitles = searchDocs(searchField.getText(), array);
+                ArrayList<Document> searchDocs = new ArrayList<>();
+                for (int i = 0; i < searchTitles.size(); ++i) searchDocs.add(Main.findDoc(searchTitles.get(i)));
+                docModel.replace(searchDocs);
+                libDocTable.revalidate();
+            } else {
+                docModel.replace(Main.documents);
+                libDocTable.revalidate();
+            }
+        });
+        searchBox.add(searchField);
+        searchBox.add(Box.createRigidArea(new Dimension(5, 0)));
+        // searchDocs button
+        JButton searchBtn = new JButton("Search");
+        searchBtn.addActionListener(e -> {
+            if (!searchField.getText().equals("")) {
+                String[] array = new String[Main.documents.size()];
+                for (int i = 0; i < Main.documents.size(); ++i) array[i] = Main.documents.get(i).getTitle();
+                ArrayList<String> searchTitles = searchDocs(searchField.getText(), array);
+                ArrayList<Document> searchDocs = new ArrayList<>();
+                for (int i = 0; i < searchTitles.size(); ++i) searchDocs.add(Main.findDoc(searchTitles.get(i)));
+                docModel.replace(searchDocs);
+                libDocTable.revalidate();
+            } else {
+                docModel.replace(Main.documents);
+                libDocTable.revalidate();
+            }
+        });
+        searchBox.add(searchBtn);
+
         mainPanel.add(Box.createRigidArea(new Dimension(0, 15)));
         mainPanel.add(profileBox);
         mainPanel.add(Box.createRigidArea(new Dimension(0, 15)));
         mainPanel.add(libLabel);
         mainPanel.add(Box.createRigidArea(new Dimension(0, 5)));
         mainPanel.add(libDocBox);
+        mainPanel.add(Box.createRigidArea(new Dimension(0, 5)));
+        mainPanel.add(searchBox);
         mainPanel.add(Box.createRigidArea(new Dimension(0, 5)));
         mainPanel.add(orderBox);
         mainPanel.add(Box.createRigidArea(new Dimension(0, 15)));
@@ -962,6 +1052,73 @@ class CabinetScreen extends JFrame {
             }
             default: { break; }
         }
+    }
+
+    public ArrayList<String> searchDocs(String word, String[] array){
+        ArrayList<String> list = new ArrayList<>();
+        for (int i = 0; i < array.length; i++) {
+            int tag = editdist(word,array[i]);
+            if(tag == 0){
+                list.add(array[i]);
+                continue;
+            }
+            if(tag <= 3) {
+                list.add(array[i]);
+            }else{
+                if (word.length()<=array[i].length()) {
+                    if (word.equals(range(array[i], 0, word.length())) || editdist(word,range(array[i],0,word.length())) <= 3) {
+                        list.add(array[i]);
+                    }
+                }
+                else{
+                    if(range(word,0,array[i].length()).equals(array[i]) || editdist(range(word,0,array[i].length()),array[i]) <= 3){
+                        list.add(array[i]);
+
+                    }
+                }
+            }
+
+
+        }
+
+        return list;
+
+    }
+    public static String range(String a, int Brange, int Erange){
+        String b = "";
+        for (int i = Brange; i < Erange; i++) {
+            b = b + a.charAt(i);
+        }
+
+
+        return b;
+    }
+
+    public int editdist(String S1, String S2) {
+        int m = S1.length(), n = S2.length();
+        int[] D1;
+        int[] D2 = new int[n + 1];
+
+        for(int i = 0; i <= n; i ++)
+            D2[i] = i;
+
+        for(int i = 1; i <= m; i ++) {
+            D1 = D2;
+            D2 = new int[n + 1];
+            for(int j = 0; j <= n; j ++) {
+                if(j == 0) D2[j] = i;
+                else {
+                    int cost = (S1.charAt(i - 1) != S2.charAt(j - 1)) ? 1 : 0;
+                    if(D2[j - 1] < D1[j] && D2[j - 1] < D1[j - 1] + cost)
+                        D2[j] = D2[j - 1] + 1;
+                    else if(D1[j] < D1[j - 1] + cost)
+                        D2[j] = D1[j] + 1;
+                    else
+                        D2[j] = D1[j - 1] + cost;
+                }
+            }
+        }
+        return D2[n];
     }
 
 }
