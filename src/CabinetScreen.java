@@ -1,4 +1,4 @@
-package main.java;
+package main;
 
 import javax.swing.*;
 import javax.swing.table.TableModel;
@@ -1054,7 +1054,7 @@ class CabinetScreen extends JFrame {
         }
     }
 
-    public ArrayList<String> Search(String word, String[] array){
+    public ArrayList<String> searchDocs(String word, String[] array){
         ArrayList<String> list = new ArrayList<>();
         for (int i = 0; i < array.length; i++) {
             int tag = editdist(word,array[i]);
@@ -1066,13 +1066,13 @@ class CabinetScreen extends JFrame {
                 list.add(array[i]);
             }else{
                 if (word.length()<=array[i].length()) {
-                    if (word.equals(Range(array[i], 0, word.length())) || (editdist(word,Range(array[i],0,word.length())) <= 4) && word.length() > 3) {
-                            list.add(array[i]);
+                    if (word.equals(range(array[i], 0, word.length())) || editdist(word,range(array[i],0,word.length())) <= 3) {
+                        list.add(array[i]);
                     }
                 }
                 else{
-                    if(Range(word,0,array[i].length()).equals(array[i]) || (editdist(Range(word,0,array[i].length()),array[i]) <= 4 && array[i].length() > 3)){
-                            list.add(array[i]);
+                    if(range(word,0,array[i].length()).equals(array[i]) || editdist(range(word,0,array[i].length()),array[i]) <= 3){
+                        list.add(array[i]);
 
                     }
                 }
