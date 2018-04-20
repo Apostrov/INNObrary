@@ -1066,12 +1066,12 @@ class CabinetScreen extends JFrame {
                 list.add(array[i]);
             }else{
                 if (word.length()<=array[i].length()) {
-                    if (word.equals(range(array[i], 0, word.length())) || editdist(word,range(array[i],0,word.length())) <= 3) {
+                    if (word.equals(range(array[i], 0, word.length())) || (editdist(word,range(array[i],0,word.length())) <= 4) && word.length() > 3) {
                         list.add(array[i]);
                     }
                 }
                 else{
-                    if(range(word,0,array[i].length()).equals(array[i]) || editdist(range(word,0,array[i].length()),array[i]) <= 3){
+                    if(range(word,0,array[i].length()).equals(array[i]) || (editdist(range(word,0,array[i].length()),array[i]) <= 4) && array[i].length() > 3){
                         list.add(array[i]);
 
                     }
