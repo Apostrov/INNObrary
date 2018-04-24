@@ -1,5 +1,7 @@
 package main.java;
 
+import java.util.ArrayList;
+
 public class Document {
 
     private String title; // title of the document
@@ -8,7 +10,7 @@ public class Document {
     private int copies; // number of copies of some document
     private Object document_id; // id of the document
     private boolean isReference;
-    private String description;
+    private ArrayList<String> keywords;
     private int year;
     private String publisher;
     private int edition;
@@ -26,11 +28,11 @@ public class Document {
 
     // Constructor for the DataBase purposes
     Document (Object document_id, String title, String authors, int price,
-              int copies, boolean isReference, String description, String publisher,
+              int copies, boolean isReference, ArrayList<String> keywords, String publisher,
               int edition, int year, boolean isBestSeller, boolean isOutstanding){
         this(title, authors, price, copies, isReference);
         this.document_id = document_id;
-        this.description = description;
+        this.keywords = keywords;
         this.publisher = publisher;
         this.edition = edition;
         this.year = year;
@@ -88,9 +90,9 @@ public class Document {
         this.price = price;
     }
 
-    /** Returns the description of the document. */
-    String getDescription() {
-        return description;
+    /** Returns the keywords of the document. */
+    ArrayList<String> getKeywords() {
+        return keywords;
     }
 
     /** Returns the year of publishing. */

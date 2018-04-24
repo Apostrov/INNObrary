@@ -93,7 +93,7 @@ public class DataBase {
                 .append("type", type)
                 .append("title", document.getTitle())
                 .append("authors", document.getAuthors())
-                .append("description", document.getDescription())
+                .append("keywords", document.getKeywords())
                 .append("publisher", document.getPublisher())
                 .append("edition", document.getEdition())
                 .append("year", document.getYear())
@@ -154,28 +154,28 @@ public class DataBase {
                     return new Book(docJson.get("_id"), docJson.getString("title"),
                             docJson.getString("authors"), docJson.getInteger("price"),
                             docJson.getInteger("copies"), docJson.getBoolean("reference"),
-                            docJson.getString("description"), docJson.getString("publisher"),
+                            (ArrayList) docJson.get("keywords"), docJson.getString("publisher"),
                             docJson.getInteger("edition"), docJson.getInteger("year"),
                             docJson.getBoolean("best-seller"), docJson.getBoolean("isOutstanding"));
                 case "av":
                     return new AudioVideo(docJson.get("_id"), docJson.getString("title"),
                             docJson.getString("authors"), docJson.getInteger("price"),
                             docJson.getInteger("copies"), docJson.getBoolean("reference"),
-                            docJson.getString("description"), docJson.getString("publisher"),
+                            (ArrayList) docJson.get("keywords"), docJson.getString("publisher"),
                             docJson.getInteger("edition"), docJson.getInteger("year"),
                             docJson.getBoolean("best-seller"), docJson.getBoolean("isOutstanding"));
                 case "ja":
                     return new JournalArticle(docJson.get("_id"), docJson.getString("title"),
                             docJson.getString("authors"), docJson.getInteger("price"),
                             docJson.getInteger("copies"), docJson.getBoolean("reference"),
-                            docJson.getString("description"), docJson.getString("publisher"),
+                            (ArrayList) docJson.get("keywords"), docJson.getString("publisher"),
                             docJson.getInteger("edition"), docJson.getInteger("year"),
                             docJson.getBoolean("best-seller"), docJson.getBoolean("isOutstanding"));
             }
             return new Document(docJson.get("_id"), docJson.getString("title"),
                     docJson.getString("authors"), docJson.getInteger("price"),
                     docJson.getInteger("copies"), docJson.getBoolean("reference"),
-                    docJson.getString("description"), docJson.getString("publisher"),
+                    (ArrayList) docJson.get("keywords"), docJson.getString("publisher"),
                     docJson.getInteger("edition"), docJson.getInteger("year"),
                     docJson.getBoolean("best-seller"), docJson.getBoolean("isOutstanding"));
         }

@@ -1,4 +1,4 @@
-package main;
+package main.java;
 
 import javax.swing.*;
 import javax.swing.table.TableModel;
@@ -1073,7 +1073,6 @@ class CabinetScreen extends JFrame {
                 else{
                     if(range(word,0,array[i].length()).equals(array[i]) || (editdist(range(word,0,array[i].length()),array[i]) <= 4) && array[i].length() > 3){
                         list.add(array[i]);
-
                     }
                 }
             }
