@@ -5,15 +5,15 @@ import java.awt.*;
 
 class DocModifyScreen extends JFrame {
 
+    private String keywords;
     private String price;
-    private String copies;
     private String edition;
     private String editionYear;
     private String publisher;
     private boolean isReference;
     private boolean isBestSeller;
+    private JTextField keywordsField;
     private JTextField priceField;
-    private JTextField copiesField;
     private JTextField editionField;
     private JTextField editionYField;
     private JTextField publisherField;
@@ -56,6 +56,23 @@ class DocModifyScreen extends JFrame {
         Box labelBox = Box.createVerticalBox();
         Box fieldBox = Box.createVerticalBox();
 
+        // Keywords label
+        JLabel keywordsLabel = new JLabel();
+        keywordsLabel.setText("Keywords:  ");
+        keywordsLabel.setFont(new Font("name", Font.BOLD, 15));
+        labelBox.add(Box.createRigidArea(new Dimension(0, 5)));
+        labelBox.add(keywordsLabel);
+        // Price field
+        keywordsField = new JTextField();
+        keywordsField.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+        keywordsField.setMaximumSize(new Dimension(160, 20));
+        String keys = "";
+        for (int i = 0; i < doc.getKeywords().size(); ++i)
+            keys += doc.getKeywords().get(i) + (i != doc.getKeywords().size() - 1 ? ", " : "");
+        keywordsField.setText(keys);
+        fieldBox.add(Box.createRigidArea(new Dimension(0, 5)));
+        fieldBox.add(keywordsField);
+
         // Price label
         JLabel priceLabel = new JLabel();
         priceLabel.setText("Price:  ");
@@ -69,20 +86,6 @@ class DocModifyScreen extends JFrame {
         priceField.setText(Integer.toString(doc.getPrice()));
         fieldBox.add(Box.createRigidArea(new Dimension(0, 5)));
         fieldBox.add(priceField);
-
-        // Copies label
-        JLabel copiesLabel = new JLabel();
-        copiesLabel.setText("Copies:  ");
-        copiesLabel.setFont(new Font("name", Font.BOLD, 15));
-        labelBox.add(Box.createRigidArea(new Dimension(0, 5)));
-        labelBox.add(copiesLabel);
-        // Copies field
-        copiesField = new JTextField();
-        copiesField.setAlignmentX(JComponent.CENTER_ALIGNMENT);
-        copiesField.setMaximumSize(new Dimension(160, 20));
-        copiesField.setText(Integer.toString(doc.getCopies()));
-        fieldBox.add(Box.createRigidArea(new Dimension(0, 5)));
-        fieldBox.add(copiesField);
 
         // Edition label
         JLabel editionLabel = new JLabel();
@@ -139,14 +142,17 @@ class DocModifyScreen extends JFrame {
         docAddBtn.setAlignmentX(JComponent.LEFT_ALIGNMENT);
         docAddBtn.addActionListener(e -> {
                     updateBookData();
-                    if (price == null || copies == null || edition == null || editionYear == null || publisher == null) {
+                    if (keywords == null || price == null || edition == null || editionYear == null || publisher == null) {
                         JOptionPane.showMessageDialog(mainPanel, "Wrong input data!");
-                    } else if (price.equals("") || copies.equals("") || edition.equals("") || editionYear.equals("") || publisher.equals("")) {
+                        DataBase.log("[" + Main.date.toString() + "][" + Main.activeUser.getUsername() +
+                                "]--(The user has tried to modify the document \"" + doc.getTitle() + "\".)");
+                    } else if (keywords.equals("") || price.equals("") || edition.equals("") || editionYear.equals("") || publisher.equals("")) {
                         JOptionPane.showMessageDialog(mainPanel, "Wrong input data!");
+                        DataBase.log("[" + Main.date.toString() + "][" + Main.activeUser.getUsername() +
+                                "]--(The user has tried to modify the document \"" + doc.getTitle() + "\".)");
                     } else {
+                        doc.setKeywords(keywords);
                         doc.setPrice(Integer.parseInt(price));
-                        doc.setCopies(Integer.parseInt(copies));
-                        // TODO: If someone in the queue - add to this users bookings with this document
                         doc.setReference(isReference);
                         doc.setEdition(Integer.parseInt(edition));
                         doc.setYear(Integer.parseInt(editionYear));
@@ -158,6 +164,8 @@ class DocModifyScreen extends JFrame {
                         Main.docMod.setVisible(false);
                         Main.cabinet.setLocationRelativeTo(null);
                         Main.cabinet.setVisible(true);
+                        DataBase.log("[" + Main.date.toString() + "][" + Main.activeUser.getUsername() +
+                                "]--(The user has modified the document \"" + doc.getTitle() + "\".)");
                     }
                 }
         );
@@ -222,6 +230,23 @@ class DocModifyScreen extends JFrame {
         Box labelBox = Box.createVerticalBox();
         Box fieldBox = Box.createVerticalBox();
 
+        // Keywords label
+        JLabel keywordsLabel = new JLabel();
+        keywordsLabel.setText("Keywords:  ");
+        keywordsLabel.setFont(new Font("name", Font.BOLD, 15));
+        labelBox.add(Box.createRigidArea(new Dimension(0, 5)));
+        labelBox.add(keywordsLabel);
+        // Price field
+        keywordsField = new JTextField();
+        keywordsField.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+        keywordsField.setMaximumSize(new Dimension(160, 20));
+        String keys = "";
+        for (int i = 0; i < doc.getKeywords().size(); ++i)
+            keys += doc.getKeywords().get(i) + (i != doc.getKeywords().size() - 1 ? ", " : "");
+        keywordsField.setText(keys);
+        fieldBox.add(Box.createRigidArea(new Dimension(0, 5)));
+        fieldBox.add(keywordsField);
+
         // Price label
         JLabel priceLabel = new JLabel();
         priceLabel.setText("Price:  ");
@@ -236,20 +261,6 @@ class DocModifyScreen extends JFrame {
         fieldBox.add(Box.createRigidArea(new Dimension(0, 5)));
         fieldBox.add(priceField);
 
-        // Copies label
-        JLabel copiesLabel = new JLabel();
-        copiesLabel.setText("Copies:  ");
-        copiesLabel.setFont(new Font("name", Font.BOLD, 15));
-        labelBox.add(Box.createRigidArea(new Dimension(0, 5)));
-        labelBox.add(copiesLabel);
-        // Copies field
-        copiesField = new JTextField();
-        copiesField.setAlignmentX(JComponent.CENTER_ALIGNMENT);
-        copiesField.setMaximumSize(new Dimension(160, 20));
-        copiesField.setText(Integer.toString(doc.getCopies()));
-        fieldBox.add(Box.createRigidArea(new Dimension(0, 5)));
-        fieldBox.add(copiesField);
-
         docAddBox.add(Box.createRigidArea(new Dimension(5, 0)));
         docAddBox.add(labelBox);
         docAddBox.add(Box.createRigidArea(new Dimension(5, 0)));
@@ -263,22 +274,27 @@ class DocModifyScreen extends JFrame {
         docAddBtn.setAlignmentX(JComponent.LEFT_ALIGNMENT);
         docAddBtn.addActionListener(e -> {
                     updateAVData();
-                    if (price == null || copies == null) {
+                    if (keywords == null ||  price == null) {
                         JOptionPane.showMessageDialog(mainPanel, "Wrong input data!");
-                    } else if (price.equals("") || copies.equals("")) {
+                        DataBase.log("[" + Main.date.toString() + "][" + Main.activeUser.getUsername() +
+                                "]--(The user has tried ot modify the document \"" + doc.getTitle() + "\".)");
+                    } else if (keywords.equals("") || price.equals("")) {
                         JOptionPane.showMessageDialog(mainPanel, "Wrong input data!");
+                        DataBase.log("[" + Main.date.toString() + "][" + Main.activeUser.getUsername() +
+                                "]--(The user has tried ot modify the document \"" + doc.getTitle() + "\".)");
                     } else {
+                        doc.setKeywords(keywords);
                         doc.setPrice(Integer.parseInt(price));
-                        doc.setCopies(Integer.parseInt(copies));
                         doc.setReference(isReference);
                         DataBase.addDoc(doc);
                         JOptionPane.showMessageDialog(mainPanel, "Document successfully modified!");
                         priceField.setText("");
-                        copiesField.setText("");
                         Main.cabinet = new CabinetScreen(true);
                         Main.docMod.setVisible(false);
                         Main.cabinet.setLocationRelativeTo(null);
                         Main.cabinet.setVisible(true);
+                        DataBase.log("[" + Main.date.toString() + "][" + Main.activeUser.getUsername() +
+                                "]--(The user has modified the document \"" + doc.getTitle() + "\".)");
                     }
                 }
         );
@@ -316,15 +332,15 @@ class DocModifyScreen extends JFrame {
         isBestSeller = BSCheckBox.isSelected();
         isReference = refCheckBox.isSelected();
         price = priceField.getText();
-        copies = copiesField.getText();
         edition = editionField.getText();
         editionYear = editionYField.getText();
         publisher = publisherField.getText();
+        keywords = keywordsField.getText();
     }
 
     private void updateAVData() {
         price = priceField.getText();
-        copies = copiesField.getText();
+        keywords = keywordsField.getText();
     }
 
 }

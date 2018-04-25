@@ -4,18 +4,20 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 /** This class is used only for building the library document table. */
-public class DocTableModel implements TableModel {
+public class DocTableModel extends AbstractTableModel {
 
     private Set<TableModelListener> listeners = new HashSet<TableModelListener>();
 
     private List<Document> documents;
 
     public DocTableModel(List<Document> documents) {
-        this.documents = documents;
+        this.documents = new LinkedList<>();
+        this.documents.addAll(documents);
     }
 
     public void addTableModelListener(TableModelListener listener) {
@@ -79,6 +81,14 @@ public class DocTableModel implements TableModel {
                 return isBS;
         }
         return "";
+    }
+
+    /** Special method that is used to real-time update of the table. */
+    void replace (List<Document> documents) {
+        this.documents.clear();
+        fireTableRowsDeleted(0, getRowCount());
+        this.documents.addAll(documents);
+        fireTableRowsInserted(0, documents.size());
     }
 
     public boolean isCellEditable(int rowIndex, int columnIndex) {

@@ -13,7 +13,8 @@ public class Main {
     static User activeUser = null;
     static ArrayList<User> users;
     static ArrayList<Document> documents;
-    static ArrayList<Document> reqDocs;
+    static ArrayList<String> logs;
+    static ArrayList<Queue<User>> priorityQueues;
 
     static LoginScreen login;
     static CabinetScreen cabinet;
@@ -27,8 +28,7 @@ public class Main {
     static DebtorViewScreen debtors;
     static RequestsScreen requests;
     static DateModifyScreen dateMod;
-
-    static ArrayList<Queue<User>> priorityQueues;
+    static LogScreen logScreen;
 
     /** Main method of INNObrary */
     public static void main(String[] args) {
@@ -38,12 +38,9 @@ public class Main {
         // Run-time storage
         users = DataBase.getAllUser();
         documents = DataBase.getAllDoc();
-
-        // Admin account
-        users.add(new Librarian("admin", "admin"));
+        logs = DataBase.getAllLogs();
 
         // Priority queue
-        reqDocs = new ArrayList<>();
         priorityQueues = new ArrayList<>();
         for (int i = 0; i < documents.size(); ++i) {
             ArrayList<User> reqUsers = new ArrayList<>();
@@ -53,12 +50,9 @@ public class Main {
                     reqUsers.add(users.get(j));
                 }
             }
-            if (reqUsers.size() > 0) {
-                reqDocs.add(documents.get(i));
-                priorityQueues.add(new PriorityQueue<>(priorityComparator));
-                for (int j = 0; j < reqUsers.size(); ++j)
-                    priorityQueues.get(priorityQueues.size() - 1).add(reqUsers.get(j));
-            }
+            priorityQueues.add(new PriorityQueue<>(priorityComparator));
+            for (int j = 0; j < reqUsers.size(); ++j)
+                priorityQueues.get(priorityQueues.size() - 1).add(reqUsers.get(j));
         }
 
         // Load interface
@@ -69,11 +63,12 @@ public class Main {
         userAdd = new UserAddScreen(); userAdd.setLocationRelativeTo(null);
         userMod = new UserModifyScreen(new User("", "", false), null); userMod.setLocationRelativeTo(null);
         docAdd = new DocAddScreen("Book"); docAdd.setLocationRelativeTo(null);
-        docMod = new DocModifyScreen(new Document("","",1,1,false)); docMod.setLocationRelativeTo(null);
+        docMod = new DocModifyScreen(new Document("","", new ArrayList<>(),1,1,false)); docMod.setLocationRelativeTo(null);
         changeProf = new ProfChangeScreen(new User("", "", false)); changeProf.setLocationRelativeTo(null);
         debtors = new DebtorViewScreen(); debtors.setLocationRelativeTo(null);
         requests = new RequestsScreen(); requests.setLocationRelativeTo(null);
         dateMod = new DateModifyScreen(); dateMod.setLocationRelativeTo(null);
+        logScreen = new LogScreen(); logScreen.setLocationRelativeTo(null);
 
         // Show only the login screen first
         login.setVisible(true);
@@ -87,6 +82,7 @@ public class Main {
         debtors.setVisible(false);
         requests.setVisible(false);
         dateMod.setVisible(false);
+        logScreen.setVisible(false);
     }
 
 	/** Returns user instance if the user with given username exists otherwise null */

@@ -39,12 +39,15 @@ class LoginScreen extends JFrame {
         loginBtn.addActionListener(e -> { // What to do after login button has pressed
                 if (checkForUser(userField.getText(), new String(passField.getPassword()))){
                     Main.activeUser = Main.findUser(userField.getText());
-                    Main.cabinet = new CabinetScreen(Main.activeUser instanceof Librarian);
+                    Main.cabinet = new CabinetScreen(Main.activeUser instanceof Admin || Main.activeUser instanceof Librarian);
                     Main.cabinet.setLocationRelativeTo(null);
                     Main.cabinet.setVisible(true);
                     Main.login.setVisible(false);
+                    DataBase.log("[" + Main.date.toString() + "][" + Main.activeUser.getUsername() +
+                            "]--(The user has logged in.)");
                 } else {
                     JOptionPane.showMessageDialog(mainPanel, "Wrong login or password!");
+                    DataBase.log("[" + Main.date.toString() + "][unknown]--(Someone has tried to log in to the system.)");
                 }
         });
 

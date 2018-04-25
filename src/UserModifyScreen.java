@@ -11,12 +11,15 @@ class UserModifyScreen extends JFrame {
     private String secondName;
     private String address;
     private String phone;
+    private String priority;
     private JTextField passwordField;
     private JTextField fNameField;
     private JTextField sNameField;
     private JTextField addressField;
     private JTextField phoneField;
+    private JTextField priorityField;
 
+    private JPanel mainPanel;
     private User finalUser;
 
     UserModifyScreen(User user, User finalUser) {
@@ -31,7 +34,7 @@ class UserModifyScreen extends JFrame {
     private void createGUI(User user) {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-        JPanel mainPanel = new JPanel();
+        mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         setResizable(false);
 
@@ -53,30 +56,67 @@ class UserModifyScreen extends JFrame {
         typeLabel.setText("Type: ");
         typeLabel.setAlignmentX(JComponent.CENTER_ALIGNMENT);
 
-        String[] items = new String[]{"Student", "Instructor", "TA", "Visiting Professor", "Professor"};
+        JLabel priorityLabel = new JLabel();
+        priorityField = new JTextField();
+
+        String[] items;
         if (finalUser == null) {
             if (user instanceof Student) {
-                items = new String[]{"Student", "Instructor", "TA", "Visiting Professor", "Professor"};
+                items = new String[]{"Student", "Instructor", "TA", "Visiting Professor", "Professor", "Librarian"};
+                priorityField.setVisible(false);
+                priorityLabel.setVisible(false);
             } else if (user instanceof Instructor) {
-                items = new String[]{"Instructor", "TA", "Visiting Professor", "Professor", "Student"};
+                items = new String[]{"Instructor", "TA", "Visiting Professor", "Professor", "Librarian", "Student"};
+                priorityField.setVisible(false);
+                priorityLabel.setVisible(false);
             } else if (user instanceof TA) {
-                items = new String[]{"TA", "Visiting Professor", "Professor", "Student", "Instructor"};
+                items = new String[]{"TA", "Visiting Professor", "Professor", "Librarian", "Student", "Instructor"};
+                priorityField.setEditable(false);
+                priorityLabel.setVisible(false);
             } else if (user instanceof VisitingProfessor) {
-                items = new String[]{"Visiting Professor", "Professor", "Student", "Instructor", "TA"};
+                items = new String[]{"Visiting Professor", "Professor", "Librarian", "Student", "Instructor", "TA"};
+                priorityField.setVisible(false);
+                priorityLabel.setVisible(false);
             } else if (user instanceof Professor) {
-                items = new String[]{"Professor", "Student", "Instructor", "TA", "Visiting Professor"};
+                items = new String[]{"Professor", "Librarian", "Student", "Instructor", "TA", "Visiting Professor"};
+                priorityField.setVisible(false);
+                priorityLabel.setVisible(false);
+            } else if (user instanceof Librarian) {
+                items = new String[]{"Librarian", "Student", "Instructor", "TA", "Visiting Professor", "Professor"};
+                priorityField.setEditable(true);
+            } else {
+                items = new String[]{"Student", "Instructor", "TA", "Visiting Professor", "Professor", "Librarian"};
+                priorityField.setVisible(false);
+                priorityLabel.setVisible(false);
             }
         } else {
             if (finalUser instanceof Student) {
-                items = new String[]{"Student", "Instructor", "TA", "Visiting Professor", "Professor"};
+                items = new String[]{"Student", "Instructor", "TA", "Visiting Professor", "Professor", "Librarian"};
+                priorityField.setVisible(false);
+                priorityLabel.setVisible(false);
             } else if (finalUser instanceof Instructor) {
-                items = new String[]{"Instructor", "TA", "Visiting Professor", "Professor", "Student"};
+                items = new String[]{"Instructor", "TA", "Visiting Professor", "Professor", "Librarian", "Student"};
+                priorityField.setVisible(false);
+                priorityLabel.setVisible(false);
             } else if (finalUser instanceof TA) {
-                items = new String[]{"TA", "Visiting Professor", "Professor", "Student", "Instructor"};
+                items = new String[]{"TA", "Visiting Professor", "Professor", "Librarian", "Student", "Instructor"};
+                priorityField.setVisible(false);
+                priorityLabel.setVisible(false);
             } else if (finalUser instanceof VisitingProfessor) {
-                items = new String[]{"Visiting Professor", "Professor", "Student", "Instructor", "TA"};
+                items = new String[]{"Visiting Professor", "Professor", "Librarian", "Student", "Instructor", "TA"};
+                priorityField.setVisible(false);
+                priorityLabel.setVisible(false);
             } else if (finalUser instanceof Professor) {
-                items = new String[]{"Professor", "Student", "Instructor", "TA", "Visiting Professor"};
+                items = new String[]{"Professor", "Librarian", "Student", "Instructor", "TA", "Visiting Professor"};
+                priorityField.setVisible(false);
+                priorityLabel.setVisible(false);
+            } else if (finalUser instanceof Librarian) {
+                items = new String[]{"Librarian", "Student", "Instructor", "TA", "Visiting Professor", "Professor"};
+                priorityField.setEditable(true);
+            } else {
+                items = new String[]{"Student", "Instructor", "TA", "Visiting Professor", "Professor", "Librarian"};
+                priorityField.setVisible(false);
+                priorityLabel.setVisible(false);
             }
         }
 
@@ -157,6 +197,7 @@ class UserModifyScreen extends JFrame {
         phoneLabel.setText("Phone number:  ");
         phoneLabel.setFont(new Font("name", Font.BOLD, 15));
         labelBox.add(phoneLabel);
+        labelBox.add(Box.createRigidArea(new Dimension(0, 5)));
         // Phone field
         phoneField = new JTextField();
         phoneField.setAlignmentX(JComponent.CENTER_ALIGNMENT);
@@ -164,6 +205,17 @@ class UserModifyScreen extends JFrame {
         phoneField.setText(user.getPhone());
         fieldBox.add(Box.createRigidArea(new Dimension(0, 5)));
         fieldBox.add(phoneField);
+
+        // Priority label
+        priorityLabel.setText("Privilege:  ");
+        priorityLabel.setFont(new Font("name", Font.BOLD, 15));
+        labelBox.add(priorityLabel);
+        // Priority field
+        priorityField.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+        priorityField.setMaximumSize(new Dimension(160, 20));
+        priorityField.setText(String.valueOf(user.getPriority() - 4));
+        fieldBox.add(Box.createRigidArea(new Dimension(0, 5)));
+        fieldBox.add(priorityField);
 
         modifyBox.add(Box.createRigidArea(new Dimension(15, 0)));
         modifyBox.add(labelBox);
@@ -177,10 +229,18 @@ class UserModifyScreen extends JFrame {
         modifyBtn.setAlignmentX(JComponent.LEFT_ALIGNMENT);
         modifyBtn.addActionListener(e -> {
                     updateData();
-                    if (password == null || firstName == null || secondName == null || address == null || phone == null) {
+                    if (password == null || firstName == null || secondName == null || address == null || phone == null || priority == null) {
                         JOptionPane.showMessageDialog(mainPanel, "Wrong input data!");
-                    } else if (password.equals("") || firstName.equals("") || secondName.equals("") || address.equals("") || phone.equals("")) {
+                        DataBase.log("[" + Main.date.toString() + "][" + Main.activeUser.getUsername() +
+                                "]--(The user has tried to modify the user " + user.getUsername() + ".)");
+                    } else if (password.equals("") || firstName.equals("") || secondName.equals("") || address.equals("") || phone.equals("") || priority.equals("")) {
                         JOptionPane.showMessageDialog(mainPanel, "Wrong input data!");
+                        DataBase.log("[" + Main.date.toString() + "][" + Main.activeUser.getUsername() +
+                                "]--(The user has tried to modify the user " + user.getUsername() + ".)");
+                    } else if (Integer.parseInt(priority) < 1 || Integer.parseInt(priority) > 3) {
+                        JOptionPane.showMessageDialog(mainPanel, "Wrong input data!");
+                        DataBase.log("[" + Main.date.toString() + "][" + Main.activeUser.getUsername() +
+                                "]--(The user has tried to modify the user " + user.getUsername() + ".)");
                     } else {
                         if (finalUser == null) updateType(user);
                         finalUser.setPassword(password);
@@ -188,6 +248,7 @@ class UserModifyScreen extends JFrame {
                         finalUser.setSecondName(secondName);
                         finalUser.setAddress(address);
                         finalUser.setPhone(phone);
+                        finalUser.setPriority(Integer.parseInt(priority) + 4);
                         Main.users.remove(Main.findUser(user.getUsername()));
                         Main.users.add(finalUser);
                         DataBase.addUser(finalUser);
@@ -202,6 +263,8 @@ class UserModifyScreen extends JFrame {
                         Main.userMod.setVisible(false);
                         Main.cabinet.setLocationRelativeTo(null);
                         Main.cabinet.setVisible(true);
+                        DataBase.log("[" + Main.date.toString() + "][" + Main.activeUser.getUsername() +
+                                "]--(The user has modified the user " + user.getUsername() + ".)");
                     }
                 }
         );
@@ -230,6 +293,7 @@ class UserModifyScreen extends JFrame {
         secondName = sNameField.getText();
         address = addressField.getText();
         phone = phoneField.getText();
+        priority = priorityField.getText();
     }
 
     private void updateType(User user) {
@@ -239,7 +303,8 @@ class UserModifyScreen extends JFrame {
             case "Instructor": {finalUser = new Instructor(user); break;}
             case "TA": {finalUser = new TA(user); break;}
             case "Visiting Professor": {finalUser = new VisitingProfessor(user); break;}
-            case "Professor": {finalUser = new Professor(user); break;}
+            case "Professor": {finalUser = new Professor(user); break; }
+            case "Librarian": {finalUser = new Librarian(user, Integer.parseInt(priorityField.getText())); break; }
         }
         Main.userMod = new UserModifyScreen(user, finalUser);
         Main.userMod.setLocationRelativeTo(null);

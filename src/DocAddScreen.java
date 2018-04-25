@@ -2,12 +2,15 @@ package main.java;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 class DocAddScreen extends JFrame {
 
     private JComboBox<String> docTypeComboBox;
     private String title;
     private String author;
+    private String keywords;
     private String price;
     private String copies;
     private String edition;
@@ -17,6 +20,7 @@ class DocAddScreen extends JFrame {
     private boolean isBestSeller;
     private JTextField titleField;
     private JTextField authorField;
+    private JTextField keywordsField;
     private JTextField priceField;
     private JTextField copiesField;
     private JTextField editionField;
@@ -121,6 +125,19 @@ class DocAddScreen extends JFrame {
         fieldBox.add(Box.createRigidArea(new Dimension(0, 5)));
         fieldBox.add(authorField);
 
+        // Keywords label
+        JLabel keywordsLabel = new JLabel();
+        keywordsLabel.setText("Keywords:  ");
+        keywordsLabel.setFont(new Font("name", Font.BOLD, 15));
+        labelBox.add(Box.createRigidArea(new Dimension(0, 5)));
+        labelBox.add(keywordsLabel);
+        // Price field
+        keywordsField = new JTextField();
+        keywordsField.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+        keywordsField.setMaximumSize(new Dimension(160, 20));
+        fieldBox.add(Box.createRigidArea(new Dimension(0, 5)));
+        fieldBox.add(keywordsField);
+
         // Price label
         JLabel priceLabel = new JLabel();
         priceLabel.setText("Price:  ");
@@ -199,17 +216,23 @@ class DocAddScreen extends JFrame {
         docAddBtn.setAlignmentX(JComponent.LEFT_ALIGNMENT);
         docAddBtn.addActionListener(e -> {
                     updateBookData();
-                    if (title == null || author == null || price == null || copies == null || edition == null || editionYear == null || publisher == null) {
+                    if (title == null || author == null || keywords == null || price == null || copies == null || edition == null || editionYear == null || publisher == null) {
                         JOptionPane.showMessageDialog(mainPanel, "Wrong input data!");
-                    } else if (title.equals("") || author.equals("") || price.equals("") || copies.equals("") || edition.equals("") || editionYear.equals("") || publisher.equals("")) {
+                        DataBase.log("[" + Main.date.toString() + "][" + Main.activeUser.getUsername() +
+                                "]--(The user has tried to add a new document to the system.)");
+                    } else if (title.equals("") || author.equals("") || keywords.equals("") || price.equals("") || copies.equals("") || edition.equals("") || editionYear.equals("") || publisher.equals("")) {
                         JOptionPane.showMessageDialog(mainPanel, "Wrong input data!");
+                        DataBase.log("[" + Main.date.toString() + "][" + Main.activeUser.getUsername() +
+                                "]--(The user has tried to add a new document to the system.)");
                     } else {
-                        Book b = new Book(title, author, Integer.parseInt(edition), Integer.parseInt(editionYear), publisher, Integer.parseInt(price), Integer.parseInt(copies), isBestSeller, isReference);
+                        ArrayList<String> keys = new ArrayList<>(); keys.addAll(Arrays.asList(keywords.split(", ")));
+                        Book b = new Book(title, author, Integer.parseInt(edition), Integer.parseInt(editionYear), publisher, keys, Integer.parseInt(price), Integer.parseInt(copies), isBestSeller, isReference);
                         Main.documents.add(b);
                         DataBase.addDoc(b);
                         JOptionPane.showMessageDialog(mainPanel, "New document successfully added!");
                         titleField.setText("");
                         authorField.setText("");
+                        keywordsField.setText("");
                         priceField.setText("");
                         copiesField.setText("");
                         editionField.setText("");
@@ -219,6 +242,8 @@ class DocAddScreen extends JFrame {
                         Main.docAdd.setVisible(false);
                         Main.cabinet.setLocationRelativeTo(null);
                         Main.cabinet.setVisible(true);
+                        DataBase.log("[" + Main.date.toString() + "][" + Main.activeUser.getUsername() +
+                                "]--(The user has added the new document \"" + b.getTitle() + "\" to the system.)");
                     }
                 }
         );
@@ -331,6 +356,19 @@ class DocAddScreen extends JFrame {
         fieldBox.add(Box.createRigidArea(new Dimension(0, 5)));
         fieldBox.add(authorField);
 
+        // Keywords label
+        JLabel keywordsLabel = new JLabel();
+        keywordsLabel.setText("Keywords:  ");
+        keywordsLabel.setFont(new Font("name", Font.BOLD, 15));
+        labelBox.add(Box.createRigidArea(new Dimension(0, 5)));
+        labelBox.add(keywordsLabel);
+        // Price field
+        keywordsField = new JTextField();
+        keywordsField.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+        keywordsField.setMaximumSize(new Dimension(160, 20));
+        fieldBox.add(Box.createRigidArea(new Dimension(0, 5)));
+        fieldBox.add(keywordsField);
+
         // Price label
         JLabel priceLabel = new JLabel();
         priceLabel.setText("Price:  ");
@@ -370,23 +408,31 @@ class DocAddScreen extends JFrame {
         docAddBtn.setAlignmentX(JComponent.LEFT_ALIGNMENT);
         docAddBtn.addActionListener(e -> {
                     updateAVData();
-                    if (title == null || author == null || price == null || copies == null) {
+                    if (title == null || author == null || keywords == null || price == null || copies == null) {
                         JOptionPane.showMessageDialog(mainPanel, "Wrong input data!");
-                    } else if (title.equals("") || author.equals("") || price.equals("") || copies.equals("")) {
+                        DataBase.log("[" + Main.date.toString() + "][" + Main.activeUser.getUsername() +
+                                "]--(The user has tried to add a new document to the system.)");
+                    } else if (title.equals("") || author.equals("") || keywords.equals("") || price.equals("") || copies.equals("")) {
                         JOptionPane.showMessageDialog(mainPanel, "Wrong input data!");
+                        DataBase.log("[" + Main.date.toString() + "][" + Main.activeUser.getUsername() +
+                                "]--(The user has tried to add a new document to the system.)");
                     } else {
-                        AudioVideo av = new AudioVideo(title, author, Integer.parseInt(price), Integer.parseInt(copies), isReference);
+                        ArrayList<String> keys = new ArrayList<>(); keys.addAll(Arrays.asList(keywords.split(", ")));
+                        AudioVideo av = new AudioVideo(title, author, keys, Integer.parseInt(price), Integer.parseInt(copies), isReference);
                         Main.documents.add(av);
                         DataBase.addDoc(av);
                         JOptionPane.showMessageDialog(mainPanel, "New document successfully added!");
                         titleField.setText("");
                         authorField.setText("");
+                        keywordsField.setText("");
                         priceField.setText("");
                         copiesField.setText("");
                         Main.cabinet = new CabinetScreen(true);
                         Main.docAdd.setVisible(false);
                         Main.cabinet.setLocationRelativeTo(null);
                         Main.cabinet.setVisible(true);
+                        DataBase.log("[" + Main.date.toString() + "][" + Main.activeUser.getUsername() +
+                                "]--(The user has added the new document \"" + av.getTitle() + "\" to the system.)");
                     }
                 }
         );
@@ -494,6 +540,19 @@ class DocAddScreen extends JFrame {
         fieldBox.add(Box.createRigidArea(new Dimension(0, 5)));
         fieldBox.add(authorField);
 
+        // Keywords label
+        JLabel keywordsLabel = new JLabel();
+        keywordsLabel.setText("Keywords:  ");
+        keywordsLabel.setFont(new Font("name", Font.BOLD, 15));
+        labelBox.add(Box.createRigidArea(new Dimension(0, 5)));
+        labelBox.add(keywordsLabel);
+        // Price field
+        keywordsField = new JTextField();
+        keywordsField.setAlignmentX(JComponent.CENTER_ALIGNMENT);
+        keywordsField.setMaximumSize(new Dimension(160, 20));
+        fieldBox.add(Box.createRigidArea(new Dimension(0, 5)));
+        fieldBox.add(keywordsField);
+
         // Price label
         JLabel priceLabel = new JLabel();
         priceLabel.setText("Price:  ");
@@ -533,23 +592,31 @@ class DocAddScreen extends JFrame {
         docAddBtn.setAlignmentX(JComponent.LEFT_ALIGNMENT);
         docAddBtn.addActionListener(e -> {
                     updateAVData();
-                    if (title == null || author == null || price == null || copies == null) {
+                    if (title == null || author == null || keywords == null || price == null || copies == null) {
                         JOptionPane.showMessageDialog(mainPanel, "Wrong input data!");
-                    } else if (title.equals("") || author.equals("") || price.equals("") || copies.equals("")) {
+                        DataBase.log("[" + Main.date.toString() + "][" + Main.activeUser.getUsername() +
+                                "]--(The user has tried to add a new document to the system.)");
+                    } else if (title.equals("") || author.equals("") || keywords.equals("") || price.equals("") || copies.equals("")) {
                         JOptionPane.showMessageDialog(mainPanel, "Wrong input data!");
+                        DataBase.log("[" + Main.date.toString() + "][" + Main.activeUser.getUsername() +
+                                "]--(The user has tried to add a new document to the system.)");
                     } else {
-                        JournalArticle ja = new JournalArticle(title, author, Integer.parseInt(price), Integer.parseInt(copies), isReference);
+                        ArrayList<String> keys = new ArrayList<>(); keys.addAll(Arrays.asList(keywords.split(", ")));
+                        JournalArticle ja = new JournalArticle(title, author, keys, Integer.parseInt(price), Integer.parseInt(copies), isReference);
                         Main.documents.add(ja);
                         DataBase.addDoc(ja);
                         JOptionPane.showMessageDialog(mainPanel, "New document successfully added!");
                         titleField.setText("");
                         authorField.setText("");
+                        keywordsField.setText("");
                         priceField.setText("");
                         copiesField.setText("");
                         Main.cabinet = new CabinetScreen(true);
                         Main.docAdd.setVisible(false);
                         Main.cabinet.setLocationRelativeTo(null);
                         Main.cabinet.setVisible(true);
+                        DataBase.log("[" + Main.date.toString() + "][" + Main.activeUser.getUsername() +
+                                "]--(The user has added the new document \"" + ja.getTitle() + "\" to the system.)");
                     }
                 }
         );
@@ -587,6 +654,7 @@ class DocAddScreen extends JFrame {
     private void updateBookData() {
         title = titleField.getText();
         author = authorField.getText();
+        keywords = keywordsField.getText();
         price = priceField.getText();
         copies = copiesField.getText();
         edition = editionField.getText();
@@ -597,6 +665,7 @@ class DocAddScreen extends JFrame {
     private void updateAVData() {
         title = titleField.getText();
         author = authorField.getText();
+        keywords = keywordsField.getText();
         price = priceField.getText();
         copies = copiesField.getText();
     }

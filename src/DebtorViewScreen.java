@@ -62,7 +62,11 @@ public class DebtorViewScreen extends JFrame {
         Box debtorBox = Box.createHorizontalBox();
         debtorBox.add(Box.createRigidArea(new Dimension(10, 0)));
 
-        TableModel debtorModel = new DebtorTableModel(Main.users);
+        LinkedList<User> lst = new LinkedList<>();
+        for (int i = 0; i < Main.users.size(); ++i)
+            if (!(Main.users.get(i) instanceof Admin || Main.users.get(i) instanceof Librarian))
+                lst.add(Main.users.get(i));
+        TableModel debtorModel = new DebtorTableModel(lst);
         JTable debtorTable = new JTable(debtorModel);
         ListSelectionModel userCellSelectionModel = debtorTable.getSelectionModel();
         userCellSelectionModel.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
@@ -108,6 +112,8 @@ public class DebtorViewScreen extends JFrame {
         debtViewBtn.addActionListener(e -> { // What to do when libRequest button was pressed
             if (debt == null) {
                 JOptionPane.showMessageDialog(mainPanel, "Select user's debt!");
+                DataBase.log("[" + Main.date.toString() + "][" + Main.activeUser.getUsername() +
+                        "]--(The user has tried to check the debt of some user.)");
             } else {
                 Booking booking = Main.findUser(debtor).findBooking(debt);
                 String info = "";
@@ -122,6 +128,8 @@ public class DebtorViewScreen extends JFrame {
                 int fine = (-1 * booking.getTimeLeft()) * 100 >= booking.getDoc().getPrice() ? booking.getDoc().getPrice() : (-1 * booking.getTimeLeft()) * 100;
                 info += "Current fine: " + fine + " rubles.\n"; // Calculated fine
                 JOptionPane.showMessageDialog(mainPanel, info);
+                DataBase.log("[" + Main.date.toString() + "][" + Main.activeUser.getUsername() +
+                        "]--(The user has checked the info about some debt of the user " + debtor + ".)");
             }
         });
         debtViewBtn.setAlignmentX(JComponent.CENTER_ALIGNMENT);

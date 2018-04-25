@@ -143,8 +143,12 @@ class UserAddScreen extends JFrame {
                     updateData();
                     if (username == null || password == null || firstName == null || secondName == null || address == null || phone == null) {
                         JOptionPane.showMessageDialog(mainPanel, "Wrong input data!");
+                        DataBase.log("[" + Main.date.toString() + "][" + Main.activeUser.getUsername() +
+                                "]--(The user has tried to add a new user.)");
                     } else if (username.equals("") || password.equals("") || firstName.equals("") || secondName.equals("") || address.equals("") || phone.equals("")) {
                         JOptionPane.showMessageDialog(mainPanel, "Wrong input data!");
+                        DataBase.log("[" + Main.date.toString() + "][" + Main.activeUser.getUsername() +
+                                "]--(The user has tried to add a new user.)");
                     } else {
                         User u = new User(username, password, isFaculty, firstName, secondName, address, phone, 0);
                         if (!DataBase.findUser(u)) {
@@ -161,8 +165,12 @@ class UserAddScreen extends JFrame {
                             Main.userAdd.setVisible(false);
                             Main.cabinet.setLocationRelativeTo(null);
                             Main.cabinet.setVisible(true);
+                            DataBase.log("[" + Main.date.toString() + "][" + Main.activeUser.getUsername() +
+                                    "]--(The user has added the new user " + u.getUsername() + ".)");
                         } else {
                             JOptionPane.showMessageDialog(mainPanel, "User with this username already exist!");
+                            DataBase.log("[" + Main.date.toString() + "][" + Main.activeUser.getUsername() +
+                                    "]--(The user has tried to add a new user with existing username.)");
                         }
                     }
                 }
