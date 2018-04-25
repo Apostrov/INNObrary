@@ -4,7 +4,9 @@ import javax.swing.*;
 import javax.swing.table.TableModel;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 class CabinetScreen extends JFrame {
 
@@ -15,6 +17,7 @@ class CabinetScreen extends JFrame {
     JPanel mainPanel = new JPanel();
     DocTableModel docModel;
     JTable libDocTable;
+    JCheckBox keywordCheckbox;
 
     /** Creates the window according to the type of the user (librarian or not) */
     CabinetScreen(boolean isLibrarian) {
@@ -185,10 +188,13 @@ class CabinetScreen extends JFrame {
             String docTitle = libDoc;
             if (docTitle != null) {
                 Document doc = Main.findDoc(docTitle);
-                String info = "";
+                String info = "", keys = "";
+                for (int i = 0; i < doc.getKeywords().size(); ++i)
+                    keys += doc.getKeywords().get(i) + (i != doc.getKeywords().size() - 1 ? ", " : "");
                 info += "Information about the document:\n";
                 info += "Title:  " + doc.getTitle() + "\n";
                 info += "Authors:  " + doc.getAuthors() + "\n";
+                info += "Keywords: " + keys + "\n";
                 info += "Price:  " + doc.getPrice() + " rubles.\n";
                 info += "Copies left:  " + doc.getCopies() + "\n";
                 if (doc.isReference()) info += "This is a reference document.\n";
@@ -371,13 +377,13 @@ class CabinetScreen extends JFrame {
         // searchDocs field
         searchField = new JTextField();
         searchField.setAlignmentX(JComponent.CENTER_ALIGNMENT);
-        searchField.setMaximumSize(new Dimension(335, 30));
+        searchField.setMaximumSize(new Dimension(235, 30));
         searchField.setText("");
         searchField.addActionListener(e -> {
             if (!searchField.getText().equals("")) {
                 String[] array = new String[Main.documents.size()];
                 for (int i = 0; i < Main.documents.size(); ++i) array[i] = Main.documents.get(i).getTitle();
-                ArrayList<String> searchTitles = searchDocs(searchField.getText(), array);
+                ArrayList<String> searchTitles = keywordCheckbox.isSelected() ? Searchkeyword(searchField.getText(), ArrayKeywords()) : TitleOrOperanda(searchField.getText(), array);
                 ArrayList<Document> searchDocs = new ArrayList<>();
                 for (int i = 0; i < searchTitles.size(); ++i) searchDocs.add(Main.findDoc(searchTitles.get(i)));
                 docModel.replace(searchDocs);
@@ -395,7 +401,7 @@ class CabinetScreen extends JFrame {
             if (!searchField.getText().equals("")) {
                 String[] array = new String[Main.documents.size()];
                 for (int i = 0; i < Main.documents.size(); ++i) array[i] = Main.documents.get(i).getTitle();
-                ArrayList<String> searchTitles = searchDocs(searchField.getText(), array);
+                ArrayList<String> searchTitles = keywordCheckbox.isSelected() ? Searchkeyword(searchField.getText(), ArrayKeywords()) : TitleOrOperanda(searchField.getText(), array);
                 ArrayList<Document> searchDocs = new ArrayList<>();
                 for (int i = 0; i < searchTitles.size(); ++i) searchDocs.add(Main.findDoc(searchTitles.get(i)));
                 docModel.replace(searchDocs);
@@ -406,6 +412,11 @@ class CabinetScreen extends JFrame {
             }
         });
         searchBox.add(searchBtn);
+        searchBox.add(Box.createRigidArea(new Dimension(5, 0)));
+        // Keyword checkbox
+        keywordCheckbox = new JCheckBox("by keywords");
+        keywordCheckbox.setAlignmentX(JComponent.LEFT_ALIGNMENT);
+        searchBox.add(keywordCheckbox);
 
         mainPanel.add(Box.createRigidArea(new Dimension(0, 15)));
         mainPanel.add(logoutBox);
@@ -658,10 +669,13 @@ class CabinetScreen extends JFrame {
         infoDocBtn.addActionListener(e -> {
             if (userDoc != null) {
                 Booking booking = Main.activeUser.findBooking(userDoc);
-                String info = "";
+                String info = "", keys = "";
+                for (int i = 0; i < booking.getDoc().getKeywords().size(); ++i)
+                    keys += booking.getDoc().getKeywords().get(i) + (i != booking.getDoc().getKeywords().size() - 1 ? ", " : "");
                 info += "Information about the order:\n";
                 info += "Title:  " + booking.getDoc().getTitle() + ".\n";
                 info += "Authors: " + booking.getDoc().getAuthors() + ".\n";
+                info += "Keywords: " + keys + "\n";
                 info += "Price: " + booking.getDoc().getPrice() + " rubles.\n";
                 if (booking.hasReceived()) {
                     info += "Date of booking: " + booking.getDate().toString() + ".\n";
@@ -855,19 +869,19 @@ class CabinetScreen extends JFrame {
         userBooksLabel.setText("Your documents");
         userBooksLabel.setAlignmentX(JComponent.CENTER_ALIGNMENT);
 
-        // searchDocs box
+        // Search box
         Box searchBox = Box.createHorizontalBox();
         searchBox.add(Box.createRigidArea(new Dimension(0, 0)));
-        // searchDocs field
+        // Search field
         searchField = new JTextField();
         searchField.setAlignmentX(JComponent.CENTER_ALIGNMENT);
-        searchField.setMaximumSize(new Dimension(335, 30));
+        searchField.setMaximumSize(new Dimension(235, 30));
         searchField.setText("");
         searchField.addActionListener(e -> {
             if (!searchField.getText().equals("")) {
                 String[] array = new String[Main.documents.size()];
                 for (int i = 0; i < Main.documents.size(); ++i) array[i] = Main.documents.get(i).getTitle();
-                ArrayList<String> searchTitles = searchDocs(searchField.getText(), array);
+                ArrayList<String> searchTitles = keywordCheckbox.isSelected() ? Searchkeyword(searchField.getText(), ArrayKeywords()) : TitleOrOperanda(searchField.getText(), array);
                 ArrayList<Document> searchDocs = new ArrayList<>();
                 for (int i = 0; i < searchTitles.size(); ++i) searchDocs.add(Main.findDoc(searchTitles.get(i)));
                 docModel.replace(searchDocs);
@@ -879,13 +893,13 @@ class CabinetScreen extends JFrame {
         });
         searchBox.add(searchField);
         searchBox.add(Box.createRigidArea(new Dimension(5, 0)));
-        // searchDocs button
+        // Searchs button
         JButton searchBtn = new JButton("Search");
         searchBtn.addActionListener(e -> {
             if (!searchField.getText().equals("")) {
                 String[] array = new String[Main.documents.size()];
                 for (int i = 0; i < Main.documents.size(); ++i) array[i] = Main.documents.get(i).getTitle();
-                ArrayList<String> searchTitles = searchDocs(searchField.getText(), array);
+                ArrayList<String> searchTitles = keywordCheckbox.isSelected() ? Searchkeyword(searchField.getText(), ArrayKeywords()) : TitleOrOperanda(searchField.getText(), array);
                 ArrayList<Document> searchDocs = new ArrayList<>();
                 for (int i = 0; i < searchTitles.size(); ++i) searchDocs.add(Main.findDoc(searchTitles.get(i)));
                 docModel.replace(searchDocs);
@@ -896,6 +910,11 @@ class CabinetScreen extends JFrame {
             }
         });
         searchBox.add(searchBtn);
+        searchBox.add(Box.createRigidArea(new Dimension(5, 0)));
+        // Keyword checkbox
+        keywordCheckbox = new JCheckBox("by keywords");
+        keywordCheckbox.setAlignmentX(JComponent.LEFT_ALIGNMENT);
+        searchBox.add(keywordCheckbox);
 
         mainPanel.add(Box.createRigidArea(new Dimension(0, 15)));
         mainPanel.add(profileBox);
@@ -1054,27 +1073,259 @@ class CabinetScreen extends JFrame {
         }
     }
 
-    public ArrayList<String> searchDocs(String word, String[] array){
+    public ArrayList<String> TitleOrOperanda(String here,String[] array){
+        String[] here1 = here.split(" ");
+        boolean oper = false;
+        int indexOper = 0;
+        boolean or = false;
+        for (int i = 0; i < here1.length; i++) {
+            if(here1[i].equals("AND")) {
+
+                oper = true;
+                for (int j = 0; j < here.length()-3; j++) {
+                    String a = here.substring(j,j + 3) ;
+                    if(a.equals("AND")) {
+                        indexOper = j;
+                        break;
+                    }
+
+                }
+
+            }
+            if(here1[i].equals("OR")) {
+                or = true;
+
+
+                oper = true;
+                for (int j = 0; j < here.length()-2; j++) {
+                    String a = here.substring(j,j + 2) ;
+                    if(a.equals("OR")) {
+                        indexOper = j;
+                        break;
+                    }
+
+                }
+
+            }
+
+        }
+        String[] here2 = new String[3];
+        ArrayList<String> list = new ArrayList<>();
+        if(oper){
+            if(!or) {
+                here2[0] = here.substring(0, indexOper - 1);
+                here2[1] = here.substring(indexOper, indexOper + 3);
+                here2[2] = here.substring(indexOper + 4, here.length());
+            }else{
+                here2[0] = here.substring(0, indexOper - 1);
+                here2[1] = here.substring(indexOper, indexOper + 2);
+                here2[2] = here.substring(indexOper + 3, here.length());
+            }
+            list = SearchTitle(here2,array);
+
+
+        }else {
+            list = Search(here, array);
+        }
+        return list;
+    }
+
+    public ArrayList<String> Searchkeyword(String teg, Map<String, ArrayList<String>> hashMap){
+        ArrayList<String> list = new ArrayList<>();
+        String[] word2 = teg.split(" ");
+        boolean oper = false;
+        boolean or = false;
+        int indexOper = 0;
+
+        for (int i = 0; i < word2.length; i++) {
+            if(word2[i].equals("AND")) {
+
+                oper = true;
+                for (int j = 0; j < teg.length()-3; j++) {
+                    String a = teg.substring(j,j + 3) ;
+                    if(a.equals("AND")) {
+                        indexOper = j;
+                        break;
+                    }
+
+                }
+
+            }
+            if(word2[i].equals("OR")) {
+                or = true;
+
+
+                oper = true;
+                for (int j = 0; j < teg.length()-2; j++) {
+                    String a = teg.substring(j,j + 2) ;
+                    if(a.equals("OR")) {
+                        indexOper = j;
+                        break;
+                    }
+
+                }
+
+            }
+
+        }
+        if(oper){
+            String[] word = new String[3];
+            if(!or) {
+                word[0] = teg.substring(0, indexOper - 1);
+                word[1] = teg.substring(indexOper, indexOper + 3);
+                word[2] = teg.substring(indexOper + 4, teg.length());
+            }else{
+                word[0] = teg.substring(0, indexOper - 1);
+                word[1] = teg.substring(indexOper, indexOper + 2);
+                word[2] = teg.substring(indexOper + 3, teg.length());
+            }
+
+            if(word[1].equals("AND")){
+                if(hashMap.get(word[0]) != null && hashMap.get(word[2]) != null){
+                    for (int i = 0; i < hashMap.get(word[0]).size(); i++) {
+                        for (int j = 0; j < hashMap.get(word[2]).size(); j++) {
+                            if(hashMap.get(word[0]).get(i) == hashMap.get(word[2]).get(j))
+                                list.add(hashMap.get(word[2]).get(j));
+
+                        }
+
+                    }
+                }
+            }
+            if(word[1].equals("OR")){
+                if(hashMap.get(word[0]) != null && hashMap.get(word[2]) != null) {
+                    for (int i = 0; i < hashMap.get(word[0]).size(); i++) {
+                        for (int j = 0; j < hashMap.get(word[2]).size(); j++) {
+                            if (hashMap.get(word[0]).get(i) == hashMap.get(word[2]).get(j)) {
+                                list.add(hashMap.get(word[2]).get(j));
+
+                            }
+
+                        }
+
+                    }
+
+                    for (int i = 0; i < hashMap.get(word[0]).size(); i++) {
+                        for (int j = 0; j < list.size(); j++) {
+                            if (list.get(j) == hashMap.get(word[0]).get(i))
+                                hashMap.get(word[0]).remove(i);
+                        }
+
+                    }
+                    for (int i = 0; i < hashMap.get(word[2]).size(); i++) {
+                        for (int j = 0; j < list.size(); j++) {
+                            if (list.get(j) == hashMap.get(word[2]).get(i))
+                                hashMap.get(word[2]).remove(i);
+                        }
+
+                    }
+                }
+
+                if(hashMap.get(word[0]) != null) {
+                    for (int i = 0; i < hashMap.get(word[0]).size(); i++) {
+                        list.add(hashMap.get(word[0]).get(i));
+
+                    }
+                }
+                if(hashMap.get(word[2]) != null) {
+                    for (int i = 0; i < hashMap.get(word[2]).size(); i++) {
+                        list.add(hashMap.get(word[2]).get(i));
+
+                    }
+                }
+            }
+        }else {
+            if(hashMap.get(teg) != null)
+                for (int i = 0; i < hashMap.get(teg).size(); i++) {
+                    list.add(hashMap.get(teg).get(i));
+                }
+
+        }
+
+
+
+        return list;
+    }
+    public ArrayList<String> SearchTitle(String[] word,String[] array){
+        ArrayList<String> list = new ArrayList<>();
+        if(word[1].equals("AND")){
+            for (int i = 0; i < array.length; i++) {
+                String[] a = array[i].split(" ");
+                for (int j = 0; j < a.length; j++) {
+                    if (word[0].equals(a[j])){
+                        for (int k = 0; k < a.length; k++) {
+                            if (word[2].equals(a[k]))
+                                list.add(array[i]);
+
+                        }
+                    }
+
+                }
+
+
+            }
+        }
+        if(word[1].equals("OR")){
+            for (int i = 0; i < array.length; i++) {
+                String[] a = array[i].split(" ");
+
+                for (int j = 0; j < a.length; j++) {
+                    if(word[0].equals(a[j])) {
+                        list.add(array[i]);
+                        break;
+                    }
+                    if(word[2].equals(a[j])){
+                        list.add(array[i]);
+                        break;
+                    }
+
+                }
+
+            }
+        }
+        return list;
+    }
+
+    public Map<String, ArrayList<String>> ArrayKeywords(){
+        Map<String, ArrayList<String>> hashMap = new HashMap<>();
+
+        for (int j = 0; j < Main.documents.size(); ++j) {
+            ArrayList<String> list = Main.documents.get(j).getKeywords();
+            for (int i = 0; i < list.size(); i++) {
+                if (hashMap.get(list.get(i)) == null) {
+                    hashMap.put(list.get(i), new ArrayList<String>());
+                    hashMap.get(list.get(i)).add(Main.documents.get(j).getTitle());
+                } else {
+                    hashMap.get(list.get(i)).add(Main.documents.get(j).getTitle());
+                }
+
+            }
+        }
+
+
+        return hashMap;
+    }
+
+    public ArrayList<String> Search(String word, String[] array){
         ArrayList<String> list = new ArrayList<>();
         for (int i = 0; i < array.length; i++) {
             int tag = editdist(word,array[i]);
+            if(word.length() <= array[i].length() && word.equals(Range(array[i],0,word.length()))){
+                list.add(array[i]);
+                continue;
+            }
             if(tag == 0){
                 list.add(array[i]);
                 continue;
             }
-            if(tag <= 3) {
-                list.add(array[i]);
-            }else{
-                if (word.length()<=array[i].length()) {
-                    if (word.equals(range(array[i], 0, word.length())) || (editdist(word,range(array[i],0,word.length())) <= 4) && word.length() > 3) {
-                        list.add(array[i]);
-                    }
+            String[] a = array[i].split(" ");
+            for (int j = 0; j < a.length; j++) {
+                if(word.equals(a[j])) {
+                    list.add(array[i]);
+                    break;
+
                 }
-                else{
-                    if(range(word,0,array[i].length()).equals(array[i]) || (editdist(range(word,0,array[i].length()),array[i]) <= 4) && array[i].length() > 3){
-                        list.add(array[i]);
-                    }
-                }
+
             }
 
 
@@ -1083,7 +1334,7 @@ class CabinetScreen extends JFrame {
         return list;
 
     }
-    public static String range(String a, int Brange, int Erange){
+    public static String Range(String a, int Brange, int Erange){
         String b = "";
         for (int i = Brange; i < Erange; i++) {
             b = b + a.charAt(i);

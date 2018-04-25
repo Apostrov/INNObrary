@@ -1,6 +1,7 @@
 package main.java;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Document {
 
@@ -17,9 +18,11 @@ public class Document {
     private boolean isBestSeller;
     private boolean isOutstanding;
 
-    Document (String title, String authors, int price, int copies, boolean isReference) {
+    Document (String title, String authors, ArrayList<String> keywords, int price, int copies, boolean isReference) {
         this.title = title;
         this.authors = authors;
+        this.keywords = new ArrayList<>();
+        this.keywords.addAll(keywords);
         this.price = price;
         this.copies = copies;
         this.isReference = isReference;
@@ -30,7 +33,7 @@ public class Document {
     Document (Object document_id, String title, String authors, int price,
               int copies, boolean isReference, ArrayList<String> keywords, String publisher,
               int edition, int year, boolean isBestSeller, boolean isOutstanding){
-        this(title, authors, price, copies, isReference);
+        this(title, authors, keywords, price, copies, isReference);
         this.document_id = document_id;
         this.keywords = keywords;
         this.publisher = publisher;
@@ -93,6 +96,12 @@ public class Document {
     /** Returns the keywords of the document. */
     ArrayList<String> getKeywords() {
         return keywords;
+    }
+
+    /** Sets new keywords. */
+    void setKeywords(String keywords) {
+        this.keywords.clear();
+        this.keywords.addAll(Arrays.asList(keywords.split(", ")));
     }
 
     /** Returns the year of publishing. */

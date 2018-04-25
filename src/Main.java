@@ -63,7 +63,7 @@ public class Main {
         userAdd = new UserAddScreen(); userAdd.setLocationRelativeTo(null);
         userMod = new UserModifyScreen(new User("", "", false), null); userMod.setLocationRelativeTo(null);
         docAdd = new DocAddScreen("Book"); docAdd.setLocationRelativeTo(null);
-        docMod = new DocModifyScreen(new Document("","",1,1,false)); docMod.setLocationRelativeTo(null);
+        docMod = new DocModifyScreen(new Document("","", new ArrayList<>(),1,1,false)); docMod.setLocationRelativeTo(null);
         changeProf = new ProfChangeScreen(new User("", "", false)); changeProf.setLocationRelativeTo(null);
         debtors = new DebtorViewScreen(); debtors.setLocationRelativeTo(null);
         requests = new RequestsScreen(); requests.setLocationRelativeTo(null);

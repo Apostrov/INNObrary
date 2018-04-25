@@ -6,8 +6,8 @@ class AudioVideo extends Document {
 
     /** Initialisation of the audio/video material.
      *  @param title, authors, price, copies. */
-    AudioVideo(String title, String authors, int price, int copies, boolean isReference){
-        super(title, authors, price, copies, isReference);
+    AudioVideo(String title, String authors, ArrayList<String> keywords, int price, int copies, boolean isReference){
+        super(title, authors, keywords, price, copies, isReference);
     }
 
     /** Another constructor for database purposes. */

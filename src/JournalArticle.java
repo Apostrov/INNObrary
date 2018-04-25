@@ -6,8 +6,8 @@ class JournalArticle extends Document {
 
     /** Initialisation of the journal article.
      *  @param title, authors, journal, issue, publisher, issue_editors, pub_date, price, copies. */
-    JournalArticle(String title, String authors, int price, int copies, boolean isReference){
-        super(title, authors, price, copies, isReference);
+    JournalArticle(String title, String authors, ArrayList<String> keywords, int price, int copies, boolean isReference){
+        super(title, authors, keywords, price, copies, isReference);
     }
 
     /** Constructor for the database purposes. */

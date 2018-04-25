@@ -5,8 +5,8 @@ import java.util.ArrayList;
 class Book extends Document {
 
     /** Initialisation of the book. */
-    Book(String title, String authors, int edition, int edition_year, String publisher, int price, int copies, boolean isBestSeller, boolean isReference){
-        super(title, authors, price, copies, isReference);
+    Book(String title, String authors, int edition, int edition_year, String publisher, ArrayList<String> keywords, int price, int copies, boolean isBestSeller, boolean isReference){
+        super(title, authors, keywords, price, copies, isReference);
         setEdition(edition);
         setYear(edition_year);
         setBestSeller(isBestSeller);
